@@ -2,7 +2,9 @@
 
 ## Projeto de desenvolvimento de software para uma empresa de pesquisa e desenvolvimento
 
-![Logo](https://github.com/RosoIsabela/trabalho-integrador-sulagro/blob/main/TelaInicial.jpeg)
+<div align="center">
+    <img src="./TelaInicial.jpeg" width="600"/>
+</div>
 
 ## Descrição
 
@@ -24,6 +26,16 @@ Este projeto tem como objetivo desenvolver um sistema de software para uma empre
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg" width="60" height="50"/><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-plain.svg" width="60" height="50"/> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg" width="60" height="50"/>
 
 
+## Organização das Pastas
+
+O projeto está organizado em diferentes diretórios para facilitar a localização dos documentos e código-fonte:
+
+- **/banco-de-dados**: No momento apenas contém os requisitos.
+- **/trabalho-integrador**: Contém o código-fonte do projeto, incluindo o frontend e o backend.
 
 
+## Discentes
 
+- Daniele Rohr | Matrícula: 2121101060
+- Isabela Roso | Matrícula: 2311100049
+- Jesuane Beatriz Kafer | Matrícula 2311100051
