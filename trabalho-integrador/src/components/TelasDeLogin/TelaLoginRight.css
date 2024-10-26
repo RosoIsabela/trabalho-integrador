@@ -1,0 +1,88 @@
+.right {
+  background-color: var(--background-laranja-principal);
+  width: 50%;
+  height: 100vh;
+  float: right;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.bemVindoLogin {
+  background-color: var(--background-branco-principal);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+  border-radius: 2rem;
+  max-width: 550px;
+
+  padding: 2rem 2rem 4rem 2rem;
+  width: 60%;
+  height: auto;
+  text-align: center;
+}
+
+
+.titlePrincipal {
+  text-align: center;
+  font-size: 3rem;
+
+  color: rgba(0, 0, 0, 0.85);
+}
+
+
+.input__login {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  padding: 1rem;
+}
+
+
+#email {
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid rgba(209, 209, 209, 1);
+  border-radius: 2rem;
+  
+  background-color: var(--tl-input-dados);
+  text-align: left;
+  outline: none;
+  transition: 0.3s;
+}
+
+
+#password {
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid rgba(209, 209, 209, 1);
+  border-radius: 2rem;
+  
+  background-color: var(--tl-input-dados);
+  text-align: left;
+  outline: none;
+  transition: 0.3s;
+
+  margin-bottom: 0.5rem;
+}
+
+
+.button__login {
+  padding: 0.5rem;
+  font-size: 1.8rem;
+  border: 1px solid rgba(174, 174, 174, 1);
+  border-radius: 2rem;
+  
+  background-color: var(--tl-button-verde);
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+
+.esqueceu__senha {
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.7);
+}

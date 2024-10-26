@@ -1,0 +1,41 @@
+body {
+    background-color: var(--background-cinza-principal);
+}
+
+.home {
+    background-color: var(--branco-para-boxs);
+    width: 80%;
+    height: 10vh;
+    float: right;
+
+    border-radius: 0 0 20px 20px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.TituloHome {
+    font-size: 40px;
+
+    display: flex;
+    margin-left: 60px;
+}
+
+
+.div__contato {
+    text-align: center;
+    margin: 0 40px 0 20px;
+}
+
+
+.p__duvida {
+    margin: 0;
+    font-weight: 600;
+}
+
+
+.link__contato {
+    color: rgba(0, 0, 0, 0.8);
+}

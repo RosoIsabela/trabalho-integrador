@@ -1,0 +1,88 @@
+* {
+  box-sizing: border-box; 
+}
+
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+
+:root {
+  /* Telas de login e SideBar*/
+  /* tl - significa tela login*/
+  --laranja-nome-empresa: rgba(251, 97, 7, 0.85);
+  --verde-nome-empresa: rgba(124, 181, 24, 0.85);
+  --background-laranja-principal: rgba(236, 109, 49, 1);
+  --background-branco-principal: white;
+  --tl-input-dados: rgba(230, 230, 230, 1);
+  --tl-button-verde: rgba(124, 181, 24, 0.75);
+
+
+  /* DashBoard Cliente */
+  --branco-para-boxs: rgba(255, 255, 255, 1);
+  --background-cinza-principal: rgba(233, 233, 233, 1);
+
+
+
+  /* Cores de texto */
+  
+}
+
+
+.sidebar{
+  background-color: rgba(236, 109, 49, 1);
+  width: 20%;
+  max-width: 400px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.SulAgro{
+  font-family: 'Josefin Sans', sans-serif;
+  text-align: center;
+}
+
+.logo{
+  width: 100px;
+  margin-top: 20px;
+  padding-left: 35%;
+}
+
+#sidebarButton p {
+  margin: 0;
+}
+
+#sidebarButton, #sidebarButtonClose {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 18px;
+  border: none;
+  background: none;
+  margin: 15px; 
+  padding-left: 30%;
+  gap: 10px;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+#sidebarButton:hover {
+  transform: translateY(-5px) scale(1.05);
+}
+
+#sidebarButtonClose{
+  position: absolute;
+  bottom: 10px;
+  left: 10%;
+}
+
+
+
+
+
