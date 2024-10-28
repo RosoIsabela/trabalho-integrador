@@ -1,13 +1,21 @@
 import './App.css'
-<<<<<<< HEAD
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import DashboardCliente from './components/DashBoard Cliente/DashboardCliente';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import DashboardCliente from './components/Cliente/DashBoard Cliente/DashboardCliente';
+import DashboardProfissional from './components/Profissional/Dashboard Profissional/DashboardProfissional';
 import TelaEsqueceuSenha from './components/TelasDeEsqueceuSenha/TelaEsqueceuSenha';
 import TelaLoginPrincipal from './components/TelasDeLogin/TelaLoginPrincipal';
 import TelaPrincipal from './components/TelaPrincipal/TelaPrincipal';
-import ContratoCliente from './components/VerContrato/ContratoCliente';
-import RelatoriosCliente from './components/VerRelatorios/RelatoriosCliente';
-import ConfiguracoesCliente from './components/Configuracoes/ConfiguracoesCliente';
+import ContratoCliente from './components/Cliente/VerContrato/ContratoCliente';
+import RelatoriosCliente from './components/Cliente/VerRelatorios/RelatoriosCliente';
+import ConfiguracoesCliente from './components/Cliente/Configuracoes/ConfiguracoesCliente';
+import PefilCliente from './components/Cliente/Perfil/PerfilCliente';
+import SobreCliente from './components/Cliente/Sobre/SobreCliente';
+import ConfiguracoesProfissional from './components/Profissional/Configuracoes/ConfiguracoesProfissional'
+import ContratoProfissional from './components/Profissional/Contrato/ContratoProfissional';
+import RelatoriosProfissional from './components/Profissional/Relatorios/RelatoriosProfissional';
+import ControleGeral from './components/Profissional/Controle Geral/ControleGeral';
+import PerfilProfissional from './components/Profissional/Perfil/PerfilProfissional'
+import SobreProfissional from './components/Profissional/Sobre/SobreProfissional'
 
 function App() {
   return (
@@ -30,7 +38,7 @@ function App() {
           element={<TelaEsqueceuSenha />}
         />
 
-
+        {/* Cliente */}
         <Route 
           path="/dashboard-cliente"
           element={<DashboardCliente />}
@@ -55,29 +63,68 @@ function App() {
         />
 
 
+        <Route 
+          path="/perfilCliente"
+          element={<PefilCliente />}
+        />
+
+
+        <Route 
+          path="/sobreCliente"
+          element={<SobreCliente />}
+        />
+
+
+        {/* Profissional */}
+        <Route
+          path="/dashboard-profissional"
+          element={<DashboardProfissional />}
+        />
+
+
+        <Route
+          path="/contrato-profissional"
+          element={<ContratoProfissional />}
+        />
+
+
+        <Route
+          path="/cadastrar-contrato"
+          element={<DashboardProfissional />}
+        />
+
+
+        <Route
+          path="/relatorios-profissional"
+          element={<RelatoriosProfissional />}
+        />
+
+
+        <Route
+          path="/controle-geral"
+          element={<ControleGeral />}
+        />
+
+
+        <Route
+          path="/configuracoes-profissional"
+          element={<ConfiguracoesProfissional />}
+        />
+
+
+        <Route 
+          path="/perfilProfissional"
+          element={<PerfilProfissional />}
+        />
+
+
+        <Route 
+          path="/sobreProfissional"
+          element={<SobreProfissional />}
+        />
+
       </Routes>
     </Router>
-=======
-import TelaLoginBemVindo from './components/TelaLoginBemVindo'
-import TelaLoginLeft from './components/TelaLoginLeft'
-import TelaLoginRight from './components/TelaLoginRight'
-import Sidebar from './components/sidebar'
-import Home from './components/home'
-
-
-function App() {
-  return (
-    <>
-      
-      <TelaLoginLeft />
-      <TelaLoginRight />
-
-      {/*
-      <Sidebar />
-      */}
-      
-    </>
->>>>>>> 3f2450a37702e1d8a2ebf8bd1287139927e1c965
   )
 }
 

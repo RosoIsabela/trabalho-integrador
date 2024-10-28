@@ -1,12 +1,12 @@
 * {
   box-sizing: border-box; 
+  font-family: 'Josefin Sans', sans-serif;
 }
 
 
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Josefin Sans', sans-serif;
 }
 
 
@@ -29,57 +29,6 @@ body {
 
   /* Cores de texto */
   
-}
-
-
-.sidebar{
-  background-color: rgba(236, 109, 49, 1);
-  width: 20%;
-  max-width: 400px;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  overflow-y: auto;
-}
-
-.SulAgro{
-  font-family: 'Josefin Sans', sans-serif;
-  text-align: center;
-}
-
-.logo{
-  width: 100px;
-  margin-top: 20px;
-  padding-left: 35%;
-}
-
-#sidebarButton p {
-  margin: 0;
-}
-
-#sidebarButton, #sidebarButtonClose {
-  font-family: 'Josefin Sans', sans-serif;
-  font-size: 18px;
-  border: none;
-  background: none;
-  margin: 15px; 
-  padding-left: 30%;
-  gap: 10px;
-  display: flex;
-  align-items: center;
-  transition: transform 0.3s ease;
-}
-
-#sidebarButton:hover {
-  transform: translateY(-5px) scale(1.05);
-}
-
-#sidebarButtonClose{
-  position: absolute;
-  bottom: 10px;
-  left: 10%;
 }
 
 

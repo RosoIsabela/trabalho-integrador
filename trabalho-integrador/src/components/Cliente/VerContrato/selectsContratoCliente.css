@@ -1,0 +1,78 @@
+.contrato__options {
+    width: 80%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 30px;
+
+    gap: 2rem;
+}
+
+
+.div__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    margin-left: 35px;
+}
+
+
+.contrato__selectBox {
+    background-color: var(--verde-nome-empresa);
+    text-align: center;
+    border: none;
+    border-radius: 30px;
+    width: 350px;
+    height: 50px;
+    font-size: 20px;
+
+    cursor: pointer;
+}
+
+
+.contrato__button {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0 0 0 40px;
+    
+    background-color: var(--verde-nome-empresa);
+    text-align: center;
+    border: none;
+    border-radius: 30px;
+    width: 350px;
+    height: 50px;
+    font-size: 20px;
+
+    cursor: pointer;
+}
+
+
+.icons__button {
+    padding: 8px 0 0 40px;
+}
+
+
+
+.box__branca {
+    background-color: var(--branco-para-boxs);
+
+    width: 80%;
+    max-width: 1000px;
+    height: 80vh;
+    border-radius: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+
+#ajuste__corButton {
+    background-color: var(--laranja-nome-empresa);
+}
+
+
+.ajustando__links {
+    text-decoration: none;
+}

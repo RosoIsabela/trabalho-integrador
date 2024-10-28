@@ -1,0 +1,56 @@
+.container-buttons {
+    display: flex;
+    padding: 55px 100px 55px 200px;
+    
+}
+
+
+.geral__gerenciar {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 140px;
+    
+}
+
+
+.cards__gerenciar {
+    background-color: var(--background-cinza-principal);
+    border: none;
+}
+
+
+.gerenciar__cliente {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: var(--verde-nome-empresa);
+    width: 400px;
+    height: 85px;
+
+    border-radius: 25px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+
+.gerenciar__funcionario {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: var(--laranja-nome-empresa);
+    width: 400px;
+    height: 85px;
+
+    border-radius: 25px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+
+.title__gerenciar {
+    font-size: 24px;
+    text-align: center; 
+}

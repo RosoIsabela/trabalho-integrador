@@ -1,0 +1,74 @@
+.container-superior p {
+    margin: 0;
+    padding: 0;
+}
+
+
+.container-super{
+    display: flex;
+    padding: 55px 100px 55px 200px;
+}
+
+
+.geral__cards {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 150px;
+}
+
+
+.card__cliente {
+    background-color: var(--branco-para-boxs);
+    width: 400px;
+    height: 250px;
+
+    border-radius: 25px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+
+.card__funcionario {
+    background-color: var(--branco-para-boxs);
+    width: 400px;
+    height: 250px;
+
+    border-radius: 25px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+
+.div__cadastraCliente {
+    background-color: var(--verde-nome-empresa);
+    width: 400px;
+    height: 50px;
+
+    padding: 15px 0 0 0;
+
+    border-radius: 25px 25px 0 0;
+}
+
+
+.div__cadastraFuncionario {
+    background-color: var(--laranja-nome-empresa);
+    width: 400px;
+    height: 50px;
+
+    padding: 15px 0 0 0;
+
+    border-radius: 25px 25px 0 0;
+}
+
+
+.card__title {
+    font-size: 24px;
+    text-align: center; 
+}
+
+
+.img__cards {
+    width: 260px;
+    height: 180px;
+
+    margin: 10px 70px 10px 70px;
+}

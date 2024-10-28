@@ -1,0 +1,22 @@
+.div__selects {
+    width: 50%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+
+}
+
+
+.selectsBoxs {
+    margin: 36px;
+    padding: 18px 150px 18px 150px;
+
+    border: none;
+    border-radius: 30px;
+    font-size: 22px;
+
+    cursor: pointer;
+}
