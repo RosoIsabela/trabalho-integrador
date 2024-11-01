@@ -11,7 +11,7 @@ function TelaLoginBemVindo() {
     function login() {
         const usuario = {
             "nome": "Isa",
-            "tipo": "cliente"
+            "tipo": "profissional"
         };
 
         localStorage.setItem('usuario', JSON.stringify(usuario));

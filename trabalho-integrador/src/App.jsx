@@ -15,7 +15,8 @@ import ContratoProfissional from './components/Profissional/Contrato/ContratoPro
 import RelatoriosProfissional from './components/Profissional/Relatorios/RelatoriosProfissional';
 import ControleGeral from './components/Profissional/Controle Geral/ControleGeral';
 import PerfilProfissional from './components/Profissional/Perfil/PerfilProfissional'
-import SobreProfissional from './components/Profissional/Sobre/SobreProfissional'
+import SobreProfissional from './components/Profissional/Sobre/SobreProfissional';
+import Pesquisa from './components/Profissional/Relatorios/Pesquisa'
 
 function App() {
   return (
@@ -38,7 +39,7 @@ function App() {
           element={<TelaEsqueceuSenha />}
         />
 
-        {/* Cliente */}
+        {/* Cliente*/}
         <Route 
           path="/dashboard-cliente"
           element={<DashboardCliente />}
@@ -74,7 +75,6 @@ function App() {
           element={<SobreCliente />}
         />
 
-
         {/* Profissional */}
         <Route
           path="/dashboard-profissional"
@@ -99,6 +99,10 @@ function App() {
           element={<RelatoriosProfissional />}
         />
 
+        <Route
+          path="/incluir-pesquisa"
+          element={<Pesquisa />}
+        />
 
         <Route
           path="/controle-geral"

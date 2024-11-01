@@ -1,8 +1,8 @@
-import '../../Cliente/VerContrato/selectsContratoCliente.css'
+import '../../Cliente/VerContrato/selectsContratoCliente.css';
 import { DownloadSimple, ArrowRight } from "@phosphor-icons/react";
 import { Link } from 'react-router-dom'; 
 
-function selectsRelatoriosProfissional() {
+function SelectsRelatoriosProfissional() {
     return (
         <div>
             <div className="contrato__options">
@@ -28,7 +28,6 @@ function selectsRelatoriosProfissional() {
                         <option value="protocolo3">3º Etapa</option>
                     </select>
 
-
                     <button className="contrato__button">
                         Baixar Relatório
                         <div className="icons__button">
@@ -36,7 +35,7 @@ function selectsRelatoriosProfissional() {
                         </div>
                     </button>
 
-                    <Link className="ajustando__links" to="/cadastrar-dados-pesquisa">
+                    <Link className="ajustando__links" to="/incluir-pesquisa">
                         <button className="contrato__button" id="ajuste__corButton">
                             Incluir dados da Pesquisa
                             <div className="icons__button">
@@ -45,12 +44,11 @@ function selectsRelatoriosProfissional() {
                         </button>
                     </Link>
                 </div>
-                
+
                 <div className="box__branca"></div>
-  
             </div>
         </div>
     )
 }
 
-export default selectsRelatoriosProfissional
+export default SelectsRelatoriosProfissional;
