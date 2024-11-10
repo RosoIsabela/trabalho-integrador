@@ -126,6 +126,7 @@ function App() {
           element={<CadastroDoProfissional />}
         />
 
+ 
         <Route 
           path="/gerenciar-clientes"
           element={<GerenciarClientes />}

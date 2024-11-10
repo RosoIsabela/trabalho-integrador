@@ -1,4 +1,4 @@
-import './inputsProfissional.css';
+ import './inputsProfissional.css';
 
 function inputsProfissional() {
     return (

@@ -1,5 +1,6 @@
 import SideBar from "../../Dashboard Profissional/sidebarProfissional";
 import TitleGerenciaCliente from "./titleGerenciaCliente";
+import DadosGerenciaCliente from "./DadosGerenciaCliente";
 
 
 function GerenciarClientes() {
@@ -7,6 +8,7 @@ function GerenciarClientes() {
         <div>
             <SideBar />
             <TitleGerenciaCliente />
+            <DadosGerenciaCliente />
         </div>
     )
 }

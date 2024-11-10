@@ -37,8 +37,6 @@ function DadosContrato(){
             </div>
 
             <div className="box__branca"></div>
-
-
         </div>
     )
 }
