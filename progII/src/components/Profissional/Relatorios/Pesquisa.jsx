@@ -1,15 +1,9 @@
-import SideBar from '../Dashboard Profissional/sidebarProfissional';
-import IncluirPesquisa from './IncluirPesquisa';
-import IncluirPesquisaTitulo from './IncluirPesquisaTitulo';
-
-function Pesquisa() {
-    return (
-        <div>
-            <SideBar />
-            <IncluirPesquisaTitulo />
-            <IncluirPesquisa />
+function Pesquisa(){
+    return(
+        <div className="home">
+            <p className="TituloHome">Incluir dados da Pesquisa</p>
         </div>
-    );
+    )
 }
 
-export default Pesquisa;
+export default Pesquisa

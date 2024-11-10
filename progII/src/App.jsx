@@ -16,7 +16,12 @@ import RelatoriosProfissional from './components/Profissional/Relatorios/Relator
 import ControleGeral from './components/Profissional/Controle Geral/ControleGeral';
 import PerfilProfissional from './components/Profissional/Perfil/PerfilProfissional'
 import SobreProfissional from './components/Profissional/Sobre/SobreProfissional';
-import Pesquisa from './components/Profissional/Relatorios/Pesquisa'
+import PesquisaProfissional from './components/Profissional/Relatorios/PesquisaProfissional';
+import CadastroDoCliente from './components/Profissional/Controle Geral/CadastroCliente/CadastroDoCliente';
+import CadastroDoProfissional from './components/Profissional/Controle Geral/CadastroProfissional/CadastroDoProfissional';
+import CadastrarContratoProfissional from './components/Profissional/Contrato/CadastrarContrato/CadastrarContratoProfissional';
+import GerenciarClientes from './components/Profissional/Controle Geral/GerenciarClientes/GerenciarClientes';
+import GerenciarFuncionario from './components/Profissional/Controle Geral/GerenciarFuncionarios/GerenciarFuncionario';
 
 function App() {
   return (
@@ -90,7 +95,7 @@ function App() {
 
         <Route
           path="/cadastrar-contrato"
-          element={<DashboardProfissional />}
+          element={<CadastrarContratoProfissional />}
         />
 
 
@@ -101,12 +106,35 @@ function App() {
 
         <Route
           path="/incluir-pesquisa"
-          element={<Pesquisa />}
+          element={<PesquisaProfissional />}
         />
 
         <Route
           path="/controle-geral"
           element={<ControleGeral />}
+        />
+
+
+        <Route
+          path="/cadastro-cliente"
+          element={<CadastroDoCliente />}
+        />
+
+
+        <Route 
+          path="/cadastro-funcionario"
+          element={<CadastroDoProfissional />}
+        />
+
+        <Route 
+          path="/gerenciar-clientes"
+          element={<GerenciarClientes />}
+        />
+
+
+        <Route 
+          path="/gerenciar-funcionarios"
+          element={<GerenciarFuncionario/>}
         />
 
 

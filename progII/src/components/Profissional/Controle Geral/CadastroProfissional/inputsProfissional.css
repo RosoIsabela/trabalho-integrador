@@ -1,0 +1,111 @@
+.div__inputsP {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 40px;
+
+    padding: 40px;
+}
+
+
+.inputs__boxsP {
+    border: none;
+    border-radius: 10px;
+}
+
+.button__formP {
+    border: none;
+    border-radius: 30px;
+    font-size: 24px;
+
+    width: 520px;
+    height: 55px;
+    margin-top: 30px;
+
+    background-color: var(--verde-nome-empresa);
+}
+
+
+#boxP1 {
+    width: 565px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxP2 {
+    width: 565px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxP3 {
+    width: 650px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxP4 {
+    width: 480px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxP5 {
+    width: 350px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxP6 {
+    width: 380px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxP7 {
+    width: 300px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxP8 {
+    width: 350px;
+    height: 50px;
+
+    font-size: 16px;
+}
+
+#boxP9 {
+    width: 350px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxP10 {
+    width: 320px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+
+

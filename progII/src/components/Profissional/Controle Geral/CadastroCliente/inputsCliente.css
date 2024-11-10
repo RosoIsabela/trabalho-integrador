@@ -1,0 +1,96 @@
+.div__inputsC {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 40px;
+
+    padding: 40px;
+}
+
+
+.inputs__boxsC {
+    border: none;
+    border-radius: 10px;
+}
+
+.button__formC {
+    border: none;
+    border-radius: 30px;
+    font-size: 24px;
+
+    width: 520px;
+    height: 55px;
+    margin-top: 30px;
+
+    background-color: var(--verde-nome-empresa);
+}
+
+
+#boxC1 {
+    width: 565px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxC2 {
+    width: 565px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxC3 {
+    width: 430px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxC4 {
+    width: 335px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxC5 {
+    width: 270px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxC6 {
+    width: 370px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxC7 {
+    width: 300px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+#boxC8 {
+    width: 350px;
+    height: 50px;
+
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
+}
+
+
+
