@@ -11,15 +11,7 @@ function SelectsContratoCliente() {
                         <option value="protocolo1">12345 - Cultivar</option>
                         <option value="protocolo2">09876 - Nutrição</option>
                         <option value="protocolo3">01928 - Solo</option>
-                    </select>
-
-                    <button className="contrato__button">
-                        Baixar Contrato
-                        <div>
-                            <DownloadSimple />
-                        </div>
-                    </button>
-                
+                    </select>                
                 </div>
                 
                 <div className="box__branca"></div>

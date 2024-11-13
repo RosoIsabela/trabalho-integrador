@@ -28,13 +28,6 @@ function SelectsRelatoriosProfissional() {
                         <option value="protocolo3">3º Etapa</option>
                     </select>
 
-                    <button className="contrato__button">
-                        Baixar Relatório
-                        <div className="icons__button">
-                            <DownloadSimple />
-                        </div>
-                    </button>
-
                     <Link className="ajustando__links" to="/incluir-pesquisa">
                         <button className="contrato__button" id="ajuste__corButton">
                             Incluir dados da Pesquisa

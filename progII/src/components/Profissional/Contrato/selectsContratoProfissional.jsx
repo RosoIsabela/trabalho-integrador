@@ -21,13 +21,6 @@ function SelectsContratoProfissional() {
                         <option value="protocolo3">01928 - Solo</option>
                     </select>
 
-                    <button className="contrato__button">
-                        Baixar Contrato
-                        <div className="icons__button">
-                            <DownloadSimple />
-                        </div>
-                    </button>
-
                     <Link className="ajustando__links" to="/cadastrar-contrato">
                         <button className="contrato__button" id="ajuste__corButton">
                             Cadastrar Contrato

@@ -19,14 +19,6 @@ function SelectsRelatoriosCliente() {
                         <option value="protocolo2">2º Etapa</option>
                         <option value="protocolo3">3º Etapa</option>
                     </select>
-
-
-                    <button className="contrato__button">
-                        Baixar Relatório
-                        <div>
-                            <DownloadSimple />
-                        </div>
-                    </button>
                 </div>
                 
                 <div className="box__branca"></div>
