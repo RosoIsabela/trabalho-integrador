@@ -18,6 +18,7 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
+
 .image-container {
     width: 250px; 
     border-radius: 10px;
@@ -46,15 +47,15 @@
     display: flex;
     align-items: center;    
     cursor: pointer;
-    gap: 8px;
+    gap: 1rem;
 
     margin-left: 28px;
 }
 
 
 .p__checkbox {
-    margin: 10px;
-    font-size: 22px;
+    margin: 2px;
+    font-size: 20px;
 }
 
 
