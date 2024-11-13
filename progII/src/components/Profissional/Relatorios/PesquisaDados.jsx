@@ -21,23 +21,23 @@ function PesquisaDados(){
 
                 <div className="inputsContainers">
                     <div className="inputsPesquisa">
-                        <label htmlFor="tamanhoInput">Tamanho médio das plantas</label>
-                        <input type="text" id="tamanhoInput" placeholder="Digite aqui"/>
+                        <label className="label__InserirDados" htmlFor="tamanhoInput">Tamanho médio das plantas</label>
+                        <input className="input__InserirText" type="text" id="tamanhoInput" placeholder="Digite aqui"/>
                     </div>
 
                     <div className="inputsPesquisa">
-                        <label htmlFor="coloracaoInput">Coloração das folhas</label>
-                        <input type="text" id="coloracaoInput" placeholder="Digite aqui"/>
+                        <label className="label__InserirDados" htmlFor="coloracaoInput">Coloração das folhas</label>
+                        <input className="input__InserirText" type="text" id="coloracaoInput" placeholder="Digite aqui"/>
                     </div>
 
                     <div className="inputsPesquisa">
-                        <label htmlFor="produtosInput">Outros produtos aplicados</label>
-                        <input type="text" id="produtosInput" placeholder="Digite aqui"/>
+                        <label className="label__InserirDados" htmlFor="produtosInput">Outros produtos aplicados</label>
+                        <input className="input__InserirText" type="text" id="produtosInput" placeholder="Digite aqui"/>
                     </div>
 
                     <div className="inputsPesquisa">
-                        <label htmlFor="nosInput">Número médio de nós</label>
-                        <input type="text" id="nosInput" placeholder="Digite aqui"/>
+                        <label className="label__InserirDados" htmlFor="nosInput">Número médio de nós</label>
+                        <input className="input__InserirText" type="text" id="nosInput" placeholder="Digite aqui"/>
                     </div>
                 </div>
             </div>
@@ -57,19 +57,19 @@ function PesquisaDados(){
                 </nav>
                     
                 <div className="inputsDate">
-                    <label htmlFor="dateInput">Data da Coleta</label>
-                    <input type="date" id="dateInput"  value="2024-12-23"/>
+                    <label className="label__InserirDados" htmlFor="dateInput">Data da Coleta</label>
+                    <input className="input__InserirDados" type="date" id="dateInput" value="2024-12-23"/>
                 </div>
 
                 <div className="inputsDate">
-                    <label htmlFor="dateInput">Data da Aplicação</label>
-                    <input type="date" id="dateInput" value="2024-12-23"/>
+                    <label className="label__InserirDados" htmlFor="dateInput">Data da Aplicação</label>
+                    <input className="input__InserirDados" type="date" id="dateInput" value="2024-12-23"/>
                 </div>
 
-                <label htmlFor="photoInput">Anexar Fotos</label>
+                <label className="label__InserirDados" htmlFor="photoInput">Anexar Fotos</label>
 
                 <div className="fotoContainer">
-                    <input type="file" id="FotoInput" multiple/> {/*onChange={handleFileChange}*/}
+                    <input className="input__InserirFoto" type="file" id="FotoInput" multiple/> {/*onChange={handleFileChange}*/}
 
                     <button className="anexarFoto">Anexar</button>
 
@@ -97,9 +97,9 @@ function PesquisaDados(){
                     </div>
                 </nav>
 
-                <label htmlFor="descricao">Descrição</label>
+                <label className="label__InserirDados" htmlFor="descricao">Descrição</label>
                 <div className="inputsNote">
-                    <input type="text" id="nosInput" placeholder="Nota técnica:"/>
+                    <input className="input__InserirText" type="text" id="nosInput" placeholder="Nota técnica:"/>
                 </div>
             </div>
         </div>
