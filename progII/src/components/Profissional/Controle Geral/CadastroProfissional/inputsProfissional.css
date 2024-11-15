@@ -9,7 +9,6 @@
     padding: 40px;
 }
 
-
 .inputs__boxsP {
     border: none;
     border-radius: 10px;
@@ -25,10 +24,14 @@
     margin-top: 30px;
 
     background-color: var(--verde-nome-empresa);
+
+    cursor: pointer; /* Garante que o botão parece clicável */
+    position: relative; /* Evita sobreposição */
+    z-index: 1; /* Prioridade sobre outros elementos */
+    flex-shrink: 0; /* Evita deformações no layout flex */
 }
 
-
-#boxP1 {
+#nome {
     width: 565px;
     height: 50px;
 
@@ -36,7 +39,7 @@
     padding: 20px 20px 15px 20px;
 }
 
-#boxP2 {
+#sobrenome {
     width: 565px;
     height: 50px;
 
@@ -44,7 +47,7 @@
     padding: 20px 20px 15px 20px;
 }
 
-#boxP3 {
+#email {
     width: 650px;
     height: 50px;
 
@@ -52,7 +55,7 @@
     padding: 20px 20px 15px 20px;
 }
 
-#boxP4 {
+#cargo {
     width: 480px;
     height: 50px;
 
@@ -60,7 +63,7 @@
     padding: 20px 20px 15px 20px;
 }
 
-#boxP5 {
+#cpf {
     width: 350px;
     height: 50px;
 
@@ -68,7 +71,7 @@
     padding: 20px 20px 15px 20px;
 }
 
-#boxP6 {
+#cidade {
     width: 380px;
     height: 50px;
 
@@ -76,7 +79,7 @@
     padding: 20px 20px 15px 20px;
 }
 
-#boxP7 {
+#estado {
     width: 300px;
     height: 50px;
 
@@ -84,14 +87,14 @@
     padding: 20px 20px 15px 20px;
 }
 
-#boxP8 {
+#permissao {
     width: 350px;
     height: 50px;
 
     font-size: 16px;
 }
 
-#boxP9 {
+#celular {
     width: 350px;
     height: 50px;
 
@@ -99,13 +102,10 @@
     padding: 20px 20px 15px 20px;
 }
 
-#boxP10 {
+#horario {
     width: 320px;
     height: 50px;
 
     font-size: 16px;
     padding: 20px 20px 15px 20px;
 }
-
-
-

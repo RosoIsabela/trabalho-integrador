@@ -22,6 +22,11 @@ import CadastroDoProfissional from './components/Profissional/Controle Geral/Cad
 import CadastrarContratoProfissional from './components/Profissional/Contrato/CadastrarContrato/CadastrarContratoProfissional';
 import GerenciarClientes from './components/Profissional/Controle Geral/GerenciarClientes/GerenciarClientes';
 import GerenciarFuncionario from './components/Profissional/Controle Geral/GerenciarFuncionarios/GerenciarFuncionario';
+import axios from "axios";
+
+axios.defaults.baseURL = "http://localhost:4000/";
+axios.defaults.headers.common["Content-Type"] =
+	"application/json;charset=utf-8";
 
 function App() {
   return (
