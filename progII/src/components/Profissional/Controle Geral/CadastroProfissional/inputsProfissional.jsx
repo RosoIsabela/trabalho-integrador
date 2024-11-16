@@ -2,18 +2,22 @@ import React, { useState } from 'react';
 import './inputsProfissional.css';
 import axios from "axios";
 
+
+
 const InputsProfissional = () => {
     const [formData, setFormData] = useState({
-        nome: "",
-        sobrenome: "",
-        email: "",
-        cargo: "",
+        nome_completo: "",
         cpf: "",
-        cidade: "",
-        estado: "",
-        permissao: "opcao",
+        email: "",
         celular: "",
-        horario: ""
+        cargo: "",
+        logradouro: "",
+        bairro: "",
+        cidade: "",
+        cep: "",
+        permissao: "opcao",
+        horario: "",
+        senha: ""
     });
 
     const handleChange = (e) => {
@@ -24,75 +28,35 @@ const InputsProfissional = () => {
         }));
     };
 
-    // async function create_colab(formData) {
-
-    //     const response = await axios.post("/login", {
-    //         username: username,
-    //         password: passwd,
-    //     });
-    
-
-    // }
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
-        if (!formData.cpf || !formData.nome || !formData.email) {
-            alert("Preencha todos os campos obrigatórios!");
-            return;
-        }
-    
+
+        if (!formData.cpf || !formData.nome_completo || !formData.email) {
+             alert("Preencha todos os campos obrigatórios!");
+             return;
+         }
+
         console.log("Dados enviados:", formData);
-    
+
         try {
-            const response = await axios.post("/create-colaborador", formData);
+            // URL completa do backend para evitar problemas de CORS
+            const response = await axios.post("http://localhost:4000/create-colaborador", formData);
             console.log("Resposta do servidor:", response.data);
         } catch (error) {
             console.error("Erro ao enviar dados:", error);
         }
     };
-    
 
     return (
         <div>
             <form className="div__inputsP" onSubmit={handleSubmit}>
-                <div className="boxP1">
-                    <input
-                        className="inputs__boxsP"
-                        id="nome"
-                        type="text"
-                        placeholder="Nome"
-                        value={formData.nome}
-                        onChange={handleChange}
-                    />
-                </div>
                 <div>
                     <input
                         className="inputs__boxsP"
-                        id="sobrenome"
+                        id="nome_completo"
                         type="text"
-                        placeholder="Sobrenome"
-                        value={formData.sobrenome}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <input
-                        className="inputs__boxsP"
-                        id="email"
-                        type="email"
-                        placeholder="Email"
-                        value={formData.email}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <input
-                        className="inputs__boxsP"
-                        id="cargo"
-                        type="text"
-                        placeholder="Cargo"
-                        value={formData.cargo}
+                        placeholder="Nome Completo"
+                        value={formData.nome_completo}
                         onChange={handleChange}
                     />
                 </div>
@@ -109,6 +73,56 @@ const InputsProfissional = () => {
                 <div>
                     <input
                         className="inputs__boxsP"
+                        id="email"
+                        type="text"
+                        placeholder="E-mail"
+                        value={formData.email}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <input
+                        className="inputs__boxsP"
+                        id="celular"
+                        type="text"
+                        placeholder="Celular"
+                        value={formData.celular}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <input
+                        className="inputs__boxsP"
+                        id="cargo"
+                        type="text"
+                        placeholder="Cargo"
+                        value={formData.cargo}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <input
+                        className="inputs__boxsP"
+                        id="logradouro"
+                        type="text"
+                        placeholder="Logradouro"
+                        value={formData.logradouro}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <input
+                        className="inputs__boxsP"
+                        id="bairro"
+                        type="text"
+                        placeholder="Bairro"
+                        value={formData.bairro}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <input
+                        className="inputs__boxsP"
                         id="cidade"
                         type="text"
                         placeholder="Cidade"
@@ -119,10 +133,10 @@ const InputsProfissional = () => {
                 <div>
                     <input
                         className="inputs__boxsP"
-                        id="estado"
+                        id="cep"
                         type="text"
-                        placeholder="Estado"
-                        value={formData.estado}
+                        placeholder="CEP"
+                        value={formData.cep}
                         onChange={handleChange}
                     />
                 </div>
@@ -144,20 +158,20 @@ const InputsProfissional = () => {
                 <div>
                     <input
                         className="inputs__boxsP"
-                        id="celular"
+                        id="horario"
                         type="text"
-                        placeholder="Celular"
-                        value={formData.celular}
+                        placeholder="Horário de Trabalho"
+                        value={formData.horario}
                         onChange={handleChange}
                     />
                 </div>
                 <div>
                     <input
                         className="inputs__boxsP"
-                        id="horario"
-                        type="text"
-                        placeholder="Horário de Trabalho"
-                        value={formData.horario}
+                        id="senha"
+                        type="password"
+                        placeholder="Senha"
+                        value={formData.senha}
                         onChange={handleChange}
                     />
                 </div>

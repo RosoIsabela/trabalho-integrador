@@ -5,7 +5,7 @@ function TelaLoginPrincipal() {
     return (
         <div>
             <TelaLoginLeft />
-            <TelaLoginRight />
+            <TelaLoginRight/>
         </div>
     );
 }

@@ -40,7 +40,7 @@ function App() {
 
         <Route 
           path="/tela-login-principal" 
-          element={<TelaLoginPrincipal />}
+          element={<TelaLoginPrincipal />} 
         />
 
 

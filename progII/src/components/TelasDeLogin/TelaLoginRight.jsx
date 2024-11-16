@@ -4,7 +4,7 @@ import TelaLoginBemVindo from "./TelaLoginBemVindo"
 function TelaLoginRight() {
     return (
         <div className="right">
-            <TelaLoginBemVindo />
+           <TelaLoginBemVindo />
         </div>
     )
 }
