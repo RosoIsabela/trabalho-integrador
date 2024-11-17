@@ -33,3 +33,27 @@ server.post("/tela-login-principal", (req, res) => {
     // Retornar token e tipo de usuário
     res.json({ token, tipo: user.tipo });
 });
+
+
+server.get("/contrato-profissional", (req, res) => {
+    const chaveDoContrato = req.query.cliente; // Aqui já recebemos a chave concatenada
+
+    const contratos = {
+        "empresaX-12345": {
+            contrato: "123456",
+            protocolo: "12345 - Cultivar",
+            parcelas: 10,
+            custo: 5000.0,
+            dataContrato: "2024-10-01",
+            dataEntrega: "2024-12-23"
+        },
+    };
+
+    const contrato = contratos[chaveDoContrato];
+
+    if (contrato) {
+        res.json(contrato);
+    } else {
+        res.status(404).json({ message: "Contrato não encontrado" });
+    }
+});

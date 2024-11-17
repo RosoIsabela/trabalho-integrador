@@ -15,14 +15,6 @@ function DadosContrato(){
                         <option value="cliente2">Ciclano de Tal</option>
                         <option value="cliente3">Sei la de Tal</option>
                     </select>
-                    {/*
-                    <select className="button__box" name="select" defaultValue="opcao">
-                        <option value="opcao" disabled>Qual é o Protocolo?</option>
-                        <option value="protocolo1">12345 - Cultivar</option>
-                        <option value="protocolo2">09876 - Nutrição</option>
-                        <option value="protocolo3">01928 - Solo</option>
-                    </select>
-                    */}
                 </div>
                 
                 <form className="div__botoes">
