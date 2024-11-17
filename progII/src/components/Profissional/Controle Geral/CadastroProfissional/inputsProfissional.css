@@ -5,107 +5,102 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 40px;
-
     padding: 40px;
 }
-
 
 .inputs__boxsP {
     border: none;
     border-radius: 10px;
+    font-size: 16px;
+    padding: 20px 20px 15px 20px;
 }
 
 .button__formP {
     border: none;
     border-radius: 30px;
     font-size: 24px;
-
     width: 520px;
     height: 55px;
     margin-top: 30px;
-
     background-color: var(--verde-nome-empresa);
+    cursor: pointer; /* Garante que o botão parece clicável */
+    position: relative; /* Evita sobreposição */
+    z-index: 1; /* Prioridade sobre outros elementos */
+    flex-shrink: 0; /* Evita deformações no layout flex */
 }
 
-
-#boxP1 {
-    width: 565px;
+#nome_completo {
+    width: 600px; /* Maior largura para o campo Nome Completo */
     height: 50px;
-
-    font-size: 16px;
-    padding: 20px 20px 15px 20px;
 }
 
-#boxP2 {
-    width: 565px;
-    height: 50px;
-
-    font-size: 16px;
-    padding: 20px 20px 15px 20px;
-}
-
-#boxP3 {
-    width: 650px;
-    height: 50px;
-
-    font-size: 16px;
-    padding: 20px 20px 15px 20px;
-}
-
-#boxP4 {
-    width: 480px;
-    height: 50px;
-
-    font-size: 16px;
-    padding: 20px 20px 15px 20px;
-}
-
-#boxP5 {
+#cpf {
     width: 350px;
     height: 50px;
-
-    font-size: 16px;
-    padding: 20px 20px 15px 20px;
 }
 
-#boxP6 {
-    width: 380px;
+#email {
+    width: 600px; /* Maior largura para o campo Email */
     height: 50px;
-
-    font-size: 16px;
-    padding: 20px 20px 15px 20px;
 }
 
-#boxP7 {
-    width: 300px;
-    height: 50px;
-
-    font-size: 16px;
-    padding: 20px 20px 15px 20px;
-}
-
-#boxP8 {
+#celular {
     width: 350px;
     height: 50px;
-
-    font-size: 16px;
 }
 
-#boxP9 {
+#cargo {
     width: 350px;
     height: 50px;
-
-    font-size: 16px;
-    padding: 20px 20px 15px 20px;
 }
 
-#boxP10 {
-    width: 320px;
+#logradouro {
+    width: 600px;
     height: 50px;
-
-    font-size: 16px;
-    padding: 20px 20px 15px 20px;
 }
 
+#bairro {
+    width: 280px;
+    height: 50px;
+}
 
+#cidade {
+    width: 280px;
+    height: 50px;
+}
 
+#cep {
+    width: 280px;
+    height: 50px;
+}
+
+#permissao {
+    width: 280px;
+    height: 50px;
+}
+
+#horario {
+    width: 280px;
+    height: 50px;
+}
+
+#senha {
+    width: 280px;
+    height: 50px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .div__inputsP {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #nome_completo, #email, #cpf, #celular, #cargo, #logradouro, #bairro, #cidade, #cep, #permissao, #horario, #senha {
+        width: 100%; /* Ajusta todos os campos para 100% da largura da tela menor */
+    }
+
+    .button__formP {
+        width: 100%; /* Botão ocupa 100% da largura em telas menores */
+    }
+}
