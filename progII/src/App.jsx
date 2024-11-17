@@ -1,4 +1,6 @@
-import './App.css'
+import './App.css';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import DashboardCliente from './components/Cliente/DashBoard Cliente/DashboardCliente';
 import DashboardProfissional from './components/Profissional/Dashboard Profissional/DashboardProfissional';
@@ -29,6 +31,14 @@ axios.defaults.headers.common["Content-Type"] =
 	"application/json;charset=utf-8";
 
 function App() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate("/tela-login-principal");
+    }
+  }, [navigate]);
   return (
     <Router>
       <Routes>
@@ -166,4 +176,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
