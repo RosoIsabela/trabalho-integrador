@@ -1,95 +1,53 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import './TelaLoginLeft.css';
+import { Link, useNavigate } from 'react-router-dom';
 
 function TelaLoginBemVindo() {
     const navigate = useNavigate();
-    const [username, setUsername] = useState("");
-    const [passwd, setPasswd] = useState("");
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // Estado de login
-    const [openMessage, setOpenMessage] = useState(false);
-    const [messageText, setMessageText] = useState("");
-    const [messageSeverity, setMessageSeverity] = useState("success");
 
-    async function enviaLogin(event) {
-        event.preventDefault();
+    async function login(e) {
+        e.preventDefault();
+
+        const username = document.getElementById("email").value; 
+        const password = document.getElementById("senha").value;
+
         try {
-            const response = await axios.post("http://localhost:4000/tela-login-principal", {
-                email: username,
-                senha: passwd,
+            const response = await fetch("http://localhost:4000/tela-login-principal", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password }),
             });
 
-            if (response.status >= 200 && response.status < 300) {
-                localStorage.setItem("token", response.data.token);
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('token', data.token); 
 
-                // Redireciona para a página dashboard-cliente após o login bem-sucedido
-                navigate("/dashboard-cliente");
-
-                setIsLoggedIn(true); // Atualiza o estado de login
+                //redireciona com base no tipo de usuário
+                if (data.tipo === 'cliente') {
+                    navigate("/dashboard-cliente");
+                } else if (data.tipo === 'profissional') {
+                    navigate("/dashboard-profissional");
+                } else {
+                    alert("Tipo de usuário inválido!");
+                }
             } else {
-                console.error("Falha na autenticação");
+                const errorData = await response.json();
+                alert(errorData.error || "Login falhou! Verifique suas credenciais.");
             }
         } catch (error) {
-            console.log(error);
-            setOpenMessage(true);
-            setMessageText("Falha ao logar usuário!");
-            setMessageSeverity("error");
+            console.error("Erro ao fazer login:", error);
+            alert("Erro no servidor. Tente novamente mais tarde.");
         }
     }
 
-    function cancelaLogin() {
-        if (username !== "" || passwd !== "") {
-            setUsername("");
-            setPasswd("");
-        }
-        setOpenMessage(true);
-        setMessageText("Login cancelado!");
-        setMessageSeverity("warning");
-    }
-
-    function handleCloseMessage(_, reason) {
-        if (reason === "clickaway") {
-            return;
-        }
-        setOpenMessage(false);
-    }
-
-    return (
+    return ( 
         <div className="bemVindoLogin">
-            {isLoggedIn ? (
-                <p>Bem-vindo ao sistema!</p> // Exibe mensagem caso o usuário já esteja logado
-            ) : (
-                <>
-                    <p className="titlePrincipal">Bem-Vindo!</p>
-                    <form className="input__login">
-                        <input
-                            className="email__login"
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="Email"
-                            required
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                        />
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Senha"
-                            required
-                            value={passwd}
-                            onChange={(e) => setPasswd(e.target.value)}
-                        />
-                        <button type="submit" className="button__login" onClick={enviaLogin}>
-                            Entrar
-                        </button>
-                    </form>
-                    <Link className="esqueceu__senha" to="/tela-esqueceu-senha">
-                        Esqueceu a senha?
-                    </Link>
-                </>
-            )}
+            <p className="titlePrincipal">Bem-Vindo!</p>
+            <form className="input__login" onSubmit={login}>
+                <input type="email" id="email" name="email" placeholder="Email" required />
+                <input type="password" id="password" name="password" placeholder="Senha" required />
+                <button type="submit" className="button__login">Entrar</button> 
+            </form>
+            <Link className="esqueceu__senha" to="/tela-esqueceu-senha">Esqueceu a senha?</Link>
         </div>
     );
 }

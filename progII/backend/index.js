@@ -1,3 +1,4 @@
+
 require('dotenv').config();
 
 const express = require("express");
@@ -11,8 +12,8 @@ const bcrypt = require("bcryptjs");
 const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
 // Conexão com o banco
-const usuario = "postgres";
-const senha = "postgre";
+const usuario = "teste";
+const senha = "123";
 const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
 
 const server = express();
@@ -128,22 +129,22 @@ server.post("/tela-login-principal", async (req, res) => {
 
   try {
       // Busca o usuário no banco de dados, incluindo a permissão
-      const user = await db.oneOrNone(
+    const user = await db.oneOrNone(
           "SELECT email, senha, permissao FROM funcionario WHERE email = $1;",
-          [email]
-      );
+      [email]
+    );
 
-      // Verifica se o usuário existe
-      if (!user) {
-          return res.status(401).json({ message: "Email ou senha inválidos!" });
-      }
+    // Verifica se o usuário existe
+    if (!user) {
+      return res.status(401).json({ message: "Email ou senha inválidos!" });
+    }
 
-      // Verifica a senha usando bcrypt
+    // Verifica a senha usando bcrypt
       const isPasswordValid = await bcrypt.compare(senha, user.senha);
 
-      if (!isPasswordValid) {
-          return res.status(401).json({ message: "Email ou senha inválidos!" });
-      }
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Email ou senha inválidos!" });
+    }
 
       // Gera o token JWT e inclui a permissão do usuário
       const token = jwt.sign(
@@ -154,8 +155,8 @@ server.post("/tela-login-principal", async (req, res) => {
 
       res.json({ token});
   } catch (error) {
-      console.error("Erro no login:", error);
-      res.status(500).json({ message: "Erro no servidor" });
+    console.error("Erro no login:", error);
+    res.status(500).json({ message: "Erro no servidor" });
   }
 });
 
@@ -177,14 +178,9 @@ server.post("/create-colaborador", async (req, res) => {
 		horario,
 		senha,
 	  } = req.body;
-
-	  // Geração do salt e do hash da senha
-	  //const salt = bcrypt.genSaltSync(saltRounds);
-	//senha = bcrypt.hashSync(senha, salt);
-    
-  const salt = bcrypt.genSaltSync(saltRounds);
+  
+	  const salt = bcrypt.genSaltSync(saltRounds);
   const hashedPasswd = bcrypt.hashSync(senha, salt);
-	  // Inserção no banco de dados
 	  await db.none(
 		"INSERT INTO funcionario (nome, sobrenome, email, cpf, cargo, permissao, cidade, estado, celular, horario, senha) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);",[
 		  nome,
@@ -192,6 +188,10 @@ server.post("/create-colaborador", async (req, res) => {
 		  email,
 		  cpf,
 		  cargo,
+		  logradouro,
+		  bairro,
+		  cidade,
+		  cep,
 		  permissao,
 		  cidade,
 		  estado,
@@ -199,15 +199,14 @@ server.post("/create-colaborador", async (req, res) => {
 		  horario,
 		  hashedPasswd, // Salva o hash da senha no banco
 		]);
-
+  
 	  console.log("Colaborador criado com sucesso!");
 	  res.status(200).json({ message: "Colaborador criado com sucesso!" });
 	} catch (error) {
 	  console.error("Erro ao criar colaborador:", error);
 	  res.status(400).json({ message: "Erro ao criar colaborador" });
 	}
-});
-
+  });
   
 
 // Inicialização do servidor
