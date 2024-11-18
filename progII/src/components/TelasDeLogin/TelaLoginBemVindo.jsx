@@ -16,7 +16,7 @@ function TelaLoginBemVindo() {
         try {
             const response = await axios.post("http://localhost:4000/tela-login-principal", {
                 email: username,
-                password: passwd,
+                senha: passwd,
             });
 
             if (response.status >= 200 && response.status < 300) {
@@ -63,6 +63,7 @@ function TelaLoginBemVindo() {
                     <p className="titlePrincipal">Bem-Vindo!</p>
                     <form className="input__login">
                         <input
+                            className="email__login"
                             type="email"
                             id="email"
                             name="email"

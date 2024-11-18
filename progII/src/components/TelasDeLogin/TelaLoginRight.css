@@ -40,11 +40,12 @@
 }
 
 
-#email {
+.email__login {
   padding: 1rem;
   font-size: 1rem;
   border: 1px solid rgba(209, 209, 209, 1);
   border-radius: 2rem;
+  max-width: 100%;
   
   background-color: var(--tl-input-dados);
   text-align: left;
@@ -64,7 +65,7 @@
   outline: none;
   transition: 0.3s;
 
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 
