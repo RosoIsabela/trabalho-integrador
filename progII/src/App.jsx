@@ -1,7 +1,7 @@
 import './App.css';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import DashboardCliente from './components/Cliente/DashBoard Cliente/DashboardCliente';
 import DashboardProfissional from './components/Profissional/Dashboard Profissional/DashboardProfissional';
 import TelaEsqueceuSenha from './components/TelasDeEsqueceuSenha/TelaEsqueceuSenha';
@@ -39,8 +39,8 @@ function App() {
       navigate("/tela-login-principal");
     }
   }, [navigate]);
+
   return (
-    <Router>
       <Routes>
         <Route 
           path="/" 
@@ -172,7 +172,6 @@ function App() {
         />
 
       </Routes>
-    </Router>
   )
 }
 

@@ -1,10 +1,10 @@
 import '../../Cliente/DashBoard Cliente/sidebar.css';
 import logoEmpresa from '../../../assets/logoSulagro.png';
 import { HouseLine, PencilLine, FileText, Gear, Cardholder, SignOut } from "@phosphor-icons/react";
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function SideBarProfissional() {
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const handleLogout = async () => {
         try {
@@ -17,7 +17,7 @@ function SideBarProfissional() {
             });
 
             if (response.ok) {
-                history.push('/tela-login-principal');
+                navigate("/tela-login-principal");
             } else {
                 console.error('Erro ao fazer logout');
             }

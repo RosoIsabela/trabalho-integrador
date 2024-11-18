@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 
 const express = require("express");
@@ -12,8 +11,8 @@ const bcrypt = require("bcryptjs");
 const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
 // Conexão com o banco
-const usuario = "teste";
-const senha = "123";
+const usuario = "postgres";
+const senha = "postgre";
 const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
 
 const server = express();
@@ -140,7 +139,7 @@ server.post("/tela-login-principal", async (req, res) => {
     }
 
     // Verifica a senha usando bcrypt
-      const isPasswordValid = await bcrypt.compare(senha, user.senha);
+    const isPasswordValid = await bcrypt.compare(senha, user.senha);
 
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Email ou senha inválidos!" });
@@ -180,7 +179,7 @@ server.post("/create-colaborador", async (req, res) => {
 	  } = req.body;
   
 	  const salt = bcrypt.genSaltSync(saltRounds);
-  const hashedPasswd = bcrypt.hashSync(senha, salt);
+    const hashedPasswd = bcrypt.hashSync(senha, salt);
 	  await db.none(
 		"INSERT INTO funcionario (nome, sobrenome, email, cpf, cargo, permissao, cidade, estado, celular, horario, senha) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);",[
 		  nome,

@@ -4,7 +4,7 @@
     flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
-    gap: 40px;
+    gap: 30px;
     padding: 40px;
 }
 
@@ -19,28 +19,25 @@
     border: none;
     border-radius: 30px;
     font-size: 24px;
-    width: 520px;
+    width: 600px;
     height: 55px;
     margin-top: 30px;
     background-color: var(--verde-nome-empresa);
-    cursor: pointer; /* Garante que o botão parece clicável */
-    position: relative; /* Evita sobreposição */
-    z-index: 1; /* Prioridade sobre outros elementos */
-    flex-shrink: 0; /* Evita deformações no layout flex */
+    cursor: pointer;
 }
 
 #nome_completo {
-    width: 600px; /* Maior largura para o campo Nome Completo */
+    width: 400px; 
     height: 50px;
 }
 
 #cpf {
-    width: 350px;
+    width: 300px;
     height: 50px;
 }
 
 #email {
-    width: 600px; /* Maior largura para o campo Email */
+    width: 400px; 
     height: 50px;
 }
 
@@ -55,12 +52,12 @@
 }
 
 #logradouro {
-    width: 600px;
+    width: 400px;
     height: 50px;
 }
 
 #bairro {
-    width: 280px;
+    width: 220px;
     height: 50px;
 }
 
@@ -75,7 +72,7 @@
 }
 
 #permissao {
-    width: 280px;
+    width: 250px;
     height: 50px;
 }
 
@@ -85,7 +82,7 @@
 }
 
 #senha {
-    width: 280px;
+    width: 350px;
     height: 50px;
 }
 
