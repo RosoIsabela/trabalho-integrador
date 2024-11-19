@@ -54,7 +54,7 @@ passport.use(
       try {
         // Busca o usuário no banco de dados
         const user = await db.oneOrNone(
-          "SELECT email, senha FROM colaborador WHERE email = $1;",
+          "SELECT email, senha FROM colaboradores WHERE email = $1;",
           [username]
         );
 
@@ -88,7 +88,7 @@ passport.use(
     async (payload, done) => {
       try {
         const user = await db.oneOrNone(
-          "SELECT * FROM colaborador WHERE email = $1;",
+          "SELECT * FROM colaboradores WHERE email = $1;",
           [payload.email]
         );
 
@@ -127,11 +127,9 @@ server.post("/tela-login-principal", async (req, res) => {
   const { email, senha } = req.body;
 
   try {
-      // Busca o usuário no banco de dados, incluindo a permissão
+    // Busca o usuário no banco de dados, incluindo a permissão
     const user = await db.oneOrNone(
-          `SELECT email, senha, permissao 
-           FROM funcionario, cliente
-           WHERE email = $1;`,
+          "SELECT email, senha, permissao FROM colaboradores WHERE email = $1;",
       [email]
     );
 
@@ -151,7 +149,7 @@ server.post("/tela-login-principal", async (req, res) => {
       const token = jwt.sign(
           { email: user.email, permissao: user.permissao },
           JWT_SECRET,
-          { expiresIn: "5m" }
+          { expiresIn: "2m" }
       );
 
       res.json({ token});
@@ -163,91 +161,141 @@ server.post("/tela-login-principal", async (req, res) => {
 
 // Rota para criar um colaborador
 server.post("/create-colaborador", async (req, res) => {
-	const saltRounds = 10; // Número de rounds para o salt
-	try {
-	  // Extração dos dados do corpo da requisição
-	  const {
-      cpf,
-      nome,
-      sobrenome,
-      email,
-      celular,
-      cargo,
-      cidade,
-      estado,
-      permissao,
-      horario,
-      senha,
-	  } = req.body;
-  
-	  const salt = bcrypt.genSaltSync(saltRounds);
-    const hashedPasswd = bcrypt.hashSync(senha, salt);
-	  await db.none(
-		"INSERT INTO funcionario (nome, sobrenome, email, cpf, cargo, permissao, cidade, estado, celular, horario, senha) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);",[
-		  nome,
-		  sobrenome,
-		  email,
-		  cpf,
-		  cargo,
-		  logradouro,
-		  bairro,
-		  cidade,
-		  cep,
-		  permissao,
-		  cidade,
-		  estado,
-		  celular,
-		  horario,
-		  hashedPasswd, // Salva o hash da senha no banco
-		]);
-  
-	  console.log("Colaborador criado com sucesso!");
-	  res.status(200).json({ message: "Colaborador criado com sucesso!" });
-	} catch (error) {
-	  console.error("Erro ao criar colaborador:", error);
-	  res.status(400).json({ message: "Erro ao criar colaborador" });
-	}
+  const saltRounds = 10; // Número de rounds para o salt
+  try {
+      const {
+          nome_completo: nome,
+          cpf,
+          email,
+          celular,
+          cargo,
+          logradouro,
+          bairro,
+          cidade,
+          estado,
+          cep,
+          permissao,
+          horario,
+          senha
+      } = req.body;
+
+      const salt = bcrypt.genSaltSync(saltRounds);
+      const hashedPasswd = bcrypt.hashSync(senha, salt);
+
+      await db.none(
+          "INSERT INTO colaboradores (nome, cpf, email, celular, cargo, permissao, cidade, logradouro, bairro, cep, estado, horario, senha) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);",
+          [
+              nome,
+              cpf,
+              email,
+              celular,
+              cargo,
+              permissao,
+              cidade,
+              logradouro,
+              bairro,
+              cep,
+              estado,
+              horario,
+              hashedPasswd
+          ]
+      );
+
+      console.log("Colaborador criado com sucesso!");
+      res.status(200).json({ message: "Colaborador criado com sucesso!" });
+  } catch (error) {
+      console.error("Erro ao criar colaborador:", error);
+      res.status(400).json({ message: "Erro ao criar colaborador" });
+  }
 });
+
+
+
+//rota para criar um cliente
+server.post("/create-cliente", async (req, res) => {
+  const saltRounds = 10; // Número de rounds para o salt
+  try {
+      const {
+        nome_completo: nome,
+        cpf_cnpj,
+        email,
+        celular,
+        razao_social,
+        cidade,
+        logradouro,
+        bairro,
+        estado,
+        cep,
+        senha,
+      } = req.body;
+
+      const permissao = 0; 
+
+      const salt = bcrypt.genSaltSync(saltRounds);
+      const hashedPasswd = bcrypt.hashSync(senha, salt);
+
+      await db.none(
+          "INSERT INTO clientes (nome, cpf_cnpj, email, celular, razao_social, cidade, logradouro, bairro, cep, estado, permissao, senha) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",
+          [
+              nome,
+              cpf_cnpj,
+              email,
+              celular,
+              razao_social,
+              cidade,
+              logradouro,
+              bairro,
+              estado,
+              cep,
+              permissao,
+              hashedPasswd
+          ]
+      );
+
+      console.log("Cliente criado com sucesso!");
+      res.status(200).json({ message: "Cliente criado com sucesso!" });
+  } catch (error) {
+      console.error("Erro ao criar cliente:", error);
+      res.status(400).json({ message: "Erro ao criar cliente" });
+  }
+});
+
   
 
-// Rota para criar um cliente
-server.post("/create-cliente", async (req, res) => {
-	const saltRounds = 10; // Número de rounds para o salt
-	try {
-	  // Extração dos dados do corpo da requisição
-	  const {
-      nome,
-      sobrenome,
-      email,
-      razaoSocial,
-      cpfOUcnpj,
-      cidade,
-      estado,
-      celular,
-      permissao,
-      senha,
-	  } = req.body;
-  
-	  const salt = bcrypt.genSaltSync(saltRounds);
-    const hashedPasswd = bcrypt.hashSync(senha, salt);
-	  await db.none(
-		"INSERT INTO funcionario (nome, sobrenome, email, razaoSocial, cpfOUcnpj, cidade, estado, celular, permissao, senha) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);",[
-		  nome,
-		  sobrenome,
-		  email,
-      razaoSocial,
-		  cpfOUcnpj,
-		  cidade,
-		  estado,
-		  celular,
-		  permissao,
-		  hashedPasswd, // Salva o hash da senha no banco
-		]);
-  
-	  console.log("Cliente criado com sucesso!");
-	  res.status(200).json({ message: "Cliente criado com sucesso!" });
-	} catch (error) {
-	  console.error("Erro ao criar cliente:", error);
-	  res.status(400).json({ message: "Erro ao criar cliente" });
-	}
+// Inicialização do servidor
+const PORT = 4000;
+server.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
+
+
+server.post("/logout", function (req, res) {
+  req.logout(function (err) {
+      if (err) {
+          return res.status(500).json({ message: "Erro ao fazer logout" });
+      }
+      res.status(200).json({ message: "Logout realizado com sucesso" });
+  });
+});
+
+
+const authenticateToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+      return res.status(401).json({ message: "Token ausente" });
+  }
+
+  //verifica token com a chave secreta
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+      if (err) {
+          return res.status(403).json({ message: "Token expirado ou inválido" });
+      }
+
+      //se token válido, anexa os dados do usuário à requisição
+      req.user = decoded;
+      next();
+  });
+};
+
+module.exports = { authenticateToken };

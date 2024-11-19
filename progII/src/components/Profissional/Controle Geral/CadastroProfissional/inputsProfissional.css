@@ -57,7 +57,7 @@
 }
 
 .div__inputsP #bairro {
-    width: 220px;
+    width: 250px;
     height: 50px;
 }
 
@@ -72,17 +72,17 @@
 }
 
 .div__inputsP #permissao {
-    width: 250px;
+    width: 300px;
     height: 50px;
 }
 
 .div__inputsP #horario {
-    width: 280px;
+    width: 350px;
     height: 50px;
 }
 
 .div__inputsP #senha {
-    width: 350px;
+    width: 440px;
     height: 50px;
 }
 

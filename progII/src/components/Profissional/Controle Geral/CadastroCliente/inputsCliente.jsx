@@ -1,22 +1,21 @@
+import { useState } from 'react';
 import './inputsCliente.css';
-import React, { useState } from 'react';
 import axios from "axios";
-
 
 const InputsCliente = () => {
     const [formData, setFormData] = useState({
-        nome: "",
-        sobrenome: "",
+        nome_completo: "",
+        cpf_cnpj: "",
         email: "",
-        razaoSocial: "",
-        cpfOUcnpj: "",
-        cidade: "",
-        estado: "",
         celular: "",
-        permissao: "cliente",
-        senha:  ""
+        razao_social: "",
+        cidade: "",
+        logradouro: "",
+        bairro: "",
+        estado: "",
+        cep: "",
+        senha: "",
     });
-
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -25,20 +24,24 @@ const InputsCliente = () => {
             [id]: value,
         }));
     };
-       
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.nome || !formData.sobrenome || !formData.email || !formData.razaoSocial || !formData.cpfOUcnpj) {
-             alert("Preencha todos os campos obrigatórios!");
-             return;
-         }
+        if (!formData.cpf_cnpj || !formData.nome_completo || !formData.email) {
+            alert("Preencha todos os campos obrigatórios!");
+            return;
+        }
 
-        console.log("Dados enviados:", formData);
+        const payload = { 
+            ...formData,
+            permissao: 0
+        };
+
+        console.log("Dados enviados:", payload);
 
         try {
-            // URL completa do backend para evitar problemas de CORS
-            const response = await axios.post("http://localhost:4000/create-cliente", formData);
+            const response = await axios.post("http://localhost:4000/create-cliente", payload);
             console.log("Resposta do servidor:", response.data);
         } catch (error) {
             console.error("Erro ao enviar dados:", error);
@@ -46,97 +49,104 @@ const InputsCliente = () => {
     };
 
     return (
-        <div>  
-            <form className="div__inputsC" onSubmit={handleSubmit}> 
-                <input 
-                    className="boxC1" 
-                    id="nome" 
-                    type="text" 
-                    placeholder="Nome"
-                    value={formData.nome}
-                    onChange={handleChange}
-                />       
-                <input 
-                    className="boxC2" 
-                    id="sobrenome" 
-                    type="text" 
-                    placeholder="Sobrenome"
-                    value={formData.sobrenome}
-                    onChange={handleChange}
-                />
-                <input 
-                    className="boxC3" 
-                    id="email" 
-                    type="email" 
-                    placeholder="Email"
-                    value={formData.email}
-                    onChange={handleChange}
-                />
-                <input 
-                    className="boxC4" 
-                    id="razaoSocial" 
-                    type="text" 
-                    placeholder="Razão Social"
-                    value={formData.razaoSocial}
-                    onChange={handleChange}
-                />
-                <input 
-                    className="boxC5" 
-                    id="cpfOUcnpj" 
-                    type="text" 
-                    placeholder="CPF ou CNPJ"
-                    value={formData.cpfOUcnpj}
-                    onChange={handleChange}
-                />
-                <input 
-                    className="boxC6" 
-                    id="cidade" 
-                    type="text" 
-                    placeholder="Cidade"
-                    value={formData.cidade}
-                    onChange={handleChange}
-                />
-                <input 
-                    className="boxC7" 
-                    id="estado" 
-                    type="text" 
-                    placeholder="Estado"
-                    value={formData.estado}
-                    onChange={handleChange}
-                />
-                <input 
-                    className="boxC8" 
-                    id="celular" 
-                    type="text" 
-                    placeholder="Celular"
-                    value={formData.celular}
-                    onChange={handleChange}
-                />
-                <select
-                    className="boxC9"
-                    id="permissao"
-                    value={formData.permissao}
-                    onChange={handleChange}
-                >
-                    <option value="opcao" disabled>Tipo de Permissão</option>
-                    <option value="4">Cliente</option>
-                </select>
-                <input
-                    className="boxC10"
-                    id="senha"
-                    type="password"
-                    placeholder="Senha"
-                    value={formData.senha}
-                    onChange={handleChange}
-                />
+        <div>
+            <form className="div__inputsC" onSubmit={handleSubmit}>
 
-                <button className="button__formC">
+                    <input 
+                        className="boxC1" 
+                        id="nome_completo" 
+                        type="text" 
+                        placeholder="Nome Completo"
+                        value={formData.nome_completo}
+                        onChange={handleChange}
+                    />
+                    <input 
+                        className="boxC2" 
+                        id="cpf_cnpj" 
+                        type="text" 
+                        placeholder="CPF/CNPJ"
+                        value={formData.cpf_cnpj}
+                        onChange={handleChange}
+                    />
+                    <input 
+                        className="boxC3" 
+                        id="email" 
+                        type="email" 
+                        placeholder="Email"
+                        value={formData.email}
+                        onChange={handleChange}
+                    />
+                    <input 
+                        className="boxC4" 
+                        id="celular" 
+                        type="text" 
+                        placeholder="Celular"
+                        value={formData.celular}
+                        onChange={handleChange}
+                    />
+                    <input 
+                        className="boxC5" 
+                        id="razao_social" 
+                        type="text" 
+                        placeholder="Razão Social"
+                        value={formData.razao_social}
+                        onChange={handleChange}
+                    />
+                    <input 
+                        className="boxC6" 
+                        id="cidade" 
+                        type="text" 
+                        placeholder="Cidade"
+                        value={formData.cidade}
+                        onChange={handleChange}
+                    />
+                    <input 
+                        className="boxC7" 
+                        id="logradouro" 
+                        type="text" 
+                        placeholder="Logradouro"
+                        value={formData.logradouro}
+                        onChange={handleChange}
+                    />
+                    <input 
+                        className="boxC8" 
+                        id="bairro" 
+                        type="text" 
+                        placeholder="Bairro"
+                        value={formData.bairro}
+                        onChange={handleChange}
+                    />
+                    <input 
+                        className="boxC9" 
+                        id="cep" 
+                        type="text" 
+                        placeholder="CEP"
+                        value={formData.cep}
+                        onChange={handleChange}
+                    />
+                    <input 
+                        className="boxC10" 
+                        id="estado" 
+                        type="text" 
+                        placeholder="Estado"
+                        value={formData.estado}
+                        onChange={handleChange}
+                    />
+                    <input 
+                        className="boxC11" 
+                        id="senha" 
+                        type="text" 
+                        placeholder="Senha para login do cliente"
+                        value={formData.senha}
+                        onChange={handleChange}
+                    />
+
+                <button className="button__formC" type="submit">
                     Cadastrar
                 </button>
             </form>
         </div>
-        
-    )
-}
+    );
+};
 
 export default InputsCliente;

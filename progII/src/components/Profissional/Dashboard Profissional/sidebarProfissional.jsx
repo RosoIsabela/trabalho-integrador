@@ -8,23 +8,27 @@ function SideBarProfissional() {
 
     const handleLogout = async () => {
         try {
-            const response = await fetch('/logout', {
-                method: 'POST',
+            const token = localStorage.getItem("token"); //token armazenado e envia para o servidor
+    
+            const response = await fetch("http://localhost:4000/logout", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
-                credentials: 'same-origin', 
             });
-
+    
             if (response.ok) {
-                navigate("/tela-login-principal");
+                localStorage.removeItem("token"); //remove o token localmente
+                navigate("/tela-login-principal"); 
             } else {
-                console.error('Erro ao fazer logout');
+                console.error("Erro ao fazer logout");
             }
         } catch (error) {
-            console.error('Erro de comunicação com o servidor:', error);
+            console.error("Erro de comunicação com o servidor:", error);
         }
     };
+    
 
     return (
         <div className="sidebar">
@@ -71,11 +75,10 @@ function SideBarProfissional() {
                 </button>
             </div>     
 
-            {/* Corrigido o ícone de Logout e o evento de onClick */}
             <div className="sidebarDivClose">
-                <button className="sidebarButtonClose" onClick={handleLogout}>
+                <button className="sidebarButtonClose" onClick={handleLogout} type='submit'>
                     <p className="sidebarP">
-                        <SignOut />
+                        <SignOut className="rotacao__ButtonClose"/>
                     </p>
                     <span className="link__buttonSidebar">Sair</span>
                 </button>
