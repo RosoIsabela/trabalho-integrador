@@ -3,7 +3,6 @@ import './inputsProfissional.css';
 import axios from "axios";
 
 
-
 const InputsProfissional = () => {
     const [formData, setFormData] = useState({
         nome_completo: "",

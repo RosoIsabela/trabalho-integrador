@@ -122,14 +122,16 @@ const requireJWTAuth = passport.authenticate("jwt", { session: false });
 
 // Rotas do servidor
 
-// Rota de login
+// Rota de login funcionario
 server.post("/tela-login-principal", async (req, res) => {
   const { email, senha } = req.body;
 
   try {
       // Busca o usuário no banco de dados, incluindo a permissão
     const user = await db.oneOrNone(
-          "SELECT email, senha, permissao FROM funcionario WHERE email = $1;",
+          `SELECT email, senha, permissao 
+           FROM funcionario, cliente
+           WHERE email = $1;`,
       [email]
     );
 
@@ -165,17 +167,17 @@ server.post("/create-colaborador", async (req, res) => {
 	try {
 	  // Extração dos dados do corpo da requisição
 	  const {
-		cpf,
-		nome,
-		sobrenome,
-		email,
-		celular,
-		cargo,
-		cidade,
-		estado,
-		permissao,
-		horario,
-		senha,
+      cpf,
+      nome,
+      sobrenome,
+      email,
+      celular,
+      cargo,
+      cidade,
+      estado,
+      permissao,
+      horario,
+      senha,
 	  } = req.body;
   
 	  const salt = bcrypt.genSaltSync(saltRounds);
@@ -205,20 +207,47 @@ server.post("/create-colaborador", async (req, res) => {
 	  console.error("Erro ao criar colaborador:", error);
 	  res.status(400).json({ message: "Erro ao criar colaborador" });
 	}
-  });
+});
   
 
-// Inicialização do servidor
-const PORT = 4000;
-server.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
-
-server.post("/logout", function (req, res, next) {
-  req.logout(function (err) {
-      if (err) {
-          return next(err);
-      }
-      res.redirect("/tela-login-principal");
-  });
+// Rota para criar um cliente
+server.post("/create-cliente", async (req, res) => {
+	const saltRounds = 10; // Número de rounds para o salt
+	try {
+	  // Extração dos dados do corpo da requisição
+	  const {
+      nome,
+      sobrenome,
+      email,
+      razaoSocial,
+      cpfOUcnpj,
+      cidade,
+      estado,
+      celular,
+      permissao,
+      senha,
+	  } = req.body;
+  
+	  const salt = bcrypt.genSaltSync(saltRounds);
+    const hashedPasswd = bcrypt.hashSync(senha, salt);
+	  await db.none(
+		"INSERT INTO funcionario (nome, sobrenome, email, razaoSocial, cpfOUcnpj, cidade, estado, celular, permissao, senha) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);",[
+		  nome,
+		  sobrenome,
+		  email,
+      razaoSocial,
+		  cpfOUcnpj,
+		  cidade,
+		  estado,
+		  celular,
+		  permissao,
+		  hashedPasswd, // Salva o hash da senha no banco
+		]);
+  
+	  console.log("Cliente criado com sucesso!");
+	  res.status(200).json({ message: "Cliente criado com sucesso!" });
+	} catch (error) {
+	  console.error("Erro ao criar cliente:", error);
+	  res.status(400).json({ message: "Erro ao criar cliente" });
+	}
 });
