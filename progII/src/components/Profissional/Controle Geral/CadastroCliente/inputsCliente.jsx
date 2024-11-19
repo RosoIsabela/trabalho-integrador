@@ -1,49 +1,183 @@
+import { useState } from 'react';
 import './inputsCliente.css';
+import axios from "axios";
 
-function inputsCliente() {
+const InputsCliente = () => {
+    const [formData, setFormData] = useState({
+        nome_completo: "",
+        cpf_cnpj: "",
+        email: "",
+        celular: "",
+        razao_social: "",
+        cidade: "",
+        logradouro: "",
+        bairro: "",
+        estado: "",
+        cep: "",
+        senha: "",
+    });
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData((prevState) => ({
+            ...prevState,
+            [id]: value,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!formData.cpf_cnpj || !formData.nome_completo || !formData.email) {
+            alert("Preencha todos os campos obrigatórios!");
+            return;
+        }
+
+        const payload = { 
+            ...formData,
+            permissao: 0
+        };
+
+        console.log("Dados enviados:", payload);
+
+        try {
+            const response = await axios.post("http://localhost:4000/create-cliente", payload);
+            console.log("Resposta do servidor:", response.data);
+        } catch (error) {
+            console.error("Erro ao enviar dados:", error);
+        }
+    };
+
     return (
         <div>
-            <div>
-                <form className="div__inputsC">
-                    <div className="boxC1">
-                        <input className="inputs__boxsC" id="boxC1" type="text" placeholder="Nome"/>
-                    </div>
+            <form className="div__inputsC" onSubmit={handleSubmit}>
+                <div className="boxC1">
+                    <input 
+                        className="inputs__boxsC" 
+                        id="nome_completo" 
+                        type="text" 
+                        placeholder="Nome Completo"
+                        value={formData.nome_completo}
+                        onChange={handleChange}
+                    />
+                </div>
 
-                    <div>
-                        <input className="inputs__boxsC" id="boxC2" type="text" placeholder="Sobrenome"/>
-                    </div>
+                <div className="boxC1">
+                    <input 
+                        className="inputs__boxsC" 
+                        id="cpf_cnpj" 
+                        type="text" 
+                        placeholder="CPF/CNPJ"
+                        value={formData.cpf_cnpj}
+                        onChange={handleChange}
+                    />
+                </div>
 
-                    <div>
-                        <input className="inputs__boxsC" id="boxC3" type="email" placeholder="Email"/>
-                    </div>
-                    
-                    <div>
-                        <input className="inputs__boxsC" id="boxC4" type="text" placeholder="Razão Social"/>
-                    </div>
+                <div>
+                    <input 
+                        className="inputs__boxsC" 
+                        id="email" 
+                        type="email" 
+                        placeholder="Email"
+                        value={formData.email}
+                        onChange={handleChange}
+                    />
+                </div>
 
-                    <div>
-                        <input className="inputs__boxsC" id="boxC5" type="text" placeholder="CPF ou CNPJ"/>
-                    </div>
+                <div>
+                    <input 
+                        className="inputs__boxsC" 
+                        id="celular" 
+                        type="text" 
+                        placeholder="Celular"
+                        value={formData.celular}
+                        onChange={handleChange}
+                    />
+                </div>
 
-                    <div>
-                        <input className="inputs__boxsC" id="boxC6" type="text" placeholder="Cidade"/>
-                    </div>
+                <div>
+                    <input 
+                        className="inputs__boxsC" 
+                        id="razao_social" 
+                        type="text" 
+                        placeholder="Razão Social"
+                        value={formData.razao_social}
+                        onChange={handleChange}
+                    />
+                </div>
 
-                    <div>
-                        <input className="inputs__boxsC" id="boxC7" type="text" placeholder="Estado"/>
-                    </div>
-                    
-                    <div>
-                        <input className="inputs__boxsC" id="boxC8" type="text" placeholder="Celular"/>
-                    </div>
+                <div>
+                    <input 
+                        className="inputs__boxsC" 
+                        id="cidade" 
+                        type="text" 
+                        placeholder="Cidade"
+                        value={formData.cidade}
+                        onChange={handleChange}
+                    />
+                </div>
 
-                    <button className="button__formC">
-                        Cadastrar
-                    </button>
-                </form>
-            </div>
+                <div>
+                    <input 
+                        className="inputs__boxsC" 
+                        id="logradouro" 
+                        type="text" 
+                        placeholder="Logradouro"
+                        value={formData.logradouro}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <div>
+                    <input 
+                        className="inputs__boxsC" 
+                        id="bairro" 
+                        type="text" 
+                        placeholder="Bairro"
+                        value={formData.bairro}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <div>
+                    <input 
+                        className="inputs__boxsC" 
+                        id="cep" 
+                        type="text" 
+                        placeholder="CEP"
+                        value={formData.cep}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <div>
+                    <input 
+                        className="inputs__boxsC" 
+                        id="estado" 
+                        type="text" 
+                        placeholder="Estado"
+                        value={formData.estado}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <div>
+                    <input 
+                        className="inputs__boxsC" 
+                        id="senha" 
+                        type="text" 
+                        placeholder="Senha para login do cliente"
+                        value={formData.senha}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <button className="button__formC" type="submit">
+                    Cadastrar
+                </button>
+            </form>
         </div>
-    )
-}
+    );
+};
 
-export default inputsCliente
+export default InputsCliente;

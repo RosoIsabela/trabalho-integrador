@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './inputsProfissional.css';
 import axios from "axios";
 
@@ -14,6 +14,7 @@ const InputsProfissional = () => {
         logradouro: "",
         bairro: "",
         cidade: "",
+        estado: "",
         cep: "",
         permissao: "opcao",
         horario: "",
@@ -32,15 +33,20 @@ const InputsProfissional = () => {
         e.preventDefault();
 
         if (!formData.cpf || !formData.nome_completo || !formData.email) {
-             alert("Preencha todos os campos obrigatórios!");
-             return;
-         }
+            alert("Preencha todos os campos obrigatórios!");
+            return;
+        }
+
+        const payload = { 
+            ...formData,
+            permissao: parseInt(formData.permissao, 10) // Converte permissao para número
+        };
 
         console.log("Dados enviados:", formData);
 
         try {
             // URL completa do backend para evitar problemas de CORS
-            const response = await axios.post("http://localhost:4000/create-colaborador", formData);
+            const response = await axios.post("http://localhost:4000/create-colaborador", payload);
             console.log("Resposta do servidor:", response.data);
         } catch (error) {
             console.error("Erro ao enviar dados:", error);
@@ -113,6 +119,14 @@ const InputsProfissional = () => {
                     placeholder="Cidade"
                     value={formData.cidade}
                     onChange={handleChange}
+                /> 
+                <input
+                    className="inputs__boxsP"
+                    id="estado"
+                    type="text"
+                    placeholder="Estado"
+                    value={formData.estado}
+                    onChange={handleChange}
                 />     
                 <input
                     className="inputs__boxsP"
@@ -129,9 +143,9 @@ const InputsProfissional = () => {
                     onChange={handleChange}
                 >
                     <option value="opcao" disabled>Tipo de Permissão</option>
-                    <option value="3">Funcionário</option>
-                    <option value="2">Coordenador de Equipe</option>
-                    <option value="1">Administrador</option>
+                    <option value="3">1</option>
+                    <option value="2">2</option>
+                    <option value="1">3</option>
                 </select>
                 <input
                     className="inputs__boxsP"

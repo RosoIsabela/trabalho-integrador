@@ -69,5 +69,6 @@
 .link__buttonSidebar {
   text-decoration: none;
   color: rgba(0, 0, 0, 1);
+  cursor: pointer;
 }
 

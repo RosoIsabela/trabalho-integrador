@@ -1,6 +1,6 @@
 import './TelaLoginLeft.css';
 import { Link, useNavigate } from 'react-router-dom';
-import React, { useState } from "react";
+import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
 function TelaLoginBemVindo() {
@@ -29,9 +29,9 @@ function TelaLoginBemVindo() {
                 const permissao = payload?.permissao;
 
                 //redireciona com base no tipo de usuário
-                if (permissao === 'cliente') {
+                if (parseInt(permissao, 10) === 0) {
                     navigate("/dashboard-cliente");
-                } else if (permissao === 'profissional') {
+                } else if (parseInt(permissao, 10) === 1) {
                     navigate("/dashboard-profissional");
                 } else {
                     alert("Tipo de usuário inválido!");
