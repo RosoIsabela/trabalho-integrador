@@ -13,4 +13,4 @@ function PerfilProfissional() {
 }
 
 
-export default PerfilProfissional
+export default PerfilProfissional;
