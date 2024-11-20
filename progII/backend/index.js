@@ -12,7 +12,7 @@ const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
 // Conexão com o banco
 const usuario = "postgres";
-const senha = "XXXX";
+const senha = "XXXXX";
 const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
 
 const server = express();
@@ -42,6 +42,13 @@ server.use(
 );
 server.use(passport.initialize());
 server.use(passport.session());
+
+
+// Inicialização do servidor
+const PORT = 4000;
+server.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
 
 // Estratégia Local com Passport para autenticação
 passport.use(
@@ -334,10 +341,44 @@ server.get("/perfilCliente", authenticateToken, async (req, res) => {
   }
 });
 
-// Inicialização do servidor
-const PORT = 4000;
-server.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+
+server.post("/incluir-pesquisa", async (req, res) => {
+  try {
+    const {
+      cod,
+      dt_coleta,
+      dt_apl_prod,
+      tm_plantas,
+      cor_folhas,
+      outros_prod,
+      clima,
+      fase,
+      obs,
+      psq_contratada
+    } = req.body;
+
+    await db.none(
+        "INSERT INTO etapas_pesquisa (cod, dt_coleta, dt_apl_prod, tm_plantas, cor_folhas, outros_prod, clima, fase, obs, psq_contratada) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);",
+        [
+          cod,
+          dt_coleta,
+          dt_apl_prod,
+          tm_plantas,
+          cor_folhas,
+          outros_prod,
+          clima,
+          fase,
+          obs,
+          psq_contratada
+        ]
+    );
+
+    console.log("Etapa de pesquisa adicionada com sucesso!");
+    res.status(200).json({ message: "Etapa de pesquisa adicionada com sucesso!" });
+} catch (error) {
+    console.error("Erro ao adicionar etapa de pesquisa:", error);
+    res.status(400).json({ message: "Erro ao adicionar etapa de pesquisa:" });
+}
 });
 
 server.post("/logout", function (req, res) {

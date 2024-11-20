@@ -14,7 +14,6 @@ import PefilCliente from './components/Cliente/Perfil/PerfilCliente';
 import SobreCliente from './components/Cliente/Sobre/SobreCliente';
 import ConfiguracoesProfissional from './components/Profissional/Configuracoes/ConfiguracoesProfissional'
 import ContratoProfissional from './components/Profissional/Contrato/ContratoProfissional';
-import RelatoriosProfissional from './components/Profissional/Relatorios/RelatoriosProfissional';
 import ControleGeral from './components/Profissional/Controle Geral/ControleGeral';
 import PerfilProfissional from './components/Profissional/Perfil/PerfilProfissional'
 import SobreProfissional from './components/Profissional/Sobre/SobreProfissional';
@@ -113,11 +112,6 @@ function App() {
           element={<CadastrarContratoProfissional />}
         />
 
-
-        <Route
-          path="/relatorios-profissional"
-          element={<RelatoriosProfissional />}
-        />
 
         <Route
           path="/incluir-pesquisa"
