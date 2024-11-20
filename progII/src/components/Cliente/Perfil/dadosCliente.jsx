@@ -76,7 +76,7 @@ function DadosCliente() {
 
                     <div className="divs__dados">
                         <p>CPF ou CNPJ</p>
-                        <p>{cliente.cpf_cnpj}</p>
+                        <p>{cliente.cnpj}</p>
                         <img src={lineDivisor} alt="linha divisoria" className="linha-divisoria" />
                     </div>
                 </div>

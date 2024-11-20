@@ -54,7 +54,7 @@ passport.use(
       try {
         // Busca o usuário no banco de dados
         const user = await db.oneOrNone(
-          "SELECT email, senha FROM colaboradores WHERE email = $1;",
+          "SELECT email, senha FROM clientes WHERE email = $1;",
           [username]
         );
 
@@ -88,7 +88,7 @@ passport.use(
     async (payload, done) => {
       try {
         const user = await db.oneOrNone(
-          "SELECT * FROM colaboradores WHERE email = $1;",
+          "SELECT * FROM clientes WHERE email = $1;",
           [payload.email]
         );
 
@@ -130,7 +130,7 @@ const authenticateToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    if (!decoded || !decoded.id) {
+    if (!decoded || !decoded.identificador) {
       return res.status(403).json({ message: "Token inválido" });
     }
     req.user = decoded;
@@ -150,32 +150,44 @@ server.post("/tela-login-principal", async (req, res) => {
   const { email, senha } = req.body;
 
   try {
-    //busca o usuário no banco de dados
-    const user = await db.oneOrNone(
-          "SELECT id, email, senha, permissao FROM colaboradores WHERE email = $1;",
+    let user;
+
+    //busca usuario na tabela de colaborador, se nao encontrar busca na de clientes
+    user = await db.oneOrNone(
+      "select cpf as identificador, email, senha, permissao from colaboradores where email = $1;",
       [email]
     );
 
-    //verifica se o usuário existe
+    if (!user) {
+      user = await db.oneOrNone(
+        "select cnpj as identificador, email, senha, permissao from clientes where email = $1;",
+        [email]
+      );
+    }
     if (!user) {
       return res.status(401).json({ message: "Email ou senha inválidos!" });
     }
 
-    //verifica a senha usando bcrypt
+    //verifica se a senha é valida usando bcrypt
     const isPasswordValid = await bcrypt.compare(senha, user.senha);
 
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Email ou senha inválidos!" });
     }
 
-      //gera o token JWT e inclui a permissão do usuário e id
+     //gerando token com identificador(cpf ou cnpj) e-mail e permissão
       const token = jwt.sign(
-          { id: user.id, email: user.email, permissao: user.permissao },
+      {
+        identificador: user.identificador,
+        email: user.email,
+        permissao: user.permissao,
+      },
           JWT_SECRET,
           { expiresIn: "5h" }
       );
 
-      res.json({ token});
+    //retorna o token gerado
+    res.json({ token });
   } catch (error) {
     console.error("Erro no login:", error);
     res.status(500).json({ message: "Erro no servidor" });
@@ -235,10 +247,10 @@ server.post("/create-colaborador", async (req, res) => {
 
 server.get("/perfilProfissional", authenticateToken, async (req, res) => {
   try {
-      const userId = req.user.id; 
+      const userCPF = req.user.identificador; 
       const colaborador = await db.oneOrNone(
-          "SELECT id, nome, cpf, email, celular, cargo, horario FROM colaboradores WHERE id = $1;",
-          [userId]
+          "SELECT nome, cpf, email, celular, cargo, horario FROM colaboradores WHERE cpf = $1;",
+          [userCPF]
       );
 
       if (!colaborador) {
@@ -259,7 +271,7 @@ server.post("/create-cliente", async (req, res) => {
   try {
       const {
         nome_completo: nome,
-        cpf_cnpj,
+        cnpj,
         email,
         celular,
         razao_social,
@@ -277,10 +289,10 @@ server.post("/create-cliente", async (req, res) => {
       const hashedPasswd = bcrypt.hashSync(senha, salt);
 
       await db.none(
-          "INSERT INTO clientes (nome, cpf_cnpj, email, celular, razao_social, cidade, logradouro, bairro, cep, estado, permissao, senha) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",
+          "INSERT INTO clientes (nome, cnpj, email, celular, razao_social, cidade, logradouro, bairro, cep, estado, permissao, senha) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",
           [
               nome,
-              cpf_cnpj,
+              cnpj,
               email,
               celular,
               razao_social,
@@ -305,10 +317,10 @@ server.post("/create-cliente", async (req, res) => {
 
 server.get("/perfilCliente", authenticateToken, async (req, res) => {
   try {
-      const userId = req.user.id; 
+      const userCNPJ = req.user.identificador; 
       const cliente = await db.oneOrNone(
-          "SELECT id, nome, cpf_cnpj, email, celular, razao_social FROM clientes WHERE id = $1;",
-          [userId]
+          "SELECT nome, cnpj, email, celular, razao_social FROM clientes WHERE cnpj = $1;",
+          [userCNPJ]
       );
 
       if (!cliente) {

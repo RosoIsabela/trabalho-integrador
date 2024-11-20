@@ -5,7 +5,7 @@ import axios from "axios";
 const InputsCliente = () => {
     const [formData, setFormData] = useState({
         nome_completo: "",
-        cpf_cnpj: "",
+        cnpj: "",
         email: "",
         celular: "",
         razao_social: "",
@@ -28,7 +28,7 @@ const InputsCliente = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.cpf_cnpj || !formData.nome_completo || !formData.email) {
+        if (!formData.cnpj || !formData.nome_completo || !formData.email) {
             alert("Preencha todos os campos obrigatórios!");
             return;
         }
@@ -61,10 +61,10 @@ const InputsCliente = () => {
                 />
                 <input 
                     className="boxC2" 
-                    id="cpf_cnpj" 
+                    id="cnpj" 
                     type="text" 
                     placeholder="CPF/CNPJ"
-                    value={formData.cpf_cnpj}
+                    value={formData.cnpj}
                     onChange={handleChange}
                 />
                 <input 

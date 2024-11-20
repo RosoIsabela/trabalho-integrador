@@ -6,4 +6,4 @@ function CadastroProfissional(){
     )
 }
 
-export default CadastroProfissional
+export default CadastroProfissional;
