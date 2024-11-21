@@ -1,22 +1,36 @@
-import { useState } from 'react';
-import { Image } from "@phosphor-icons/react";
+import { useState, useEffect } from 'react';
 import './PesquisaDados.css';
-import axios from "axios";
 
 const PesquisaDados = () => {
+    const [clientes, setClientes] = useState([]);
+    const [cliente, setCliente] = useState('');
+    const [protocolos, setProtocolos] = useState([]);
+    const [protocolo, setProtocolo] = useState('');
     const [formData, setFormData] = useState({
-        cliente: "",
         cultivar: "",
-        fase: "",
+        fase: "opcao",
         tamanho: "",
         coloracao: "",
         produtos: "",
         nos: "",
         data_coleta: "2024-12-23",
         data_aplicacao: "2024-12-23",
-        fotos: [],
-        descricao: ""
+        descricao: "",
+        clima: "",
+        psq_contratada: "",
     });
+
+    useEffect(() => {
+        fetch('http://localhost:4000/clientes')
+            .then((response) => response.json())
+            .then((data) => setClientes(data))
+            .catch((error) => console.error("Erro ao buscar clientes:", error));
+
+        fetch('http://localhost:4000/protocolos')
+            .then((response) => response.json())
+            .then((data) => setProtocolos(data))
+            .catch((error) => console.error("Erro ao buscar protocolos:", error));
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -26,29 +40,49 @@ const PesquisaDados = () => {
         }));
     };
 
-    const handleFileChange = (e) => {
-        setFormData((prevState) => ({
-            ...prevState,
-            fotos: Array.from(e.target.files),
-        }));
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.cliente || !formData.tamanho || !formData.coloracao || !formData.produtos || !formData.nos) {
-            alert("Preencha todos os campos obrigatórios!");
-            return;
-        }
-
-        console.log("Dados enviados:", formData);
-
         try {
-            const response = await axios.post("http://localhost:4000/incluir-pesquisa", formData);
-            console.log("Resposta do servidor:", response.data);
+            const response = await fetch('http://localhost:4000/incluir-etapa-pesquisa', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    dt_coleta: formData.data_coleta,
+                    dt_apl_prod: formData.data_aplicacao,
+                    tm_plantas: formData.tamanho,
+                    cor_folhas: formData.coloracao,
+                    outros_prod: formData. produtos,
+                    num_nos: formData.nos,
+                    clima: formData.clima,
+                    fase: formData.fase,
+                    obs: formData.descricao,
+                    psq_contratada: formData.psq_contratada,
+                    cliente_cnpj: cliente,
+                    protocolo_sigla: protocolo
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao salvar os dados!');
+            }
+            alert('Informações salvas com sucesso!');
         } catch (error) {
-            console.error("Erro ao enviar dados:", error);
+            console.error('Erro ao enviar os dados:', error);
+            alert('Erro ao salvar as informações. Tente novamente.');
         }
+    };
+
+    //função para selecionar o cliente
+    const handleClienteSelect = (e) => {
+        setCliente(e.target.value);
+    };
+
+    //função para selecionar o protocolo
+    const handleProtocoloSelect = (e) => {
+        setProtocolo(e.target.value);
     };
 
     return (
@@ -58,18 +92,16 @@ const PesquisaDados = () => {
                     <div>
                         <select
                             id="clienteSelect"
-                            name="cliente"
-                            value={formData.cliente}
-                            onChange={handleChange}
-                            required
+                            name="cod" 
+                            value={formData.cod}
+                            onChange={handleClienteSelect}
                         >
                             <option value="" disabled>Selecionar Cliente</option>
-                            <option value="cliente1">cliente1</option>
-                            <option value="cliente2">cliente2</option>
-                            <option value="cliente3">cliente3</option>
-                            <option value="cliente4">cliente4</option>
-                            <option value="cliente5">cliente5</option>
-                            <option value="cliente6">cliente6</option>
+                            {clientes.map((cliente) => (
+                            <option key={cliente.cnpj} value={cliente.cnpj}>
+                                {cliente.razao_social}
+                            </option>
+                            ))}
                         </select>
                     </div>
                 </nav>
@@ -139,19 +171,44 @@ const PesquisaDados = () => {
                         <select
                             id="cultivarSelect"
                             name="cultivar"
-                            value={formData.cultivar}
-                            onChange={handleChange}
-                            required
+                            value={formData.protocolo}
+                            onChange={handleProtocoloSelect}
                         >
                             <option value="" disabled selected>Protocolo</option>
-                            <option value="cultivar1">Cultivar</option>
-                            <option value="cultivar2">Folicular</option>
-                            <option value="cultivar3">Semente</option>
-                            <option value="cultivar4">Nutrição</option>
-                            <option value="cultivar5">Solo</option>
+                            {protocolos.map((protocolo) => (
+                                <option key={protocolo.sigla} value={protocolo.sigla}>
+                                    {protocolo.sigla}
+                                </option>
+                            ))}
                         </select>
                     </div>
                 </nav>
+
+                <div className="inputsPesquisa">
+                        <label className="label__InserirDados" htmlFor="climaInput">Clima</label>
+                        <input
+                            className="input__InserirText"
+                            type="text"
+                            id="climaInput"
+                            name="clima"
+                            placeholder="Digite aqui"
+                            value={formData.clima}
+                            onChange={handleChange}
+                        />
+                </div>
+
+                <div className="inputsPesquisa">
+                        <label className="label__InserirDados" htmlFor="psq_contratadaInput">Pesquisa Contratada (cod)</label>
+                        <input
+                            className="input__InserirText"
+                            type="text"
+                            id="psq_contratadaInput"
+                            name="psq_contratada"
+                            placeholder="Digite aqui"
+                            value={formData.psq_contratada}
+                            onChange={handleChange}
+                        />
+                </div>
                     
                 <div className="inputsDate">
                     <label className="label__InserirDados" htmlFor="dateInput">Data da Coleta</label>
@@ -177,29 +234,6 @@ const PesquisaDados = () => {
                         onChange={handleChange}
                         required
                     />
-                </div>
-
-                <label className="label__InserirDados" htmlFor="photoInput">Anexar Fotos</label>
-
-                <div className="fotoContainer">
-                    <input
-                        className="input__InserirFoto"
-                        type="file"
-                        id="FotoInput"
-                        name="fotos"
-                        multiple
-                        onChange={handleFileChange}
-                    />
-                    <button className="anexarFoto" type="button">Anexar</button>
-
-                    <div className="fotosAnexadas">
-                        <h3><Image /> Fotos anexadas:</h3>
-                        <ul>
-                            {formData.fotos.map((foto, index) => (
-                                <li key={index}>{foto.name}</li>
-                            ))}
-                        </ul>
-                    </div>
                 </div>
 
                 <button className="saveButton" type="submit">Salvar</button>

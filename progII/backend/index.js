@@ -12,7 +12,7 @@ const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
 // Conexão com o banco
 const usuario = "postgres";
-const senha = "XXXXX";
+const senha = "x";
 const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
 
 const server = express();
@@ -225,7 +225,7 @@ server.post("/create-colaborador", async (req, res) => {
       const hashedPasswd = bcrypt.hashSync(senha, salt);
 
       await db.none(
-          "INSERT INTO colaboradores (nome, cpf, email, celular, cargo, permissao, cidade, logradouro, bairro, cep, estado, horario, senha) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);",
+          "insert into colaboradores (nome, cpf, email, celular, cargo, permissao, cidade, logradouro, bairro, cep, estado, horario, senha) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);",
           [
               nome,
               cpf,
@@ -256,7 +256,7 @@ server.get("/perfilProfissional", authenticateToken, async (req, res) => {
   try {
       const userCPF = req.user.identificador; 
       const colaborador = await db.oneOrNone(
-          "SELECT nome, cpf, email, celular, cargo, horario FROM colaboradores WHERE cpf = $1;",
+          "select nome, cpf, email, celular, cargo, horario from colaboradores where cpf = $1;",
           [userCPF]
       );
 
@@ -296,7 +296,7 @@ server.post("/create-cliente", async (req, res) => {
       const hashedPasswd = bcrypt.hashSync(senha, salt);
 
       await db.none(
-          "INSERT INTO clientes (nome, cnpj, email, celular, razao_social, cidade, logradouro, bairro, cep, estado, permissao, senha) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",
+          "insert  into clientes (nome, cnpj, email, celular, razao_social, cidade, logradouro, bairro, cep, estado, permissao, senha) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",
           [
               nome,
               cnpj,
@@ -326,7 +326,7 @@ server.get("/perfilCliente", authenticateToken, async (req, res) => {
   try {
       const userCNPJ = req.user.identificador; 
       const cliente = await db.oneOrNone(
-          "SELECT nome, cnpj, email, celular, razao_social FROM clientes WHERE cnpj = $1;",
+          "select nome, cnpj, email, celular, razao_social from clientes where cnpj = $1;",
           [userCNPJ]
       );
 
@@ -341,11 +341,87 @@ server.get("/perfilCliente", authenticateToken, async (req, res) => {
   }
 });
 
+server.get("/clientes", async (req, res) => {
+  try {
+      const clientes = await db.any("select cnpj, razao_social from clientes");
+      res.status(200).json(clientes);
+  } catch (error) {
+      console.error("Erro ao buscar clientes:", error);
+      res.status(500).json({ message: "Erro ao buscar clientes" });
+  }
+});
+
+server.get("/protocolos", async (req, res) => {
+  try {
+    const protocolos = await db.any("select sigla from protocolo");
+    res.status(200).json(protocolos);
+  } catch (error) {
+    console.error("Erro ao buscar protocolos:", error);
+    res.status(500).json({ message: "Erro ao buscar protocolos" });
+}
+});
 
 server.post("/incluir-pesquisa", async (req, res) => {
   try {
     const {
-      cod,
+      num_contrato,
+      dt_assinatura,
+      dt_entrega,
+      preco,
+      num_parcelas,
+      cliente_cnpj,
+      protocolo_num,
+    } = req.body;
+
+    const token = req.headers['authorization'].split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const responsavel = decoded.identificador;
+
+    await db.none(
+      "insert into pesquisa (num_contrato, dt_assinatura, dt_entrega, preco, num_parcelas, cliente_cnpj, protocolo_num, responsavel) values ($1, $2, $3, $4, $5, $6, $7, $8);",
+      [
+        num_contrato,
+        dt_assinatura,
+        dt_entrega,
+        preco,
+        num_parcelas,
+        cliente_cnpj,
+        protocolo_num,
+        responsavel,
+      ]
+    );
+
+    console.log("Informações de pesquisa adicionadas com sucesso!");
+    res.status(200).json({ message: "Informações de pesquisa adicionadas com sucesso!" });
+  } catch (error) {
+    console.error("Erro ao adicionar pesquisa", error);
+    res.status(400).json({ message: "Erro ao adicionar pesquisa" });
+  }
+});
+
+
+server.get("/ver-contrato", async (req, res) => {
+  try { 
+      const { cliente_cnpj, protocolo_num } = req.query;
+      const pesquisa = await db.oneOrNone(
+          "select num_contrato, dt_assinatura, dt_entrega, preco, num_parcelas  from pesquisa where cliente_cnpj = $1 and protocolo_num = $2;",
+          [cliente_cnpj, protocolo_num]
+      );
+
+      if (!pesquisa) {
+          return res.status(404).json({ message: "Contrato não encontrado." });
+      }
+
+      res.status(200).json({ pesquisa });
+  } catch (error) {
+      console.error("Erro ao buscar contrato:", error);
+      res.status(500).json({ message: "Erro ao buscar contrato." });
+  }
+});
+
+server.post("/incluir-etapa-pesquisa", async (req, res) => {
+  try {
+    const {
       dt_coleta,
       dt_apl_prod,
       tm_plantas,
@@ -354,31 +430,38 @@ server.post("/incluir-pesquisa", async (req, res) => {
       clima,
       fase,
       obs,
-      psq_contratada
+      psq_contratada,
+      num_nos,
+      cliente_cnpj,
+      protocolo_sigla,
     } = req.body;
 
     await db.none(
-        "INSERT INTO etapas_pesquisa (cod, dt_coleta, dt_apl_prod, tm_plantas, cor_folhas, outros_prod, clima, fase, obs, psq_contratada) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);",
-        [
-          cod,
-          dt_coleta,
-          dt_apl_prod,
-          tm_plantas,
-          cor_folhas,
-          outros_prod,
-          clima,
-          fase,
-          obs,
-          psq_contratada
-        ]
+      `insert into etapas_pesquisa 
+      (dt_coleta, dt_apl_prod, tm_plantas, cor_folhas, outros_prod, clima, fase, obs, psq_contratada, num_nos, cliente_cnpj, protocolo_sigla) 
+      values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);`,
+      [
+        dt_coleta,
+        dt_apl_prod,
+        tm_plantas,
+        cor_folhas,
+        outros_prod,
+        clima,
+        fase,
+        obs,
+        psq_contratada,
+        num_nos,
+        cliente_cnpj,
+        protocolo_sigla,
+      ]
     );
 
     console.log("Etapa de pesquisa adicionada com sucesso!");
     res.status(200).json({ message: "Etapa de pesquisa adicionada com sucesso!" });
-} catch (error) {
+  } catch (error) {
     console.error("Erro ao adicionar etapa de pesquisa:", error);
-    res.status(400).json({ message: "Erro ao adicionar etapa de pesquisa:" });
-}
+    res.status(400).json({ message: "Erro ao adicionar etapa de pesquisa." });
+  }
 });
 
 server.post("/logout", function (req, res) {

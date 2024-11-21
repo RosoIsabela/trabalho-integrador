@@ -28,7 +28,7 @@ const InputsCliente = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.cnpj || !formData.nome_completo || !formData.email) {
+        if (!formData.cnpj || !formData.nome_completo || !formData.email || !formData.razao_social) {
             alert("Preencha todos os campos obrigatórios!");
             return;
         }

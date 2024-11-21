@@ -1,48 +1,131 @@
-import '../../Cliente/VerContrato/selectsContratoCliente.css'
+import '../../Cliente/VerContrato/selectsContratoCliente.css';
 import Linha from "../../../assets/Line 29.png";
 import { ArrowRight } from "@phosphor-icons/react";
-import { Link } from 'react-router-dom'; 
-import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 function SelectsContratoProfissional() {
+    const [clientes, setClientes] = useState([]);
+    const [protocolos, setProtocolos] = useState([]);
     const [cliente, setCliente] = useState('');
     const [protocolo, setProtocolo] = useState('');
     const [dados, setDados] = useState({
         contrato: '',
-        protocolo: '',
-        parcelas: '',
-        custo: '',
         dataContrato: '',
-        dataEntrega: ''
+        dataEntrega: '',
+        custo: '',
+        parcelas: '',
     });
+    const [error, setError] = useState('');
 
     useEffect(() => {
-        if (cliente && protocolo) { // Só faz a requisição se ambos os campos estiverem preenchidos
-            const chave = `${cliente}-${protocolo}`;
-            fetch(`/contrato-profissional?cliente=${chave}`)
+        fetch('http://localhost:4000/clientes')
+            .then((response) => response.json())
+            .then((data) => setClientes(data))
+            .catch((error) => console.error("Erro ao buscar clientes:", error));
+
+        fetch('http://localhost:4000/protocolos')
+            .then((response) => response.json())
+            .then((data) => setProtocolos(data))
+            .catch((error) => console.error("Erro ao buscar protocolos:", error));
+    }, []);
+
+    // Função para buscar os dados do contrato baseado no cliente e protocolo
+    const buscarContrato = () => {
+        if (cliente && protocolo) {
+            fetch(`http://localhost:4000/ver-contrato?cliente=${cliente}&protocolo=${protocolo}`)
                 .then(response => response.json())
-                .then(data => setDados(data))
-                .catch(error => console.error('Erro ao buscar dados:', error));
+                .then(data => {
+                    if (data.pesquisa && data.pesquisa.length === 1) {
+                        const contractData = data.pesquisa[0];
+                        const formatData = (date) => new Date(date).toISOString().split('T')[0]; // Converte para AAAA-MM-DD
+                        setDados({
+                            contrato: contractData.num_contrato || '',
+                            dataContrato: contractData.dt_assinatura ? formatData(contractData.dt_assinatura) : '',
+                            dataEntrega: contractData.dt_entrega ? formatData(contractData.dt_entrega) : '',
+                            custo: contractData.preco || '',
+                            parcelas: contractData.num_parcelas || '',
+                        });
+                        setError('');
+                    } else {
+                        setError('Contrato não encontrado ou múltiplos contratos encontrados.');
+                    }
+                })
+                .catch(error => {
+                    setError('Erro ao buscar dados do contrato.');
+                    console.error('Erro ao buscar dados do contrato:', error);
+                });
+        } else {
+            setError('Por favor, selecione um cliente e um protocolo.');
         }
-    }, [cliente, protocolo]);
+    };
+
+    // Envio de dados (Caso necessário)
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await fetch('http://localhost:4000/incluir-pesquisa', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    num_contrato: dados.contrato,
+                    dt_assinatura: dados.dataContrato,
+                    dt_entrega: dados.dataEntrega,
+                    preco: dados.custo,
+                    cliente_cnpj: cliente,
+                    protocolo_num: protocolo,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao salvar os dados!');
+            }
+            alert('Informações salvas com sucesso!');
+        } catch (error) {
+            console.error('Erro ao enviar os dados:', error);
+            alert('Erro ao salvar as informações. Tente novamente.');
+        }
+    };
 
     return (
         <div>
+            {error && <div className="error">{error}</div>} {/* Displaying error message if any */}
             <div className="contrato__options">
                 <div className="div__buttons">
-                    <select className="contrato__selectBox" name="selectCliente" defaultValue="opcao" onChange={(e) => setCliente(e.target.value)}> 
-                        <option value="opcao" disabled>Selecione o Cliente</option>
-                        <option value="empresaX">Empresa X</option>
-                        <option value="empresaY">Empresa Y</option>
-                        <option value="empresaZ">Empresa Z</option>
+                    <select
+                        className="contrato__selectBox"
+                        name="selectCliente"
+                        value={cliente}
+                        onChange={(e) => setCliente(e.target.value)}
+                    >
+                        <option value="" disabled>Selecione o Cliente</option>
+                        {clientes.map((cliente) => (
+                            <option key={cliente.cnpj} value={cliente.cnpj}>
+                                {cliente.razao_social}
+                            </option>
+                        ))}
                     </select>
 
-                    <select className="contrato__selectBox" name="selectProtocolo" defaultValue="opcao" onChange={(e) => setProtocolo(e.target.value)}>
-                        <option value="opcao" disabled>Selecione o Protocolo</option>
-                        <option value="12345">12345 - Cultivar</option>
-                        <option value="09876">09876 - Nutrição</option>
-                        <option value="10293">10293 - Solo</option>
+                    <select
+                        className="contrato__selectBox"
+                        name="selectProtocolo"
+                        value={protocolo}
+                        onChange={(e) => setProtocolo(e.target.value)}
+                    >
+                        <option value="" disabled>Selecione o Protocolo</option>
+                        {protocolos.map((protocolo) => (
+                            <option key={protocolo.sigla} value={protocolo.sigla}>
+                                {protocolo.sigla}
+                            </option>
+                        ))}
                     </select>
+
+                    <button type="button" className="contrato__button" onClick={buscarContrato}>Ver contrato</button>
 
                     <Link className="ajustando__links" to="/cadastrar-contrato">
                         <button className="contrato__button" id="ajuste__corButton">
@@ -55,35 +138,31 @@ function SelectsContratoProfissional() {
                 </div>
                 
                 <div className="box__branca">
-                    <form className="DadosDoContrato">
+                    <form className="DadosDoContrato" onSubmit={handleSubmit}>
                         <p>Contrato</p>
-                        <input className="inputs__DadosContrato" type="text" value={dados.contrato} readOnly/>
-                        <img src={Linha} alt="linha horizontal" />
-
-                        <p>Protocolo</p>
-                        <input className="inputs__DadosContrato" type="text" value={dados.protocolo} readOnly/>
+                        <p>{dados.contrato}</p>
                         <img src={Linha} alt="linha horizontal" />
 
                         <p>Número de Parcelas</p>
-                        <input className="inputs__DadosContrato" type="text" value={dados.parcelas} readOnly/>
+                        <p>{dados.parcelas}</p>
                         <img src={Linha} alt="linha horizontal" />
 
                         <p>Custo</p>
-                        <input className="inputs__DadosContrato" type="text" value={dados.custo} readOnly/>
+                        <p>{dados.custo}</p>
                         <img src={Linha} alt="linha horizontal" />
 
                         <p>Data do Contrato</p>
-                        <input className="inputs__DadosContrato" type="date" value={dados.dataContrato} readOnly/>
+                        <p>{dados.dataContrato}</p>
                         <img src={Linha} alt="linha horizontal" />
 
                         <p>Data de Entrega do Relatório Final</p>
-                        <input className="inputs__DadosContrato" type="date" value={dados.dataEntrega} readOnly/>
+                        <p>{dados.dataEntrega}</p>
                         <img src={Linha} alt="linha horizontal" />
                     </form>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default SelectsContratoProfissional
+export default SelectsContratoProfissional;

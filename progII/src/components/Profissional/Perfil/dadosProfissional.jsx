@@ -104,4 +104,4 @@ function DadosCliente() {
 }
 
 
-export default DadosCliente
+export default DadosCliente;
