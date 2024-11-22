@@ -1,0 +1,103 @@
+.div__mestreProtocolo {
+    width: 80%;
+
+    display: flex;
+    justify-content: center; 
+    align-items: center;               
+    text-align: center;
+    padding: 30px;
+}
+
+
+.box__brancaProtocolo {
+    background-color: var(--branco-para-boxs);
+
+    width: 60%;
+    max-width: 1000px;
+    height: 60vh;
+    border-radius: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+
+.p_cadastrarProtocolo {
+    display: flex;
+    justify-content: center; 
+    align-items: center;               
+    text-align: center;
+
+    background-color: var(--verde-nome-empresa);
+    border-radius: 30px;
+    width: 300px;
+    height: 40px;
+    margin: 40px;
+
+    font-size: 22px;
+}
+
+
+.input-container {
+    display: flex;
+    justify-content: center; 
+    align-items: center;               
+    text-align: center;
+}
+
+
+.label__protocolo{
+    margin: 20px;
+}
+
+
+#sigla {
+    border-radius: 30px;
+    border: none;
+    margin: 20px;
+    
+    width: 250px;
+    height: 40px;
+    font-size: 16px;
+}
+
+#tipo {
+    border-radius: 30px;
+    border: none;
+    margin: 20px;
+    
+    width: 250px;
+    height: 40px;
+    font-size: 16px;
+}
+
+
+.submit-button {
+    display: flex;
+    justify-content: center; 
+    align-items: center;               
+    text-align: center;
+    
+    background-color: var(--laranja-nome-empresa);
+    border-radius: 30px;
+
+    width: 300px;
+    height: 50px;
+    font-size: 22px;
+    margin: 40px;
+
+    border: none;
+    cursor: pointer;
+}
+
+
+.div__alinhamento {
+    display: flex;
+    justify-content: center; 
+    align-items: center;               
+    text-align: center;
+}
+
+
+.linha__alinhamento {
+    width: 400px;
+    margin: 0 0 0 20px;
+}

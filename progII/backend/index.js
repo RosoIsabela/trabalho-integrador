@@ -12,7 +12,7 @@ const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
 // Conexão com o banco
 const usuario = "postgres";
-const senha = "x";
+const senha = "postgre";
 const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
 
 const server = express();
@@ -341,6 +341,7 @@ server.get("/perfilCliente", authenticateToken, async (req, res) => {
   }
 });
 
+
 server.get("/clientes", async (req, res) => {
   try {
       const clientes = await db.any("select cnpj, razao_social from clientes");
@@ -351,9 +352,10 @@ server.get("/clientes", async (req, res) => {
   }
 });
 
+
 server.get("/protocolos", async (req, res) => {
   try {
-    const protocolos = await db.any("select sigla from protocolo");
+    const protocolos = await db.any("select sigla, tipo from protocolo");
     res.status(200).json(protocolos);
   } catch (error) {
     console.error("Erro ao buscar protocolos:", error);
@@ -361,6 +363,114 @@ server.get("/protocolos", async (req, res) => {
 }
 });
 
+
+server.get("/ver-contrato", async (req, res) => {
+  try { 
+      const { cliente_cnpj, protocolo_sigla } = req.query;
+
+      const protocolo = await db.oneOrNone("select sigla from protocolo", [protocolo_sigla]);
+      if (!protocolo) {
+        return res.status(404).json({ message: "Protocolo não encontrado." });
+      }
+
+      const contrato = await db.any(
+        "select num_contrato, num_parcelas, preco, dt_assinatura, dt_entrega " +
+        "FROM contrato WHERE cliente_cnpj = $1 AND protocolo_num = $2;",
+        [cliente_cnpj, protocolo_sigla] 
+     );
+
+      if (!contrato || contrato.length === 0) {
+          return res.status(404).json({ message: "Contrato não encontrado." });
+      }
+
+      res.status(200).json({ contrato });
+  } catch (error) {
+      console.error("Erro ao buscar contrato:", error);
+      res.status(500).json({ message: "Erro ao buscar contrato." });
+  }
+});
+
+
+server.post("/cadastrar-protocolo", async (req, res) => {
+  try {
+    const { sigla, tipo } = req.body; 
+
+    if (!sigla || !tipo) {
+        return res.status(400).json({error: "Sigla e tipo são obrigatórios."});
+    }
+
+    await db.oneOrNone(
+      "insert into protocolo (sigla, tipo) values ($1, $2);", 
+      [sigla, tipo]
+    );
+      
+    res.status(201).json({message: 'Protocolo cadastrado com sucesso!'});
+  } catch (error) {
+      console.error("Erro ao cadastrar protocolo:", error);
+      res.status(500).json({error: "Erro ao cadastrar protocolo."});
+    }
+});
+
+
+
+server.post("/cadastrar-contrato", async (req, res) => {
+  try {
+    const {
+      num_contrato,
+      protocolo,
+      num_parcelas,
+      preco,
+      dt_assinatura,
+      dt_entrega,
+      cliente_cnpj
+    } = req.body;
+
+
+    // Buscar a sigla do protocolo
+    const protocoloData = await db.oneOrNone("SELECT sigla FROM protocolo", [protocolo]);
+    if (!protocoloData) {
+        return res.status(400).json({ message: "Protocolo não encontrado." });
+    }
+
+
+    await db.none(
+      "insert into contrato (num_contrato, protocolo_num, num_parcelas, preco, dt_assinatura, dt_entrega, cliente_cnpj) values ($1, $2, $3, $4, $5, $6, $7);",
+      [
+        num_contrato,
+        protocoloData.sigla, 
+        num_parcelas,
+        preco,
+        dt_assinatura,
+        dt_entrega,
+        cliente_cnpj
+      ]
+    );
+
+    console.log("Contrato cadastrado com sucesso!");
+    res.status(200).json({ message: "Contrato cadastrado com sucesso!" });
+
+  } catch(error){
+      console.error("Erro ao cadastrar contrato", error);
+      res.status(400).json({ message: "Erro ao cadastrar contrato" });
+  }
+});
+
+
+server.delete("/excluir-contrato/:num_contrato", async (req, res) => {
+  try {
+    const { num_contrato } = req.params;
+
+    await db.none("DELETE FROM contrato WHERE num_contrato = $1;", [num_contrato]);
+
+    res.status(200).json({ message: "Contrato excluído com sucesso!" });
+  } catch (error) {
+    console.error("Erro ao excluir contrato", error);
+    res.status(400).json({ message: "Erro ao excluir contrato" });
+  }
+});
+
+
+/*
 server.post("/incluir-pesquisa", async (req, res) => {
   try {
     const {
@@ -398,26 +508,7 @@ server.post("/incluir-pesquisa", async (req, res) => {
     res.status(400).json({ message: "Erro ao adicionar pesquisa" });
   }
 });
-
-
-server.get("/ver-contrato", async (req, res) => {
-  try { 
-      const { cliente_cnpj, protocolo_num } = req.query;
-      const pesquisa = await db.oneOrNone(
-          "select num_contrato, dt_assinatura, dt_entrega, preco, num_parcelas  from pesquisa where cliente_cnpj = $1 and protocolo_num = $2;",
-          [cliente_cnpj, protocolo_num]
-      );
-
-      if (!pesquisa) {
-          return res.status(404).json({ message: "Contrato não encontrado." });
-      }
-
-      res.status(200).json({ pesquisa });
-  } catch (error) {
-      console.error("Erro ao buscar contrato:", error);
-      res.status(500).json({ message: "Erro ao buscar contrato." });
-  }
-});
+*/
 
 server.post("/incluir-etapa-pesquisa", async (req, res) => {
   try {

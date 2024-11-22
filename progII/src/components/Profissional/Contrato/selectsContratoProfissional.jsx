@@ -1,6 +1,6 @@
 import '../../Cliente/VerContrato/selectsContratoCliente.css';
 import Linha from "../../../assets/Line 29.png";
-import { ArrowRight } from "@phosphor-icons/react";
+import { ArrowRight, Eraser, MagnifyingGlass } from "@phosphor-icons/react";
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
@@ -33,22 +33,22 @@ function SelectsContratoProfissional() {
     // Função para buscar os dados do contrato baseado no cliente e protocolo
     const buscarContrato = () => {
         if (cliente && protocolo) {
-            fetch(`http://localhost:4000/ver-contrato?cliente=${cliente}&protocolo=${protocolo}`)
+            fetch(`http://localhost:4000/ver-contrato?cliente_cnpj=${cliente}&protocolo_sigla=${protocolo}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.pesquisa && data.pesquisa.length === 1) {
-                        const contractData = data.pesquisa[0];
+                    if (data.contrato && data.contrato.length === 1) {
+                        const contractData = data.contrato[0];
                         const formatData = (date) => new Date(date).toISOString().split('T')[0]; // Converte para AAAA-MM-DD
                         setDados({
                             contrato: contractData.num_contrato || '',
+                            parcelas: contractData.num_parcelas || '',
+                            custo: contractData.preco || '',
                             dataContrato: contractData.dt_assinatura ? formatData(contractData.dt_assinatura) : '',
                             dataEntrega: contractData.dt_entrega ? formatData(contractData.dt_entrega) : '',
-                            custo: contractData.preco || '',
-                            parcelas: contractData.num_parcelas || '',
                         });
                         setError('');
                     } else {
-                        setError('Contrato não encontrado ou múltiplos contratos encontrados.');
+                        setError('Contrato não encontrado.');
                     }
                 })
                 .catch(error => {
@@ -66,7 +66,7 @@ function SelectsContratoProfissional() {
         const token = localStorage.getItem('token');
 
         try {
-            const response = await fetch('http://localhost:4000/incluir-pesquisa', {
+            const response = await fetch('http://localhost:4000/cadastrar-contrato', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,11 +74,12 @@ function SelectsContratoProfissional() {
                 },
                 body: JSON.stringify({
                     num_contrato: dados.contrato,
+                    protocolo_num: protocolo,
+                    num_parcelas: dados.parcelas,
+                    preco: dados.custo,
                     dt_assinatura: dados.dataContrato,
                     dt_entrega: dados.dataEntrega,
-                    preco: dados.custo,
-                    cliente_cnpj: cliente,
-                    protocolo_num: protocolo,
+                    cliente_cnpj: cliente
                 }),
             });
 
@@ -89,6 +90,39 @@ function SelectsContratoProfissional() {
         } catch (error) {
             console.error('Erro ao enviar os dados:', error);
             alert('Erro ao salvar as informações. Tente novamente.');
+        }
+    };
+
+
+    const DeleteContrato = async (e) => {
+        e.preventDefault();
+      
+        try {
+            const response = await fetch(`http://localhost:4000/excluir-contrato/${dados.contrato}`, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+        
+            if (!response.ok) {
+                throw new Error("Erro ao excluir contrato");
+            }
+      
+            alert("Contrato excluído com sucesso!");
+
+            // Limpa todos os campos do contrato
+            setDados({
+                contrato: '',
+                dataContrato: '',
+                dataEntrega: '',
+                custo: '',
+                parcelas: '',
+            });
+        
+        } catch (error) {
+            console.error("Erro ao excluir contrato:", error);
+            alert("Erro ao excluir o contrato. Tente novamente."); 
         }
     };
 
@@ -114,18 +148,30 @@ function SelectsContratoProfissional() {
                     <select
                         className="contrato__selectBox"
                         name="selectProtocolo"
-                        value={protocolo}
-                        onChange={(e) => setProtocolo(e.target.value)}
+                        value={protocolo} 
+                        onChange={(e) => setProtocolo(e.target.value )}
                     >
                         <option value="" disabled>Selecione o Protocolo</option>
                         {protocolos.map((protocolo) => (
                             <option key={protocolo.sigla} value={protocolo.sigla}>
-                                {protocolo.sigla}
+                                {protocolo.tipo}
                             </option>
                         ))}
                     </select>
 
-                    <button type="button" className="contrato__button" onClick={buscarContrato}>Ver contrato</button>
+                    <button type="button" className="contrato__button2" onClick={buscarContrato}>
+                        Ver contrato
+                        <div className="icons__button3">
+                            <MagnifyingGlass />
+                        </div>
+                    </button>
+
+                    <button className="button__excluir" type="button" onClick={DeleteContrato}>
+                        Excluir
+                        <div className="icons__button2">
+                            <Eraser />
+                        </div>
+                    </button>
 
                     <Link className="ajustando__links" to="/cadastrar-contrato">
                         <button className="contrato__button" id="ajuste__corButton">
@@ -140,23 +186,23 @@ function SelectsContratoProfissional() {
                 <div className="box__branca">
                     <form className="DadosDoContrato" onSubmit={handleSubmit}>
                         <p>Contrato</p>
-                        <p>{dados.contrato}</p>
+                        <p className="p_dadosDoContrato">{dados.contrato}</p>
                         <img src={Linha} alt="linha horizontal" />
 
                         <p>Número de Parcelas</p>
-                        <p>{dados.parcelas}</p>
+                        <p className="p_dadosDoContrato">{dados.parcelas}</p>
                         <img src={Linha} alt="linha horizontal" />
 
                         <p>Custo</p>
-                        <p>{dados.custo}</p>
+                        <p className="p_dadosDoContrato">{dados.custo}</p>
                         <img src={Linha} alt="linha horizontal" />
 
                         <p>Data do Contrato</p>
-                        <p>{dados.dataContrato}</p>
+                        <p className="p_dadosDoContrato">{dados.dataContrato}</p>
                         <img src={Linha} alt="linha horizontal" />
 
                         <p>Data de Entrega do Relatório Final</p>
-                        <p>{dados.dataEntrega}</p>
+                        <p className="p_dadosDoContrato">{dados.dataEntrega}</p>
                         <img src={Linha} alt="linha horizontal" />
                     </form>
                 </div>

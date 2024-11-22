@@ -93,10 +93,11 @@ const PesquisaDados = () => {
                         <select
                             id="clienteSelect"
                             name="cod" 
+                            defaultValue="opcao"
                             value={formData.cod}
                             onChange={handleClienteSelect}
                         >
-                            <option value="" disabled>Selecionar Cliente</option>
+                            <option value="opcao" disabled>Selecionar Cliente</option>
                             {clientes.map((cliente) => (
                             <option key={cliente.cnpj} value={cliente.cnpj}>
                                 {cliente.razao_social}
@@ -171,10 +172,11 @@ const PesquisaDados = () => {
                         <select
                             id="cultivarSelect"
                             name="cultivar"
+                            defaultValue="opcao"
                             value={formData.protocolo}
                             onChange={handleProtocoloSelect}
                         >
-                            <option value="" disabled selected>Protocolo</option>
+                            <option value="opcao" disabled>Protocolo</option>
                             {protocolos.map((protocolo) => (
                                 <option key={protocolo.sigla} value={protocolo.sigla}>
                                     {protocolo.sigla}
@@ -198,16 +200,16 @@ const PesquisaDados = () => {
                 </div>
 
                 <div className="inputsPesquisa">
-                        <label className="label__InserirDados" htmlFor="psq_contratadaInput">Pesquisa Contratada (cod)</label>
-                        <input
-                            className="input__InserirText"
-                            type="text"
-                            id="psq_contratadaInput"
-                            name="psq_contratada"
-                            placeholder="Digite aqui"
-                            value={formData.psq_contratada}
-                            onChange={handleChange}
-                        />
+                    <label className="label__InserirDados" htmlFor="psq_contratadaInput">Pesquisa Contratada (cod)</label>
+                    <input
+                        className="input__InserirText"
+                        type="text"
+                        id="psq_contratadaInput"
+                        name="psq_contratada"
+                        placeholder="Digite aqui"
+                        value={formData.psq_contratada}
+                        onChange={handleChange}
+                    />
                 </div>
                     
                 <div className="inputsDate">
@@ -245,11 +247,12 @@ const PesquisaDados = () => {
                         <select
                             id="faseSelect"
                             name="fase"
+                            defaultValue="opcao"
                             value={formData.fase}
                             onChange={handleChange}
                             required
                         >
-                            <option value="" disabled selected>Fase</option>
+                            <option value="opcao" disabled>Fase</option>
                             <option value="fase1">1</option>
                             <option value="fase2">2</option>
                             <option value="fase3">3</option>

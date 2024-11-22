@@ -23,6 +23,7 @@ import CadastroDoProfissional from './components/Profissional/Controle Geral/Cad
 import CadastrarContratoProfissional from './components/Profissional/Contrato/CadastrarContrato/CadastrarContratoProfissional';
 import GerenciarClientes from './components/Profissional/Controle Geral/GerenciarClientes/GerenciarClientes';
 import GerenciarFuncionario from './components/Profissional/Controle Geral/GerenciarFuncionarios/GerenciarFuncionario';
+import CadastrarProtocoloProfissional from './components/Profissional/Contrato/CadastrarProtocolo/cadastrarProtocoloProfissional';
 import axios from "axios";
 
 axios.defaults.baseURL = "http://localhost:4000/";
@@ -110,6 +111,12 @@ function App() {
         <Route
           path="/cadastrar-contrato"
           element={<CadastrarContratoProfissional />}
+        />
+
+
+        <Route
+          path="/cadastrar-protocolo"
+          element={<CadastrarProtocoloProfissional />}
         />
 
 

@@ -43,6 +43,7 @@ const InputsCliente = () => {
         try {
             const response = await axios.post("http://localhost:4000/create-cliente", payload);
             console.log("Resposta do servidor:", response.data);
+            alert("Cliente criado com sucesso!");
         } catch (error) {
             console.error("Erro ao enviar dados:", error);
         }
