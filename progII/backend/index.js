@@ -12,14 +12,14 @@ const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
 // Conexão com o banco
 const usuario = "postgres";
-const senha = "postgre";
+const senha = "postgres";
 const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
 
 const server = express();
 
 // Configuração de CORS
 const corsOptions = {
-  origin: "http://localhost:5173", // Permite requisições do frontend
+  origin: ["http://localhost:5173", "http://localhost:3000"], // Permite requisições do frontend
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   optionsSuccessStatus: 200,
@@ -206,7 +206,7 @@ server.post("/create-colaborador", async (req, res) => {
   const saltRounds = 10; // Número de rounds para o salt
   try {
       const {
-          nome_completo: nome,
+          nome,
           cpf,
           email,
           celular,
@@ -225,7 +225,7 @@ server.post("/create-colaborador", async (req, res) => {
       const hashedPasswd = bcrypt.hashSync(senha, salt);
 
       await db.none(
-          "insert into colaboradores (nome, cpf, email, celular, cargo, permissao, cidade, logradouro, bairro, cep, estado, horario, senha) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);",
+          "INSERT INTO colaboradores (nome, cpf, email, celular, cargo, permissao, cidade, logradouro, bairro, cep, estado, horario, senha) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);",
           [
               nome,
               cpf,
@@ -251,23 +251,75 @@ server.post("/create-colaborador", async (req, res) => {
   }
 });
 
+// Rota para procurar um colaborador
+server.get('/buscar_funcionario', async (req, res) => {
+  console.log('Requisição recebida em /buscar_funcionario');
+  const termoBusca = req.query.search;
+  console.log('Parâmetro search:', termoBusca);
 
-server.get("/perfilProfissional", authenticateToken, async (req, res) => {
   try {
-      const userCPF = req.user.identificador; 
-      const colaborador = await db.oneOrNone(
-          "select nome, cpf, email, celular, cargo, horario from colaboradores where cpf = $1;",
-          [userCPF]
+      const colaboradores = await db.any(
+          `
+          SELECT * 
+          FROM colaboradores 
+          WHERE nome ILIKE $1 
+          OR cpf ILIKE $1
+          `,
+          [`%${termoBusca}%`]
       );
-
-      if (!colaborador) {
-          return res.status(404).json({ message: "Colaborador não encontrado." });
-      }
-
-      res.status(200).json({ colaborador });
+      console.log('Resultado da consulta:', colaboradores);
+      res.json(colaboradores);
   } catch (error) {
-      console.error("Erro ao buscar perfil profissional:", error);
-      res.status(500).json({ message: "Erro ao buscar perfil profissional." });
+      console.error('Erro ao buscar colaboradores:', error.message);
+      res.status(500).send("Erro no servidor");
+  }
+});
+
+// Atualizar colaborador
+server.put('/update-colaborador/', async (req, res) => {
+  const { cpf } = req.params;
+  const {
+    nome,
+    email,
+    celular,
+    cargo,
+    logradouro,
+    bairro,
+    cidade,
+    estado,
+    cep,
+    permissao,
+    horario,
+    senha,
+  } = req.body;
+
+  try {
+    await db.none(
+      `UPDATE colaboradores 
+       SET nome = $1, email = $2, celular = $3, cargo = $4, logradouro = $5, 
+           bairro = $6, cidade = $7, estado = $8, cep = $9, permissao = $10, horario = $11, senha = $12 
+       WHERE cpf = $13`,
+      [nome, email, celular, cargo, logradouro, bairro, cidade, estado, cep, permissao, horario, senha, cpf]
+    );
+    // Resposta JSON explícita para o front-end
+    res.json({ message: 'Colaborador atualizado com sucesso!' });
+  } catch (error) {
+    console.error('Erro ao atualizar colaborador:', error);
+    res.status(500).json({ message: 'Erro ao atualizar colaborador!' });
+  }
+});
+
+
+// Excluir colaborador
+server.delete('/delete-colaborador/:cpf', async (req, res) => {
+  const { cpf } = req.params;
+
+  try {
+      await db.none('DELETE FROM colaboradores WHERE cpf = $1', [cpf]);
+      res.json({ message: 'Colaborador excluído com sucesso!' });
+  } catch (error) {
+      console.error('Erro ao excluir colaborador:', error);
+      res.status(500).json({ message: 'Erro ao excluir colaborador!' });
   }
 });
 

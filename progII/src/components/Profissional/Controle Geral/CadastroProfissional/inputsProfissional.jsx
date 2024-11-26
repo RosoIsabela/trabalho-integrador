@@ -1,24 +1,26 @@
 import { useState } from 'react';
 import './inputsProfissional.css';
-import axios from "axios";
-
+import axios from 'axios';
 
 const InputsProfissional = () => {
     const [formData, setFormData] = useState({
-        nome_completo: "",
-        cpf: "",
-        email: "",
-        celular: "",
-        cargo: "",
-        logradouro: "",
-        bairro: "",
-        cidade: "",
-        estado: "",
-        cep: "",
-        permissao: "opcao",
-        horario: "",
-        senha: ""
+        nome: '',
+        cpf: '',
+        email: '',
+        celular: '',
+        cargo: '',
+        logradouro: '',
+        bairro: '',
+        cidade: '',
+        estado: '',
+        cep: '',
+        permissao: 'opcao',
+        horario: '',
+        senha: '',
     });
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [colaboradores, setColaboradores] = useState([]);
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -28,41 +30,133 @@ const InputsProfissional = () => {
         }));
     };
 
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const handleSearch = async () => {
+        if (!searchQuery) {
+            alert('Digite o nome ou CPF para buscar!');
+            return;
+        }
+
+        try {
+            const response = await axios.get(`http://localhost:4000/buscar_funcionario?search=${searchQuery}`);
+            const data = response.data;
+
+            if (data.length === 1) {
+                setFormData(data[0]); // Preenche o formulário se apenas um colaborador for encontrado
+            } else if (data.length > 1) {
+                setColaboradores(data); // Lista os colaboradores encontrados
+            } else {
+                alert('Nenhum colaborador encontrado!');
+            }
+        } catch (error) {
+            console.error('Erro ao buscar colaboradores:', error);
+            alert('Erro ao buscar colaboradores!');
+        }
+    };
+
+
+    const handleEdit = (colaborador) => {
+        setFormData(colaborador); // Preenche o formulário com os dados do colaborador para edição
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.cpf || !formData.nome_completo || !formData.email) {
-            alert("Preencha todos os campos obrigatórios!");
+        if (!formData.cpf || !formData.nome || !formData.email) {
+            alert('Preencha todos os campos obrigatórios!');
             return;
         }
 
         const payload = { 
             ...formData,
-            permissao: parseInt(formData.permissao, 10) // Converte permissao para número
+            permissao: parseInt(formData.permissao, 10), // Converte permissao para número
         };
 
-        console.log("Dados enviados:", formData);
+        console.log('Dados enviados:', formData);
 
         try {
-            // URL completa do backend para evitar problemas de CORS
-            const response = await axios.post("http://localhost:4000/create-colaborador", payload);
-            console.log("Resposta do servidor:", response.data);
+            const response = await axios.post('http://localhost:4000/create-colaborador', payload);
+            console.log('Resposta do servidor:', response.data);
+            alert('Colaborador cadastrado com sucesso!');
+            setFormData({
+                nome: '',
+                cpf: '',
+                email: '',
+                celular: '',
+                cargo: '',
+                logradouro: '',
+                bairro: '',
+                cidade: '',
+                estado: '',
+                cep: '',
+                permissao: 'opcao',
+                horario: '',
+                senha: '',
+            });
         } catch (error) {
-            console.error("Erro ao enviar dados:", error);
+            console.error('Erro ao enviar dados:', error);
         }
     };
 
+   
+        const handleAlterar = async () => {
+            try {
+                const response = await axios.put("http://localhost:4000/update-colaborador", formData);
+                console.log("Colaborador atualizado:", response.data);
+                alert("Alteração realizada com sucesso!");
+            } catch (error) {
+                console.error("Erro ao alterar colaborador:", error);
+                alert("Erro ao tentar alterar o colaborador.");
+            }
+        };
+      
+
+  // Função para excluir colaborador
+  const handleExcluir = async () => {
+    if (!formData.cpf) {
+        alert("Informe o CPF do colaborador para exclusão.");
+        return;
+    }
+    try {
+        const response = await axios.delete(`http://localhost:4000/delete-colaborador/${formData.cpf}`);
+        console.log("Colaborador excluído:", response.data);
+        alert("Exclusão realizada com sucesso!");
+    } catch (error) {
+        console.error("Erro ao excluir colaborador:", error);
+        alert("Erro ao tentar excluir o colaborador.");
+    }
+};
+
     return (
+
         <div>
-            <form className="div__inputsP" onSubmit={handleSubmit}>        
+            <div className="div__search">
+                    <input
+                        className="inputs__boxsP"                         
+                        id="search"
+                        type="text"
+                        placeholder="Digite o nome ou CPF do colaborador"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                    />
+                    <button className="button__search" type="submit" onClick={handleSearch}>
+                        Buscar
+                    </button>
+                </div>
+            
+            {/* Formulário de cadastro */}
+            <form className="div__inputsP" onSubmit={handleSubmit}>
                 <input
                     className="inputs__boxsP"
                     id="nome_completo"
                     type="text"
                     placeholder="Nome Completo"
-                    value={formData.nome_completo}
+                    value={formData.nome}
                     onChange={handleChange}
-                />      
+                />
                 <input
                     className="inputs__boxsP"
                     id="cpf"
@@ -70,7 +164,7 @@ const InputsProfissional = () => {
                     placeholder="CPF"
                     value={formData.cpf}
                     onChange={handleChange}
-                />             
+                />
                 <input
                     className="inputs__boxsP"
                     id="email"
@@ -78,7 +172,7 @@ const InputsProfissional = () => {
                     placeholder="E-mail"
                     value={formData.email}
                     onChange={handleChange}
-                />               
+                />
                 <input
                     className="inputs__boxsP"
                     id="celular"
@@ -102,7 +196,7 @@ const InputsProfissional = () => {
                     placeholder="Logradouro"
                     value={formData.logradouro}
                     onChange={handleChange}
-                />               
+                />
                 <input
                     className="inputs__boxsP"
                     id="bairro"
@@ -110,7 +204,7 @@ const InputsProfissional = () => {
                     placeholder="Bairro"
                     value={formData.bairro}
                     onChange={handleChange}
-                />    
+                />
                 <input
                     className="inputs__boxsP"
                     id="cidade"
@@ -118,7 +212,7 @@ const InputsProfissional = () => {
                     placeholder="Cidade"
                     value={formData.cidade}
                     onChange={handleChange}
-                /> 
+                />
                 <input
                     className="inputs__boxsP"
                     id="estado"
@@ -126,7 +220,7 @@ const InputsProfissional = () => {
                     placeholder="Estado"
                     value={formData.estado}
                     onChange={handleChange}
-                />     
+                />
                 <input
                     className="inputs__boxsP"
                     id="cep"
@@ -134,7 +228,7 @@ const InputsProfissional = () => {
                     placeholder="CEP"
                     value={formData.cep}
                     onChange={handleChange}
-                />    
+                />
                 <select
                     className="inputs__boxsP"
                     id="permissao"
@@ -162,13 +256,37 @@ const InputsProfissional = () => {
                     value={formData.senha}
                     onChange={handleChange}
                 />
-                
                 <div>
                     <button className="button__formP" type="submit">
                         Cadastrar
                     </button>
                 </div>
+
+                <div>
+    <button className="button__formP alterar" type="button" onClick={handleAlterar}>
+        Alterar
+    </button>
+</div>
+
+<div>
+    <button className="button__formP deletar" type="button" onClick={handleExcluir}>
+        Excluir
+    </button>
+</div>
             </form>
+
+         
+           
+           
+            {/* Listagem de colaboradores */}
+            <div className="div__listagemP">
+                {colaboradores.map((colaborador) => (
+                    <div className="colaborador" key={colaborador.cpf}>
+                        <span>Nome: {colaborador.nome} | CPF: {colaborador.cpf}</span>
+                        <button onClick={() => handleEdit(colaborador)}>Alterar</button>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
