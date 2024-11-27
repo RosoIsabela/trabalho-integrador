@@ -15,18 +15,59 @@
     padding: 20px 20px 15px 20px;
 }
 
+.div__search {
+    display: flex;
+    justify-content: left;
+    flex-direction: row;
+    align-items: left;
+    flex-wrap:wrap ;
+    gap: 20px;
+    padding: 20px;
+    padding-left: 45px;
+}
+
 .button__formP {
     border: none;
     border-radius: 30px;
     font-size: 24px;
-    width: 600px;
+    width: 300px;
     height: 55px;
     margin-top: 30px;
     background-color: var(--verde-nome-empresa);
     cursor: pointer;
 }
 
-.div__inputsP #nome_completo {
+.button__formP.alterar {
+    background-color: goldenrod;
+}
+
+.button__formP.deletar {
+    background-color: red;
+}
+
+.button__search {
+    border: none;
+    border-radius: 30px;
+    vertical-align:top;
+    font-size: 24px;
+    width: 200px;
+    height: 45px;
+    margin-top: 0;
+    background-color: var(--laranja-nome-empresa);
+    cursor: pointer;
+}
+
+.div__search #search {
+    width: 600px; 
+    height: 50px;
+    border-radius: 30px;
+    border-style:solid;
+    border-color:  var(--laranja-nome-empresa);
+   
+
+}
+
+.div__inputsP #nome {
     width: 400px; 
     height: 50px;
 }
@@ -98,6 +139,10 @@
     }
 
     .button__formP {
-        width: 100%; /* Botão ocupa 100% da largura em telas menores */
+        width: 33%; /* Botão ocupa 100% da largura em telas menores */
+    }
+
+    .button__search{
+        width: 50%; /* Botão ocupa 100% da largura em telas menores */
     }
 }
