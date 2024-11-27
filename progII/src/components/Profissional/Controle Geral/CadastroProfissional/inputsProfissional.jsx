@@ -102,17 +102,20 @@ const InputsProfissional = () => {
     };
 
    
-        const handleAlterar = async () => {
-            try {
-                const response = await axios.put("http://localhost:4000/update-colaborador", formData);
-                console.log("Colaborador atualizado:", response.data);
-                alert("Alteração realizada com sucesso!");
-            } catch (error) {
-                console.error("Erro ao alterar colaborador:", error);
-                alert("Erro ao tentar alterar o colaborador.");
-            }
-        };
-      
+    const handleAlterar = async () => {
+        try {
+            const response = await axios.put(
+                `http://localhost:4000/update-colaborador/${formData.cpf}`, 
+                formData // Inclui os dados no corpo da requisição
+            );
+            console.log("Colaborador atualizado:", response.data);
+            alert("Alteração realizada com sucesso!");
+        } catch (error) {
+            console.error("Erro ao alterar colaborador:", error);
+            alert("Erro ao tentar alterar o colaborador.");
+        }
+    };
+    
 
   // Função para excluir colaborador
   const handleExcluir = async () => {
@@ -151,7 +154,7 @@ const InputsProfissional = () => {
             <form className="div__inputsP" onSubmit={handleSubmit}>
                 <input
                     className="inputs__boxsP"
-                    id="nome_completo"
+                    id="nome"
                     type="text"
                     placeholder="Nome Completo"
                     value={formData.nome}
@@ -273,20 +276,11 @@ const InputsProfissional = () => {
         Excluir
     </button>
 </div>
-            </form>
-
-         
+            </form>   
            
            
-            {/* Listagem de colaboradores */}
-            <div className="div__listagemP">
-                {colaboradores.map((colaborador) => (
-                    <div className="colaborador" key={colaborador.cpf}>
-                        <span>Nome: {colaborador.nome} | CPF: {colaborador.cpf}</span>
-                        <button onClick={() => handleEdit(colaborador)}>Alterar</button>
-                    </div>
-                ))}
-            </div>
+           
+          
         </div>
     );
 };

@@ -12,7 +12,7 @@ const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
 // Conexão com o banco
 const usuario = "postgres";
-const senha = "postgres";
+const senha = "laranja02";
 const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
 
 const server = express();
@@ -276,9 +276,9 @@ server.get('/buscar_funcionario', async (req, res) => {
 });
 
 // Atualizar colaborador
-server.put('/update-colaborador/', async (req, res) => {
+server.put('/update-colaborador/:cpf', async (req, res) => {
   const { cpf } = req.params;
-  const {
+  let {
     nome,
     email,
     celular,
@@ -294,20 +294,38 @@ server.put('/update-colaborador/', async (req, res) => {
   } = req.body;
 
   try {
+    // Atualiza a senha apenas se ela for enviada
+    if (senha) {
+      const saltRounds = 10;
+      const salt = bcrypt.genSaltSync(saltRounds);
+      senha = bcrypt.hashSync(senha, salt);
+    }
+
     await db.none(
       `UPDATE colaboradores 
-       SET nome = $1, email = $2, celular = $3, cargo = $4, logradouro = $5, 
-           bairro = $6, cidade = $7, estado = $8, cep = $9, permissao = $10, horario = $11, senha = $12 
+       SET nome = COALESCE($1, nome), 
+           email = COALESCE($2, email), 
+           celular = COALESCE($3, celular), 
+           cargo = COALESCE($4, cargo), 
+           logradouro = COALESCE($5, logradouro), 
+           bairro = COALESCE($6, bairro), 
+           cidade = COALESCE($7, cidade), 
+           estado = COALESCE($8, estado), 
+           cep = COALESCE($9, cep), 
+           permissao = COALESCE($10, permissao), 
+           horario = COALESCE($11, horario), 
+           senha = COALESCE($12, senha)
        WHERE cpf = $13`,
       [nome, email, celular, cargo, logradouro, bairro, cidade, estado, cep, permissao, horario, senha, cpf]
     );
-    // Resposta JSON explícita para o front-end
+
     res.json({ message: 'Colaborador atualizado com sucesso!' });
   } catch (error) {
     console.error('Erro ao atualizar colaborador:', error);
     res.status(500).json({ message: 'Erro ao atualizar colaborador!' });
   }
 });
+
 
 
 // Excluir colaborador
