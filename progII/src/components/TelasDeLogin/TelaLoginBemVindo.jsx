@@ -31,7 +31,7 @@ function TelaLoginBemVindo() {
                 //redireciona com base no tipo de usuário
                 if (parseInt(permissao, 10) === 0) {
                     navigate("/dashboard-cliente");
-                } else if (parseInt(permissao, 10) === 1) {
+                } else if (parseInt(permissao, 10) === 1 || parseInt(permissao, 10) === 2 || parseInt(permissao, 10) === 3) {
                     navigate("/dashboard-profissional");
                 } else {
                     alert("Tipo de usuário inválido!");

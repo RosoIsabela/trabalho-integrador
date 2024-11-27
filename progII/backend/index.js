@@ -61,7 +61,7 @@ passport.use(
       try {
         // Busca o usuário no banco de dados
         const user = await db.oneOrNone(
-          "SELECT email, senha FROM clientes WHERE email = $1;",
+          "SELECT email, senha FROM cliente WHERE email = $1;",
           [username]
         );
 
@@ -95,7 +95,7 @@ passport.use(
     async (payload, done) => {
       try {
         const user = await db.oneOrNone(
-          "SELECT * FROM clientes WHERE email = $1;",
+          "SELECT * FROM cliente WHERE email = $1;",
           [payload.email]
         );
 
@@ -161,13 +161,13 @@ server.post("/tela-login-principal", async (req, res) => {
 
     //busca usuario na tabela de colaborador, se nao encontrar busca na de clientes
     user = await db.oneOrNone(
-      "select cpf as identificador, email, senha, permissao from colaboradores where email = $1;",
+      "select cpf as identificador, email, senha, permissao from colaborador_sulagro where email = $1;",
       [email]
     );
 
     if (!user) {
       user = await db.oneOrNone(
-        "select cnpj as identificador, email, senha, permissao from clientes where email = $1;",
+        "select cnpj as identificador, email, senha, permissao from cliente where email = $1;",
         [email]
       );
     }
@@ -175,6 +175,7 @@ server.post("/tela-login-principal", async (req, res) => {
       return res.status(401).json({ message: "Email ou senha inválidos!" });
     }
 
+   
     //verifica se a senha é valida usando bcrypt
     const isPasswordValid = await bcrypt.compare(senha, user.senha);
 
@@ -225,7 +226,7 @@ server.post("/create-colaborador", async (req, res) => {
       const hashedPasswd = bcrypt.hashSync(senha, salt);
 
       await db.none(
-          "insert into colaboradores (nome, cpf, email, celular, cargo, permissao, cidade, logradouro, bairro, cep, estado, horario, senha) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);",
+          "insert into colaborador_sulagro (nome, cpf, email, celular, cargo, permissao, cidade, logradouro, bairro, cep, estado, horario, senha) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);",
           [
               nome,
               cpf,
@@ -256,7 +257,7 @@ server.get("/perfilProfissional", authenticateToken, async (req, res) => {
   try {
       const userCPF = req.user.identificador; 
       const colaborador = await db.oneOrNone(
-          "select nome, cpf, email, celular, cargo, horario from colaboradores where cpf = $1;",
+          "select nome, cpf, email, celular, cargo, horario from colaborador_sulagro where cpf = $1;",
           [userCPF]
       );
 
@@ -296,7 +297,7 @@ server.post("/create-cliente", async (req, res) => {
       const hashedPasswd = bcrypt.hashSync(senha, salt);
 
       await db.none(
-          "insert  into clientes (nome, cnpj, email, celular, razao_social, cidade, logradouro, bairro, cep, estado, permissao, senha) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",
+          "insert  into cliente (nome, cnpj, email, celular, razao_social, cidade, logradouro, bairro, cep, estado, permissao, senha) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",
           [
               nome,
               cnpj,
@@ -326,7 +327,7 @@ server.get("/perfilCliente", authenticateToken, async (req, res) => {
   try {
       const userCNPJ = req.user.identificador; 
       const cliente = await db.oneOrNone(
-          "select nome, cnpj, email, celular, razao_social from clientes where cnpj = $1;",
+          "select nome, cnpj, email, celular, razao_social from cliente where cnpj = $1;",
           [userCNPJ]
       );
 
@@ -344,7 +345,7 @@ server.get("/perfilCliente", authenticateToken, async (req, res) => {
 
 server.get("/clientes", async (req, res) => {
   try {
-      const clientes = await db.any("select cnpj, razao_social from clientes");
+      const clientes = await db.any("select cnpj, razao_social from cliente");
       res.status(200).json(clientes);
   } catch (error) {
       console.error("Erro ao buscar clientes:", error);
@@ -374,8 +375,7 @@ server.get("/ver-contrato", async (req, res) => {
       }
 
       const contrato = await db.any(
-        "select num_contrato, num_parcelas, preco, dt_assinatura, dt_entrega " +
-        "FROM contrato WHERE cliente_cnpj = $1 AND protocolo_num = $2;",
+        "select num_contrato, num_parcelas, preco, dt_assinatura, dt_entrega from contrato where cliente_cnpj = $1 AND protocolo_num = $2;",
         [cliente_cnpj, protocolo_sigla] 
      );
 
@@ -470,46 +470,6 @@ server.delete("/excluir-contrato/:num_contrato", async (req, res) => {
 });
 
 
-/*
-server.post("/incluir-pesquisa", async (req, res) => {
-  try {
-    const {
-      num_contrato,
-      dt_assinatura,
-      dt_entrega,
-      preco,
-      num_parcelas,
-      cliente_cnpj,
-      protocolo_num,
-    } = req.body;
-
-    const token = req.headers['authorization'].split(' ')[1];
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const responsavel = decoded.identificador;
-
-    await db.none(
-      "insert into pesquisa (num_contrato, dt_assinatura, dt_entrega, preco, num_parcelas, cliente_cnpj, protocolo_num, responsavel) values ($1, $2, $3, $4, $5, $6, $7, $8);",
-      [
-        num_contrato,
-        dt_assinatura,
-        dt_entrega,
-        preco,
-        num_parcelas,
-        cliente_cnpj,
-        protocolo_num,
-        responsavel,
-      ]
-    );
-
-    console.log("Informações de pesquisa adicionadas com sucesso!");
-    res.status(200).json({ message: "Informações de pesquisa adicionadas com sucesso!" });
-  } catch (error) {
-    console.error("Erro ao adicionar pesquisa", error);
-    res.status(400).json({ message: "Erro ao adicionar pesquisa" });
-  }
-});
-*/
-
 server.post("/incluir-etapa-pesquisa", async (req, res) => {
   try {
     const {
@@ -518,18 +478,18 @@ server.post("/incluir-etapa-pesquisa", async (req, res) => {
       tm_plantas,
       cor_folhas,
       outros_prod,
+      num_nos,
       clima,
       fase,
       obs,
-      psq_contratada,
-      num_nos,
+      contrato,
       cliente_cnpj,
-      protocolo_sigla,
+      protocolo_num,
     } = req.body;
 
     await db.none(
-      `insert into etapas_pesquisa 
-      (dt_coleta, dt_apl_prod, tm_plantas, cor_folhas, outros_prod, clima, fase, obs, psq_contratada, num_nos, cliente_cnpj, protocolo_sigla) 
+      `insert into pesquisa 
+      (dt_coleta, dt_apl_prod, tm_plantas, cor_folhas, outros_prod, num_nos, clima, fase, obs, contrato, cliente_cnpj, protocolo_num) 
       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);`,
       [
         dt_coleta,
@@ -537,13 +497,13 @@ server.post("/incluir-etapa-pesquisa", async (req, res) => {
         tm_plantas,
         cor_folhas,
         outros_prod,
+        num_nos,
         clima,
         fase,
         obs,
-        psq_contratada,
-        num_nos,
+        contrato,
         cliente_cnpj,
-        protocolo_sigla,
+        protocolo_num,
       ]
     );
 
@@ -554,6 +514,28 @@ server.post("/incluir-etapa-pesquisa", async (req, res) => {
     res.status(400).json({ message: "Erro ao adicionar etapa de pesquisa." });
   }
 });
+
+
+server.get("/ver-pesquisa", async (req, res) => {
+  try {
+    const { cliente_cnpj, protocolo_sigla, fase } = req.query;
+
+    const pesquisa = await db.any(
+      `select * FROM pesquisa where cliente_cnpj = $1 and protocolo_sigla = $2 and fase = $3`, 
+      [cliente_cnpj, protocolo_sigla, fase]
+    );
+
+    if (pesquisa.length > 0) {
+      res.status(200).json({ pesquisa });
+    } else {
+      res.status(404).json({ message: "Pesquisa não encontrada." });
+    }
+  } catch (error) {
+    console.error("Erro ao buscar pesquisa:", error);
+    res.status(500).json({ message: "Erro ao buscar pesquisa." });
+  }
+});
+
 
 server.post("/logout", function (req, res) {
   req.logout(function (err) {

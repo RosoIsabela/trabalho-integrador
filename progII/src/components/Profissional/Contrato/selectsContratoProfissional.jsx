@@ -1,6 +1,6 @@
 import '../../Cliente/VerContrato/selectsContratoCliente.css';
 import Linha from "../../../assets/Line 29.png";
-import { ArrowRight, Eraser, MagnifyingGlass } from "@phosphor-icons/react";
+import { ArrowRight, Eraser, MagnifyingGlass, Wrench } from "@phosphor-icons/react";
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
@@ -165,6 +165,14 @@ function SelectsContratoProfissional() {
                             <MagnifyingGlass />
                         </div>
                     </button>
+
+                    <button type="button" className="contrato__button3">
+                        Alterar
+                        <div className="icons__button3">
+                            <Wrench />
+                        </div>
+                    </button>
+
 
                     <button className="button__excluir" type="button" onClick={DeleteContrato}>
                         Excluir

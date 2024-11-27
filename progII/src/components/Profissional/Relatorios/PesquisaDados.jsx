@@ -13,11 +13,11 @@ const PesquisaDados = () => {
         coloracao: "",
         produtos: "",
         nos: "",
-        data_coleta: "2024-12-23",
-        data_aplicacao: "2024-12-23",
+        data_coleta: "",
+        data_aplicacao: "",
         descricao: "",
         clima: "",
-        psq_contratada: "",
+        contrato: "",
     });
 
     useEffect(() => {
@@ -59,7 +59,7 @@ const PesquisaDados = () => {
                     clima: formData.clima,
                     fase: formData.fase,
                     obs: formData.descricao,
-                    psq_contratada: formData.psq_contratada,
+                    contrato: formData.contrato,
                     cliente_cnpj: cliente,
                     protocolo_sigla: protocolo
                 }),
@@ -97,7 +97,7 @@ const PesquisaDados = () => {
                             value={formData.cod}
                             onChange={handleClienteSelect}
                         >
-                            <option value="opcao" disabled>Selecionar Cliente</option>
+                            <option value="opcao" disabled>Selecionar Contrato</option>
                             {clientes.map((cliente) => (
                             <option key={cliente.cnpj} value={cliente.cnpj}>
                                 {cliente.razao_social}
@@ -207,7 +207,7 @@ const PesquisaDados = () => {
                         id="psq_contratadaInput"
                         name="psq_contratada"
                         placeholder="Digite aqui"
-                        value={formData.psq_contratada}
+                        value={formData.contrato}
                         onChange={handleChange}
                     />
                 </div>
@@ -257,6 +257,7 @@ const PesquisaDados = () => {
                             <option value="fase2">2</option>
                             <option value="fase3">3</option>
                             <option value="fase4">4</option>
+                            <option value="fase5">4</option>
                         </select>
                     </div>
                 </nav>

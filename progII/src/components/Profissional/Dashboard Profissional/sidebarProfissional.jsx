@@ -55,7 +55,7 @@ function SideBarProfissional() {
                     <p className="sidebarP"> 
                         <FileText />
                     </p>
-                    <Link className="link__buttonSidebar" to="/incluir-pesquisa">Relatórios</Link>
+                    <Link className="link__buttonSidebar" to="/relatorios-profissional">Relatórios</Link>
                 </button>
 
 

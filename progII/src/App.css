@@ -19,6 +19,9 @@ body {
   --background-branco-principal: white;
   --tl-input-dados: rgba(230, 230, 230, 1);
   --tl-button-verde: rgba(124, 181, 24, 0.75);
+  --red-para-botao: rgba(236, 10, 10, 0.85);
+  --blue-para-botao: rgba(10, 168, 236, 0.85);
+  --yellow-para-botao: rgba(255, 201, 23, 1);
 
 
   /* DashBoard Cliente */

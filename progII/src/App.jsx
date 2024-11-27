@@ -13,6 +13,7 @@ import ConfiguracoesCliente from './components/Cliente/Configuracoes/Configuraco
 import PefilCliente from './components/Cliente/Perfil/PerfilCliente';
 import SobreCliente from './components/Cliente/Sobre/SobreCliente';
 import ConfiguracoesProfissional from './components/Profissional/Configuracoes/ConfiguracoesProfissional'
+import RelatoriosProfissional from './components/Profissional/Relatorios/RelatoriosProfissional';
 import ContratoProfissional from './components/Profissional/Contrato/ContratoProfissional';
 import ControleGeral from './components/Profissional/Controle Geral/ControleGeral';
 import PerfilProfissional from './components/Profissional/Perfil/PerfilProfissional'
@@ -119,11 +120,18 @@ function App() {
           element={<CadastrarProtocoloProfissional />}
         />
 
+        
+        <Route
+          path="/relatorios-profissional"
+          element={<RelatoriosProfissional />}
+        />        
+
 
         <Route
           path="/incluir-pesquisa"
           element={<PesquisaProfissional />}
         />
+
 
         <Route
           path="/controle-geral"

@@ -57,7 +57,7 @@
     justify-content: center;
     align-items: center;
 
-    background-color: var(--verde-nome-empresa);
+    background-color: var(--blue-para-botao);
     text-align: center;
     border: none;
     border-radius: 30px;
@@ -70,13 +70,33 @@
 }
 
 
+.contrato__button3 {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    background-color: var(--yellow-para-botao);
+    text-align: center;
+    border: none;
+    border-radius: 30px;
+    width: 350px;
+    height: 50px;
+    font-size: 20px; 
+    padding: 0 0 0 25px;  
+
+    cursor: pointer;
+}
+
+
+
 .button__excluir {
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     
-    background-color: var(--verde-nome-empresa);
+    background-color: var(--red-para-botao);
     border-radius: 30px;
 
     width: 350px;
@@ -93,14 +113,15 @@
     padding: 8px 0 0 40px;
 }
 
+
 .icons__button2 {
     padding: 8px 0px 0 20px;
 }
 
+
 .icons__button3 {
     padding: 8px 0px 0 20px;
 }
-
 
 
 .box__branca {
@@ -111,6 +132,37 @@
     height: 80vh;
     border-radius: 30px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+
+.DadosDaPesquisa {
+    display: flex;
+    flex-direction: row; 
+    justify-content: space-between;  
+    align-items: flex-start;  
+    width: 100%;  
+    flex-wrap: wrap;
+}
+
+
+.div__Pesquisa1,
+.div__Pesquisa2 {
+    width: 35%;  
+    display: flex;
+    flex-direction: column; 
+    text-align: left;  
+
+    margin: 20px 40px 0 40px;
+}
+
+
+.alinhar__linha {
+    margin: 0 0 10px 0;
+}
+
+
+.p_dadosDaPesquisa {
+    margin: 20px 0 10px 0;
 }
 
 
@@ -127,6 +179,7 @@
 .ajustando__links {
     text-decoration: none;
 }
+
 
 .inputs__DadosContrato{
     outline: none;
