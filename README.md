@@ -30,7 +30,7 @@ Este projeto tem como objetivo desenvolver um sistema de software para uma empre
 
 O projeto está organizado em diferentes diretórios para facilitar a localização dos documentos e código-fonte:
 
-- **/banco-de-dados**: No momento apenas contém os requisitos.
+- **/banco-de-dados**: Contém os requisitos e o modelo conceitual do banco de dados.
 - **/trabalho-integrador**: Contém o código-fonte do projeto, incluindo o frontend e o backend.
 
 
