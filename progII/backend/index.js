@@ -12,7 +12,7 @@ const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
 // Conexão com o banco
 const usuario = "postgres";
-const senha = "postgre";
+const senha = "postgres";
 const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
 
 const server = express();
@@ -210,6 +210,81 @@ server.post("/tela-login-principal", async (req, res) => {
   } catch (error) {
     console.error("Erro no login:", error);
     res.status(500).json({ message: "Erro no servidor" });
+  }
+});
+
+// seleção de cliente para a tela inicial do funcionário
+
+server.get("/clientes", async (req, res) => {
+  try {
+      const clientes = await db.any("select cnpj, razao_social from cliente");
+      res.status(200).json(clientes);
+  } catch (error) {
+      console.error("Erro ao buscar clientes:", error);
+      res.status(500).json({ message: "Erro ao buscar clientes" });
+  }
+});
+
+// seleção de contrato para a tela inicial do funcionario
+
+server.get('/contratos/:clienteCnpj', async (req, res) => {
+  const clienteCnpj = req.params.clienteCnpj;
+
+  try {
+    const contratos = await db.any("SELECT num_contrato, protocolo_num FROM contrato WHERE cliente_cnpj = $1", [clienteCnpj]);
+    
+    res.status(200).json(contratos); 
+  } catch (error) {
+    console.error("Erro ao buscar contratos:", error);
+    res.status(500).json({ message: "Erro ao buscar contratos" });
+  }
+});
+
+// Atualização da data final de entrega do dashboard do profissional
+
+server.get('/contratos/:clienteCnpj/:contratoNum', async (req, res) => {
+  try {
+    const { clienteCnpj, contratoNum } = req.params;
+
+    const contrato = await db.oneOrNone(
+      `SELECT dt_entrega
+       FROM contrato 
+       WHERE cliente_cnpj = $1 AND num_contrato = $2;`,
+      [clienteCnpj, contratoNum]
+    );
+
+    if (!contrato) {
+      return res.status(404).json({ message: "Contrato não encontrado." });
+    }
+
+    res.status(200).json({ contrato });
+  } catch (error) {
+    console.error("Erro ao buscar contrato:", error);
+    res.status(500).json({ message: "Erro ao buscar contrato." });
+  }
+});
+
+// Atualização do checklist das fases da pesquisa
+server.get('/pesquisas/fase-maior/:clienteCnpj/:contratoNum', async (req, res) => {
+  try {
+    const { clienteCnpj, contratoNum } = req.params;
+
+    const resultado = await db.oneOrNone(
+      `SELECT MAX(fase) AS maior_fase
+       FROM pesquisa p
+       JOIN contrato c ON p.contrato = c.num_contrato
+       WHERE c.cliente_cnpj = $1 AND c.num_contrato = $2;`,
+      [clienteCnpj, contratoNum]
+    );
+
+    if (!resultado || resultado.maior_fase === null) {
+      return res.status(404).json({ message: "Nenhuma fase encontrada para o contrato e cliente especificados." });
+    }
+
+    res.status(200).json({ maiorFase: resultado.maior_fase });
+  } catch (error) {
+    console.error("Erro ao buscar a maior fase:", error);
+    res.status(500).json({ message: "Erro ao buscar a maior fase da pesquisa." });
   }
 });
 
