@@ -43,12 +43,12 @@ const InputsProfissional = () => {
 
         try {
             const response = await axios.get(`http://localhost:4000/buscar_funcionario?search=${searchQuery}`);
-            const data = response.data;
-
-            if (data.length === 1) {
-                setFormData(data[0]); // Preenche o formulário se apenas um colaborador for encontrado
-            } else if (data.length > 1) {
-                setColaboradores(data); // Lista os colaboradores encontrados
+            const { status, data } = response.data; // Desestruturação para acessar status e dados diretamente
+    
+            if (status === 'encontrado' && data.length === 1) {
+                setFormData(data[0]);
+            } else if (status === 'encontrado' && data.length > 1) {
+                setColaboradores(data);
             } else {
                 alert('Nenhum colaborador encontrado!');
             }
