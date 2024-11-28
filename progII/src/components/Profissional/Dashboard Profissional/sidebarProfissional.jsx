@@ -2,9 +2,20 @@ import '../../Cliente/DashBoard Cliente/sidebar.css';
 import logoEmpresa from '../../../assets/logoSulagro.png';
 import { HouseLine, PencilLine, FileText, Gear, Cardholder, SignOut } from "@phosphor-icons/react";
 import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { jwtDecode } from "jwt-decode";
 
 function SideBarProfissional() {
     const navigate = useNavigate();
+    const [permissao, setPermissao] = useState(null);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token'); 
+        if (token) {
+            const payload = jwtDecode(token);
+            setPermissao(payload.permissao);
+        }
+    }, []);
 
     const handleLogout = async () => {
         try {
@@ -44,27 +55,32 @@ function SideBarProfissional() {
                     <Link className="link__buttonSidebar" to="/dashboard-profissional">Home</Link>
                 </button>
 
-                <button className="sidebarButton">
-                    <p className="sidebarP">
-                        <PencilLine />
-                    </p>
-                    <Link className="link__buttonSidebar" to="/contrato-profissional">Contrato</Link>
-                </button>
+                {permissao === 3 && (
+                    <button className="sidebarButton">
+                        <p className="sidebarP">
+                            <PencilLine />
+                        </p>
+                        <Link className="link__buttonSidebar" to="/contrato-profissional">Contrato</Link>
+                    </button>
+                )}
 
-                <button className="sidebarButton">
-                    <p className="sidebarP"> 
-                        <FileText />
-                    </p>
-                    <Link className="link__buttonSidebar" to="/relatorios-profissional">Relatórios</Link>
-                </button>
+                {(permissao === 2 || permissao === 3) && (
+                    <button className="sidebarButton">
+                        <p className="sidebarP"> 
+                            <FileText />
+                        </p>
+                        <Link className="link__buttonSidebar" to="/relatorios-profissional">Relatórios</Link>
+                    </button>
+                )}
 
-
-                <button className="sidebarButton">
-                    <p className="sidebarP">
-                        <Cardholder />
-                    </p>
-                    <Link className="link__buttonSidebar" to="/controle-geral">Controle Geral</Link>
-                </button>
+                {permissao === 3 && (
+                    <button className="sidebarButton">
+                        <p className="sidebarP">
+                            <Cardholder />
+                        </p>
+                        <Link className="link__buttonSidebar" to="/controle-geral">Controle Geral</Link>
+                    </button>
+                )}
             
             
                 <button className="sidebarButton">

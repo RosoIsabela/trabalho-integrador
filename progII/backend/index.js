@@ -714,3 +714,23 @@ server.post("/logout", function (req, res) {
   });
 });
 
+
+// Rota para obter permissão de um colaborador pelo CPF
+server.get("/colaborador-permissao/:cpf", async (req, res) => {
+  const { cpf } = req.params;
+  try {
+      const colaborador = await db.oneOrNone(
+          "SELECT permissao FROM colaborador_sulagro WHERE cpf = $1", 
+          [cpf]  // Alteração aqui: estamos passando 'cpf', não 'id'
+      );
+      
+      if (colaborador) {
+          res.status(200).json({ permissao: colaborador.permissao });
+      } else {
+          res.status(404).json({ message: "Colaborador não encontrado" });
+      }
+  } catch (error) {
+      console.error("Erro ao obter permissão do colaborador:", error);
+      res.status(400).json({ message: "Erro ao obter permissão" });
+  }
+});

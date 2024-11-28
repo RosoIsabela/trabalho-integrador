@@ -255,9 +255,9 @@ const InputsProfissional = () => {
                     onChange={handleChange}
                 >
                     <option value="opcao" disabled>Tipo de Permissão</option>
-                    <option value="3">Funcionário</option>
+                    <option value="3">Administrador</option>
                     <option value="2">Coordenador de Equipe</option>
-                    <option value="1">Administrador</option>
+                    <option value="1">Funcionário</option>
                 </select>
                 <input
                     className="inputs__boxsP"
