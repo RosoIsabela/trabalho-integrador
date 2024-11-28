@@ -2,10 +2,7 @@ import { useState, useEffect } from 'react';
 import './PesquisaDados.css';
 
 const PesquisaDados = () => {
-    const [clientes, setClientes] = useState([]);
-    const [cliente, setCliente] = useState('');
-    const [protocolos, setProtocolos] = useState([]);
-    const [protocolo, setProtocolo] = useState('');
+    const [contratos, setContratos] = useState([]);  
     const [formData, setFormData] = useState({
         cultivar: "",
         fase: "opcao",
@@ -17,19 +14,23 @@ const PesquisaDados = () => {
         data_aplicacao: "",
         descricao: "",
         clima: "",
-        contrato: "",
+        contrato: "opcao",
     });
 
-    useEffect(() => {
-        fetch('http://localhost:4000/clientes')
-            .then((response) => response.json())
-            .then((data) => setClientes(data))
-            .catch((error) => console.error("Erro ao buscar clientes:", error));
+    const fases = [
+        { id: 'fase1', nome: '1º Etapa' },
+        { id: 'fase2', nome: '2º Etapa' },
+        { id: 'fase3', nome: '3º Etapa' },
+        { id: 'fase4', nome: '4º Etapa' },
+        { id: 'fase5', nome: '5º Etapa' },
+    ];
 
-        fetch('http://localhost:4000/protocolos')
+
+    useEffect(() => {
+        fetch('http://localhost:4000/contratos')
             .then((response) => response.json())
-            .then((data) => setProtocolos(data))
-            .catch((error) => console.error("Erro ao buscar protocolos:", error));
+            .then((data) => setContratos(data))
+            .catch((error) => console.error("Erro ao buscar contratos:", error));
     }, []);
 
     const handleChange = (e) => {
@@ -60,8 +61,6 @@ const PesquisaDados = () => {
                     fase: formData.fase,
                     obs: formData.descricao,
                     contrato: formData.contrato,
-                    cliente_cnpj: cliente,
-                    protocolo_sigla: protocolo
                 }),
             });
 
@@ -75,14 +74,13 @@ const PesquisaDados = () => {
         }
     };
 
-    //função para selecionar o cliente
-    const handleClienteSelect = (e) => {
-        setCliente(e.target.value);
-    };
-
-    //função para selecionar o protocolo
-    const handleProtocoloSelect = (e) => {
-        setProtocolo(e.target.value);
+    //função para selecionar o contrato
+    const handleContratoSelect = (e) => {
+        const { value } = e.target;
+        setFormData((prevState) => ({
+            ...prevState,
+            contrato: value,
+        }));
     };
 
     return (
@@ -91,16 +89,16 @@ const PesquisaDados = () => {
                 <nav className="TopBarPesquisa">
                     <div>
                         <select
-                            id="clienteSelect"
-                            name="cod" 
+                            id="contratoSelect"  
+                            name="contrato"  
                             defaultValue="opcao"
-                            value={formData.cod}
-                            onChange={handleClienteSelect}
+                            value={formData.contrato}
+                            onChange={handleContratoSelect} 
                         >
                             <option value="opcao" disabled>Selecionar Contrato</option>
-                            {clientes.map((cliente) => (
-                            <option key={cliente.cnpj} value={cliente.cnpj}>
-                                {cliente.razao_social}
+                            {contratos.map((contrato) => (
+                            <option key={contrato.num_contrato} value={contrato.num_contrato}>  
+                                {contrato.num_contrato} 
                             </option>
                             ))}
                         </select>
@@ -170,50 +168,38 @@ const PesquisaDados = () => {
                 <nav className="TopBarPesquisa">
                     <div>
                         <select
-                            id="cultivarSelect"
-                            name="cultivar"
-                            defaultValue="opcao"
-                            value={formData.protocolo}
-                            onChange={handleProtocoloSelect}
+                            id="faseSelect"
+                            name="fase"
+                            value={formData.fase}
+                            onChange={handleChange}
+                            required
                         >
-                            <option value="opcao" disabled>Protocolo</option>
-                            {protocolos.map((protocolo) => (
-                                <option key={protocolo.sigla} value={protocolo.sigla}>
-                                    {protocolo.sigla}
-                                </option>
+                            <option value="">Selecione a Fase</option>
+                            {fases.map((fase) => (
+                            <option key={fase.id} value={fase.id}>
+                                {fase.nome}
+                            </option>
                             ))}
                         </select>
+
                     </div>
                 </nav>
 
                 <div className="inputsPesquisa">
-                        <label className="label__InserirDados" htmlFor="climaInput">Clima</label>
-                        <input
-                            className="input__InserirText"
-                            type="text"
-                            id="climaInput"
-                            name="clima"
-                            placeholder="Digite aqui"
-                            value={formData.clima}
-                            onChange={handleChange}
-                        />
-                </div>
-
-                <div className="inputsPesquisa">
-                    <label className="label__InserirDados" htmlFor="psq_contratadaInput">Pesquisa Contratada (cod)</label>
+                    <label className="label__InserirDados" htmlFor="climaInput">Clima</label>
                     <input
                         className="input__InserirText"
                         type="text"
-                        id="psq_contratadaInput"
-                        name="psq_contratada"
+                        id="climaInput"
+                        name="clima"
                         placeholder="Digite aqui"
-                        value={formData.contrato}
+                        value={formData.clima}
                         onChange={handleChange}
                     />
                 </div>
                     
                 <div className="inputsDate">
-                    <label className="label__InserirDados" htmlFor="dateInput">Data da Coleta</label>
+                    <label className="label__InserirDados" id="dateInput_Nome" htmlFor="dateInput">Data da Coleta</label>
                     <input
                         className="input__InserirDados"
                         type="date"
@@ -226,7 +212,7 @@ const PesquisaDados = () => {
                 </div>
 
                 <div className="inputsDate">
-                    <label className="label__InserirDados" htmlFor="dateInput">Data da Aplicação</label>
+                    <label className="label__InserirDados" id="dateInput_Nome" htmlFor="dateInput">Data da Aplicação</label>
                     <input
                         className="input__InserirDados"
                         type="date"
@@ -237,33 +223,11 @@ const PesquisaDados = () => {
                         required
                     />
                 </div>
-
-                <button className="saveButton" type="submit">Salvar</button>
             </div>
                 
             <div className="colunas">
-                <nav className="TopBarPesquisa">
-                    <div>
-                        <select
-                            id="faseSelect"
-                            name="fase"
-                            defaultValue="opcao"
-                            value={formData.fase}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="opcao" disabled>Fase</option>
-                            <option value="fase1">1</option>
-                            <option value="fase2">2</option>
-                            <option value="fase3">3</option>
-                            <option value="fase4">4</option>
-                            <option value="fase5">4</option>
-                        </select>
-                    </div>
-                </nav>
-
-                <label className="label__InserirDados" htmlFor="descricao">Descrição</label>
-                <div className="inputsNote">
+                <label className="label__InserirDados"  htmlFor="descricao">Descrição</label>
+                <div  className="inputsNote">
                     <input
                         className="input__InserirText"
                         type="text"
@@ -274,6 +238,8 @@ const PesquisaDados = () => {
                         onChange={handleChange}
                     />
                 </div>
+
+                <button className="saveButton" type="submit">Salvar</button>
             </div>
         </form>
     );

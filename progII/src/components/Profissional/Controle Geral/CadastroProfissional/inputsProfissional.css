@@ -38,11 +38,21 @@
 }
 
 .button__formP.alterar {
-    background-color: goldenrod;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    background-color: var(--yellow-para-botao);
 }
 
 .button__formP.deletar {
-    background-color: red;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    
+    background-color: var(--red-para-botao);
 }
 
 .button__search {
@@ -63,8 +73,6 @@
     border-radius: 30px;
     border-style:solid;
     border-color:  var(--laranja-nome-empresa);
-   
-
 }
 
 .div__inputsP #nome {

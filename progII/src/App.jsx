@@ -25,7 +25,9 @@ import CadastrarContratoProfissional from './components/Profissional/Contrato/Ca
 import GerenciarClientes from './components/Profissional/Controle Geral/GerenciarClientes/GerenciarClientes';
 import GerenciarFuncionario from './components/Profissional/Controle Geral/GerenciarFuncionarios/GerenciarFuncionario';
 import CadastrarProtocoloProfissional from './components/Profissional/Contrato/CadastrarProtocolo/cadastrarProtocoloProfissional';
+import AlterarContratoProfissional from './components/Profissional/Contrato/AlterarContrato/AlterarContratoProfissional';
 import axios from "axios";
+import AlterarRelatorioProfissional from './components/Profissional/Relatorios/AlterarRelatorios/AlterarRelatorioProfissional';
 
 axios.defaults.baseURL = "http://localhost:4000/";
 axios.defaults.headers.common["Content-Type"] =
@@ -120,10 +122,22 @@ function App() {
           element={<CadastrarProtocoloProfissional />}
         />
 
+
+        <Route
+          path="/alterar-contrato"
+          element={<AlterarContratoProfissional />}
+        />
+
         
         <Route
           path="/relatorios-profissional"
           element={<RelatoriosProfissional />}
+        />        
+
+
+        <Route
+          path="/alterar-relatorios"
+          element={<AlterarRelatorioProfissional />}
         />        
 
 

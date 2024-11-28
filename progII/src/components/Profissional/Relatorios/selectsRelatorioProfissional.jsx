@@ -5,12 +5,11 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 function SelectsRelatoriosProfissional() {
-    const [clientes, setClientes] = useState([]);
-    const [protocolos, setProtocolos] = useState([]);
-    const [cliente, setCliente] = useState('');
-    const [protocolo, setProtocolo] = useState('');
-    const [dados, setDados] = useState({});
+    const [contratos, setContratos] = useState([]);
     const [fase, setFase] = useState('');
+    const [dados, setDados] = useState({});
+    const [num_contrato, setNumContrato] = useState('');
+    const [error, setError] = useState('');
 
     const fases = [
         { id: 'fase1', nome: '1º Etapa' },
@@ -21,35 +20,37 @@ function SelectsRelatoriosProfissional() {
     ];
 
     useEffect(() => {
-        fetch('http://localhost:4000/clientes')
-        .then((response) => response.json())
-        .then((data) => setClientes(data))
-        .catch((error) => console.error("Erro ao buscar clientes:", error));
-
-        fetch('http://localhost:4000/protocolos')
+        fetch('http://localhost:4000/contratos')
             .then((response) => response.json())
-            .then((data) => setProtocolos(data))
-            .catch((error) => console.error("Erro ao buscar protocolos:", error));
+            .then((data) => setContratos(data))
+            .catch((error) => console.error("Erro ao buscar contratos:", error));
     }, []);
 
-    // Função para buscar os dados da pesquisa baseado no cliente e protocolo
+    const formatData = (date) => {
+        const formattedDate = new Date(date);
+        // Verifica se a data é válida
+        if (isNaN(formattedDate.getTime())) {
+            return ''; // Retorna uma string vazia se a data for inválida
+        }
+        return formattedDate.toISOString().split('T')[0]; // Formata a data para AAAA-MM-DD
+    };
+
+    // Função para buscar os dados da pesquisa baseado no contrato
     const buscarRelatorio = () => {
-        if (cliente && protocolo) {
-            fetch(`http://localhost:4000/ver-pesquisa?cliente_cnpj=${cliente}&protocolo_sigla=${protocolo}`)
+        if (num_contrato && fase) {
+            fetch(`http://localhost:4000/ver-pesquisa/${num_contrato}/${fase}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.pesquisa && data.pesquisa.length === 1) {
                         const pesquisaData = data.pesquisa[0];
-                        const formatData = (date) => new Date(date).toISOString().split('T')[0]; // Converte para AAAA-MM-DD
                         setDados({
                             tamanho: pesquisaData.tm_plantas || '',
                             coloracao: pesquisaData.cor_folhas || '',
                             produtos: pesquisaData.outros_prod || '',
                             nos: pesquisaData.num_nos || '',
                             clima: pesquisaData.clima || '',
-                            contrato: pesquisaData.contrato || '',
                             data_coleta: pesquisaData.dt_coleta ? formatData(pesquisaData.dt_coleta) : '',
-                            data_aplicacao: pesquisaData.dt_apl_prod ? formatData(pesquisaData.dt_aplicacao) : '',
+                            data_aplicacao: pesquisaData.dt_apl_prod ? formatData(pesquisaData.dt_apl_prod) : '',
                             descricao: pesquisaData.obs || '',
                         });
                         setError('');
@@ -62,7 +63,30 @@ function SelectsRelatoriosProfissional() {
                     console.error('Erro ao buscar dados da pesquisa:', error);
                 });
         } else {
-            setError('Por favor, selecione um cliente e um protocolo.');
+            setError('Por favor, selecione um contrato e uma fase.');
+        }
+    };
+
+    const DeleteRelatorio = async () => {
+        try {
+            const response = await fetch(`http://localhost:4000/excluir-relatorio/${fase}`, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Erro ao excluir relatório");
+            }
+
+            alert("Relatório excluído com sucesso!");
+
+            // Limpa os campos do contrato
+            setDados({});
+        } catch (error) {
+            console.error("Erro ao excluir relatório:", error);
+            alert("Erro ao excluir o relatório. Tente novamente."); 
         }
     };
 
@@ -72,28 +96,14 @@ function SelectsRelatoriosProfissional() {
                 <div className="div__buttons">
                     <select
                         className="contrato__selectBox"
-                        name="selectCliente"
-                        value={cliente}
-                        onChange={(e) => setCliente(e.target.value)}
+                        name="contrato"
+                        value={num_contrato} 
+                        onChange={(e) => setNumContrato(e.target.value)}
                     >
-                        <option value="" disabled>Selecione o Cliente</option>
-                        {clientes.map((cliente) => (
-                            <option key={cliente.cnpj} value={cliente.cnpj}>
-                                {cliente.razao_social}
-                            </option>
-                        ))}
-                    </select>
-                    
-                    <select
-                        className="contrato__selectBox"
-                        name="selectProtocolo"
-                        value={protocolo} 
-                        onChange={(e) => setProtocolo(e.target.value )}
-                    >
-                        <option value="" disabled>Selecione o Protocolo</option>
-                        {protocolos.map((protocolo) => (
-                            <option key={protocolo.sigla} value={protocolo.sigla}>
-                                {protocolo.tipo}
+                        <option value="opcao">Selecionar Contrato</option>
+                        {contratos.map((contrato) => (
+                            <option key={contrato.num_contrato} value={contrato.num_contrato}>
+                                {contrato.num_contrato}
                             </option>
                         ))}
                     </select>
@@ -101,7 +111,7 @@ function SelectsRelatoriosProfissional() {
                     <select
                         className="contrato__selectBox"
                         name="selectFase"
-                        value={fases}
+                        value={fase}
                         onChange={(e) => setFase(e.target.value)}
                     >
                         <option value="">Selecione a Fase</option>
@@ -119,14 +129,16 @@ function SelectsRelatoriosProfissional() {
                         </div>
                     </button>
 
-                    <button type="button" className="contrato__button3">
-                        Alterar
-                        <div className="icons__button3">
-                            <Wrench />
-                        </div>
-                    </button>
+                    <Link className="ajustando__links" to="/alterar-relatorios">
+                        <button type="button" className="contrato__button3">
+                            Alterar
+                            <div className="icons__button3">
+                                <Wrench />
+                            </div>
+                        </button>
+                    </Link>
 
-                    <button className="button__excluir" type="button" >
+                    <button className="button__excluir" type="button"onClick={DeleteRelatorio}>
                         Excluir
                         <div className="icons__button2">
                             <Eraser />
@@ -162,14 +174,11 @@ function SelectsRelatoriosProfissional() {
                             <p className="p_dadosDaPesquisa">{dados.nos}</p>
                             <img className="alinhar__linha" src={Linha} alt="linha horizontal" />
 
-                            <p>Clima</p>
-                            <p className="p_dadosDaPesquisa">{dados.clima}</p>
-                            <img className="alinhar__linha" src={Linha} alt="linha horizontal" />
                         </div>
 
                         <div className="div__Pesquisa2">
-                            <p>Pesquisa Contratada</p>
-                            <p className="p_dadosDaPesquisa">{dados.contrato}</p>
+                            <p>Clima</p>
+                            <p className="p_dadosDaPesquisa">{dados.clima}</p>
                             <img className="alinhar__linha" src={Linha} alt="linha horizontal" />
 
                             <p>Data da Coleta</p>

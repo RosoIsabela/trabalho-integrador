@@ -218,7 +218,7 @@ server.post("/create-colaborador", async (req, res) => {
   const saltRounds = 10; // Número de rounds para o salt
   try {
       const {
-          nome_completo: nome,
+          nome,
           cpf,
           email,
           celular,
@@ -279,11 +279,15 @@ server.get('/buscar_funcionario', async (req, res) => {
           `,
           [`%${termoBusca}%`]
       );
-      console.log('Resultado da consulta:', colaboradores);
-      res.json(colaboradores);
+
+      if (colaboradores.length > 0) {
+          res.json({ status: 'encontrado', data: colaboradores });
+      } else {
+          res.json({ status: 'não encontrado', message: 'Nenhum colaborador encontrado.' });
+      }
   } catch (error) {
       console.error('Erro ao buscar colaboradores:', error.message);
-      res.status(500).send("Erro no servidor");
+      res.status(500).json({ status: 'error', message: 'Erro no servidor.' });
   }
 });
 
@@ -291,7 +295,7 @@ server.get('/buscar_funcionario', async (req, res) => {
 server.put('/update-colaborador/:cpf', async (req, res) => {
   const { cpf } = req.params;
   let {
-    nome_completo: nome,
+    nome,
     email,
     celular,
     cargo,
@@ -349,6 +353,26 @@ server.delete('/delete-colaborador/:cpf', async (req, res) => {
   } catch (error) {
       console.error('Erro ao excluir colaborador:', error);
       res.status(500).json({ message: 'Erro ao excluir colaborador!' });
+  }
+});
+
+
+server.get("/perfilProfissional", authenticateToken, async (req, res) => {
+  try {
+      const userCPF = req.user.identificador; 
+      const colaborador = await db.oneOrNone(
+          "select nome, cpf, email, celular, cargo, horario from colaborador_sulagro where cpf = $1;",
+          [userCPF]
+      );
+
+      if (!colaborador) {
+          return res.status(404).json({ message: "Colaborador não encontrado." });
+      }
+
+      res.status(200).json({ colaborador });
+  } catch (error) {
+      console.error("Erro ao buscar perfil profissional:", error);
+      res.status(500).json({ message: "Erro ao buscar perfil profissional." });
   }
 });
 
@@ -434,6 +458,19 @@ server.get("/clientes", async (req, res) => {
 });
 
 
+// Rota para buscar todos os colaboradores
+server.get("/colaboradores", async (req, res) => {
+  try {
+      const colaboradores = await db.any("SELECT cpf, nome FROM colaborador_sulagro");
+      res.status(200).json(colaboradores);
+  } catch (error) {
+      console.error("Erro ao buscar colaboradores:", error);
+      res.status(400).json({ message: "Erro ao buscar colaboradores" });
+  }
+});
+
+
+// Rota para buscar todos os protocolo
 server.get("/protocolos", async (req, res) => {
   try {
     const protocolos = await db.any("select sigla, tipo from protocolo");
@@ -442,6 +479,18 @@ server.get("/protocolos", async (req, res) => {
     console.error("Erro ao buscar protocolos:", error);
     res.status(500).json({ message: "Erro ao buscar protocolos" });
 }
+});
+
+
+// Rota para buscar todos os contratos
+server.get("/contratos", async (req, res) => {
+  try {
+      const contratos = await db.any("select num_contrato from contrato");
+      res.status(200).json(contratos);
+  } catch (error) {
+      console.error("Erro ao buscar contratos:", error);
+      res.status(400).json({ message: "Erro ao buscar contratos" });
+  }
 });
 
 
@@ -492,7 +541,6 @@ server.post("/cadastrar-protocolo", async (req, res) => {
 });
 
 
-
 server.post("/cadastrar-contrato", async (req, res) => {
   try {
     const {
@@ -536,6 +584,36 @@ server.post("/cadastrar-contrato", async (req, res) => {
 });
 
 
+server.put('/alterar-contrato/:cliente_cnpj/:protocolo_num', async (req, res) => {
+  const { cliente_cnpj, protocolo_num } = req.params;
+  const { 
+    contrato, 
+    dataContrato, 
+    dataEntrega, 
+    custo, 
+    parcelas 
+  } = req.body;
+
+  try {
+      await db.none(
+          `update contrato 
+           set num_contrato = COALESCE($1, num_contrato),
+               dt_assinatura = COALESCE($2, dt_assinatura),
+               dt_entrega = COALESCE($3, dt_entrega),
+               preco = COALESCE($4, preco),
+               num_parcelas = COALESCE($5, num_parcelas)
+           where cliente_cnpj = $6 and protocolo_num = $7`,
+          [contrato, dataContrato, dataEntrega, custo, parcelas, cliente_cnpj, protocolo_num]
+      );
+
+      res.json({ message: 'Contrato atualizado com sucesso!' });
+  } catch (error) {
+      console.error('Erro ao atualizar contrato:', error);
+      res.status(500).json({ message: 'Erro ao atualizar contrato!' });
+  }
+});
+
+
 server.delete("/excluir-contrato/:num_contrato", async (req, res) => {
   try {
     const { num_contrato } = req.params;
@@ -563,14 +641,12 @@ server.post("/incluir-etapa-pesquisa", async (req, res) => {
       fase,
       obs,
       contrato,
-      cliente_cnpj,
-      protocolo_num,
     } = req.body;
 
     await db.none(
       `insert into pesquisa 
-      (dt_coleta, dt_apl_prod, tm_plantas, cor_folhas, outros_prod, num_nos, clima, fase, obs, contrato, cliente_cnpj, protocolo_num) 
-      values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);`,
+      (dt_coleta, dt_apl_prod, tm_plantas, cor_folhas, outros_prod, num_nos, clima, fase, obs, contrato) 
+      values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`,
       [
         dt_coleta,
         dt_apl_prod,
@@ -582,8 +658,6 @@ server.post("/incluir-etapa-pesquisa", async (req, res) => {
         fase,
         obs,
         contrato,
-        cliente_cnpj,
-        protocolo_num,
       ]
     );
 
@@ -596,13 +670,13 @@ server.post("/incluir-etapa-pesquisa", async (req, res) => {
 });
 
 
-server.get("/ver-pesquisa", async (req, res) => {
+server.get("/ver-pesquisa/:contrato/:fase", async (req, res) => {
   try {
-    const { cliente_cnpj, protocolo_sigla, fase } = req.query;
+    const { contrato, fase } = req.params;
 
     const pesquisa = await db.any(
-      `select * FROM pesquisa where cliente_cnpj = $1 and protocolo_sigla = $2 and fase = $3`, 
-      [cliente_cnpj, protocolo_sigla, fase]
+      `select * from pesquisa where contrato = $1 and fase = $2`, 
+      [contrato, fase]
     );
 
     if (pesquisa.length > 0) {
@@ -613,6 +687,20 @@ server.get("/ver-pesquisa", async (req, res) => {
   } catch (error) {
     console.error("Erro ao buscar pesquisa:", error);
     res.status(500).json({ message: "Erro ao buscar pesquisa." });
+  }
+});
+
+
+server.delete("/excluir-relatorio/:fase", async (req, res) => {
+  try {
+    const { fase } = req.params;
+
+    await db.none("DELETE FROM pesquisa WHERE fase = $1;", [fase]);
+
+    res.status(200).json({ message: "Relatório excluído com sucesso!" });
+  } catch (error) {
+    console.error("Erro ao excluir relatório", error);
+    res.status(400).json({ message: "Erro ao excluir relatório" });
   }
 });
 

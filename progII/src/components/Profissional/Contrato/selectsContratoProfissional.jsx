@@ -166,13 +166,14 @@ function SelectsContratoProfissional() {
                         </div>
                     </button>
 
-                    <button type="button" className="contrato__button3">
-                        Alterar
-                        <div className="icons__button3">
-                            <Wrench />
-                        </div>
-                    </button>
-
+                    <Link className="ajustando__links" to="/alterar-contrato">
+                        <button type="button" className="contrato__button3">
+                            Alterar
+                            <div className="icons__button3">
+                                <Wrench />
+                            </div>
+                        </button>
+                    </Link>
 
                     <button className="button__excluir" type="button" onClick={DeleteContrato}>
                         Excluir

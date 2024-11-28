@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './inputsProfissional.css';
+import { Eraser, Wrench } from "@phosphor-icons/react";
 import axios from 'axios';
 
 const InputsProfissional = () => {
@@ -127,6 +128,21 @@ const InputsProfissional = () => {
         const response = await axios.delete(`http://localhost:4000/delete-colaborador/${formData.cpf}`);
         console.log("Colaborador excluído:", response.data);
         alert("Exclusão realizada com sucesso!");
+        setFormData({
+            nome: '',
+            cpf: '',
+            email: '',
+            celular: '',
+            cargo: '',
+            logradouro: '',
+            bairro: '',
+            cidade: '',
+            estado: '',
+            cep: '',
+            permissao: 'opcao',
+            horario: '',
+            senha: '',
+        });
     } catch (error) {
         console.error("Erro ao excluir colaborador:", error);
         alert("Erro ao tentar excluir o colaborador.");
@@ -239,9 +255,9 @@ const InputsProfissional = () => {
                     onChange={handleChange}
                 >
                     <option value="opcao" disabled>Tipo de Permissão</option>
-                    <option value="3">1</option>
-                    <option value="2">2</option>
-                    <option value="1">3</option>
+                    <option value="3">Funcionário</option>
+                    <option value="2">Coordenador de Equipe</option>
+                    <option value="1">Administrador</option>
                 </select>
                 <input
                     className="inputs__boxsP"
@@ -260,27 +276,29 @@ const InputsProfissional = () => {
                     onChange={handleChange}
                 />
                 <div>
-                    <button className="button__formP" type="submit">
+                    <button className="button__formP" type="submit" onClick={handleSubmit}>
                         Cadastrar
                     </button>
                 </div>
 
                 <div>
-    <button className="button__formP alterar" type="button" onClick={handleAlterar}>
-        Alterar
-    </button>
-</div>
+                    <button className="button__formP alterar" type="button" onClick={handleAlterar}>
+                        Alterar
+                        <div className="icons__button3">
+                            <Wrench />
+                        </div>
+                    </button>
+                </div>
 
-<div>
-    <button className="button__formP deletar" type="button" onClick={handleExcluir}>
-        Excluir
-    </button>
-</div>
-            </form>   
-           
-           
-           
-          
+                <div>
+                    <button className="button__formP deletar" type="button" onClick={handleExcluir}>
+                        Excluir
+                        <div className="icons__button2">
+                            <Eraser />
+                        </div>
+                    </button>
+                </div>
+            </form>      
         </div>
     );
 };

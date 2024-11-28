@@ -9,7 +9,7 @@ function CardsGerenciar() {
                 <Link to="/gerenciar-clientes">
                     <button className="cards__gerenciar">
                         <div className="gerenciar__cliente">
-                            <p className="title__gerenciar">Gerenciar Clientes<br/>Cadastrados</p>
+                            <p className="title__gerenciar">Ver Clientes<br/>Cadastrados</p>
                         </div>
                     </button>
                 </Link>
@@ -17,7 +17,7 @@ function CardsGerenciar() {
                 <Link to="/gerenciar-funcionarios">
                     <button className="cards__gerenciar">
                         <div className="gerenciar__funcionario">
-                            <p className="title__gerenciar">Gerenciar Funcionários<br/>Cadastrados</p>
+                            <p className="title__gerenciar">Ver Funcionários<br/>Cadastrados</p>
                         </div>
                     </button>
                 </Link>
