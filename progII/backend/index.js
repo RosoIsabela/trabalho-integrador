@@ -12,14 +12,14 @@ const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
 // Conexão com o banco
 const usuario = "postgres";
-const senha = "laranja02";
+const senha = "postgre";
 const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
 
 const server = express();
 
 // Configuração de CORS
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:3000"], // Permite requisições do frontend
+  origin: "http://localhost:5173", // Permite requisições do frontend
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   optionsSuccessStatus: 200,
@@ -49,6 +49,17 @@ const PORT = 4000;
 server.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
+
+
+db.connect()
+  .then(obj => {
+    console.log("Conexão bem-sucedida com o banco de dados!");
+    obj.done(); // libera a conexão
+  })
+  .catch(error => {
+    console.error("Erro ao conectar ao banco:", error);
+});
+
 
 // Estratégia Local com Passport para autenticação
 passport.use(
@@ -207,7 +218,7 @@ server.post("/create-colaborador", async (req, res) => {
   const saltRounds = 10; // Número de rounds para o salt
   try {
       const {
-          nome,
+          nome_completo: nome,
           cpf,
           email,
           celular,
@@ -280,7 +291,7 @@ server.get('/buscar_funcionario', async (req, res) => {
 server.put('/update-colaborador/:cpf', async (req, res) => {
   const { cpf } = req.params;
   let {
-    nome,
+    nome_completo: nome,
     email,
     celular,
     cargo,
@@ -326,7 +337,6 @@ server.put('/update-colaborador/:cpf', async (req, res) => {
     res.status(500).json({ message: 'Erro ao atualizar colaborador!' });
   }
 });
-
 
 
 // Excluir colaborador
@@ -445,7 +455,7 @@ server.get("/ver-contrato", async (req, res) => {
       }
 
       const contrato = await db.any(
-        "select num_contrato, num_parcelas, preco, dt_assinatura, dt_entrega from contrato where cliente_cnpj = $1 AND protocolo_num = $2;",
+        "select num_contrato, num_parcelas, preco, dt_assinatura, dt_entrega from contrato where cliente_cnpj = $1 and protocolo_num = $2;",
         [cliente_cnpj, protocolo_sigla] 
      );
 
