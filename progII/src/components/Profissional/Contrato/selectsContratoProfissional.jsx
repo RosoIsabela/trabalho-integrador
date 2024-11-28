@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 function SelectsContratoProfissional() {
     const [clientes, setClientes] = useState([]);
     const [protocolos, setProtocolos] = useState([]);
+    const [listaContratos, setListaContratos] = useState([]);
     const [cliente, setCliente] = useState('');
     const [protocolo, setProtocolo] = useState('');
     const [dados, setDados] = useState({
@@ -28,12 +29,17 @@ function SelectsContratoProfissional() {
             .then((response) => response.json())
             .then((data) => setProtocolos(data))
             .catch((error) => console.error("Erro ao buscar protocolos:", error));
+
+        fetch('http://localhost:4000/contratos')
+            .then((response) => response.json())
+            .then((data) => setListaContratos(data))
+            .catch((error) => console.error("Erro ao buscar contratos:", error));
     }, []);
 
-    // Função para buscar os dados do contrato baseado no cliente e protocolo
+    // Função para buscar os dados do contrato baseado no cliente, protocolo e contrato
     const buscarContrato = () => {
         if (cliente && protocolo) {
-            fetch(`http://localhost:4000/ver-contrato?cliente_cnpj=${cliente}&protocolo_sigla=${protocolo}`)
+            fetch(`http://localhost:4000/ver-contrato?cliente_cnpj=${cliente}&protocolo_sigla=${protocolo}&num_contrato=${dados.contrato}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.contrato && data.contrato.length === 1) {
@@ -56,40 +62,7 @@ function SelectsContratoProfissional() {
                     console.error('Erro ao buscar dados do contrato:', error);
                 });
         } else {
-            setError('Por favor, selecione um cliente e um protocolo.');
-        }
-    };
-
-    // Envio de dados (Caso necessário)
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const token = localStorage.getItem('token');
-
-        try {
-            const response = await fetch('http://localhost:4000/cadastrar-contrato', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    num_contrato: dados.contrato,
-                    protocolo_num: protocolo,
-                    num_parcelas: dados.parcelas,
-                    preco: dados.custo,
-                    dt_assinatura: dados.dataContrato,
-                    dt_entrega: dados.dataEntrega,
-                    cliente_cnpj: cliente
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Erro ao salvar os dados!');
-            }
-            alert('Informações salvas com sucesso!');
-        } catch (error) {
-            console.error('Erro ao enviar os dados:', error);
-            alert('Erro ao salvar as informações. Tente novamente.');
+            setError('Por favor, selecione um cliente, um protocolo e um contrato.');
         }
     };
 
@@ -113,7 +86,7 @@ function SelectsContratoProfissional() {
 
             // Limpa todos os campos do contrato
             setDados({
-                contrato: '',
+                contrato: '', 
                 dataContrato: '',
                 dataEntrega: '',
                 custo: '',
@@ -128,7 +101,7 @@ function SelectsContratoProfissional() {
 
     return (
         <div>
-            {error && <div className="error">{error}</div>} {/* Displaying error message if any */}
+            {error && <div className="error">{error}</div>}
             <div className="contrato__options">
                 <div className="div__buttons">
                     <select
@@ -155,6 +128,20 @@ function SelectsContratoProfissional() {
                         {protocolos.map((protocolo) => (
                             <option key={protocolo.sigla} value={protocolo.sigla}>
                                 {protocolo.tipo}
+                            </option>
+                        ))}
+                    </select>
+
+                    <select
+                        className="contrato__selectBox"  
+                        name="contrato"  
+                        value={dados.contrato}
+                        onChange={(e) => setDados({...dados, contrato: e.target.value})}
+                    >
+                        <option value="" disabled>Selecionar Contrato</option>
+                        {listaContratos.map((contrato) => (
+                            <option key={contrato.num_contrato} value={contrato.num_contrato}>  
+                                {contrato.num_contrato} 
                             </option>
                         ))}
                     </select>
@@ -193,7 +180,7 @@ function SelectsContratoProfissional() {
                 </div>
                 
                 <div className="box__branca">
-                    <form className="DadosDoContrato" onSubmit={handleSubmit}>
+                    <form className="DadosDoContrato">
                         <p>Contrato</p>
                         <p className="p_dadosDoContrato">{dados.contrato}</p>
                         <img src={Linha} alt="linha horizontal" />

@@ -120,14 +120,22 @@ function DadosContrato() {
 
                     <p>Protocolo</p>
                     <Link className="link_cadastrarProtocolo" to="/cadastrar-protocolo">Cadastrar Protocolo</Link>
-                    <input 
-                      className="inputs__DadosContrato" 
-                      type="text" 
-                      placeholder="digite aqui" 
-                      value={dados.protocolo || ''} 
-                      onChange={(e) => setDados({ ...dados, protocolo: e.target.value })} 
-                    />
+
+                    <select
+                        className="inputs__DadosContrato"
+                        name="text"
+                        value={dados.protocolo || ''} 
+                        onChange={(e) => setDados({ ...dados, protocolo: e.target.value })} 
+                    >
+                        <option value="" disabled>Selecione o Protocolo</option>
+                        {protocolo.map((protocolo) => (
+                            <option key={protocolo.sigla} value={protocolo.sigla}>
+                                {protocolo.tipo}
+                            </option>
+                        ))}
+                    </select>
                     <img src={Linha} alt="linha horizontal" />
+
 
                     <p>Número de Parcelas</p>
                     <input 

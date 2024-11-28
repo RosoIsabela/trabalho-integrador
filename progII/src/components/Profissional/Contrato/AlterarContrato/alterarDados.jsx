@@ -5,8 +5,9 @@ import { useState, useEffect } from 'react';
 
 function AlterarDados() {
     const [clientes, setClientes] = useState([]);
-    const [cliente, setCliente] = useState('');
     const [protocolos, setProtocolos] = useState([]);
+    const [listaContratos, setListaContratos] = useState([]);
+    const [cliente, setCliente] = useState('');
     const [protocolo, setProtocolo] = useState('');
     const [dados, setDados] = useState({
         contrato: '',
@@ -16,7 +17,7 @@ function AlterarDados() {
         protocolo: '',
         parcelas: '',
     });
-    const [error, setError] = useState(''); 
+    const [error, setError] = useState('');
 
     useEffect(() => {
         fetch('http://localhost:4000/clientes')
@@ -28,13 +29,18 @@ function AlterarDados() {
             .then((response) => response.json())
             .then((data) => setProtocolos(data))
             .catch((error) => console.error("Erro ao buscar protocolos:", error));
+        
+        fetch('http://localhost:4000/contratos')
+            .then((response) => response.json())
+            .then((data) => setListaContratos(data))
+            .catch((error) => console.error("Erro ao buscar contratos:", error));
     }, []);
 
-    // Função para buscar os dados do contrato baseado no cliente e protocolo
+    // Função para buscar os dados do contrato baseado no cliente, protocolo e contrato
     const buscarContrato = (e) => {
         e.preventDefault();
         if (cliente && protocolo) {
-            fetch(`http://localhost:4000/ver-contrato?cliente_cnpj=${cliente}&protocolo_sigla=${protocolo}`)
+            fetch(`http://localhost:4000/ver-contrato?cliente_cnpj=${cliente}&protocolo_sigla=${protocolo}&num_contrato=${dados.contrato}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.contrato && data.contrato.length === 1) {
@@ -57,7 +63,7 @@ function AlterarDados() {
                     console.error('Erro ao buscar dados do contrato:', error);
                 });
         } else {
-            setError('Por favor, selecione um cliente e um protocolo.');
+            setError('Por favor, selecione um cliente, um protocolo e um contrato.');
         }
     };
 
@@ -65,7 +71,7 @@ function AlterarDados() {
         e.preventDefault();
     
         if (cliente && protocolo && dados.contrato) {
-            fetch(`http://localhost:4000/alterar-contrato/${cliente}/${protocolo}`, {
+            fetch(`http://localhost:4000/alterar-contrato/${cliente}/${protocolo}/${dados.contrato}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -78,15 +84,15 @@ function AlterarDados() {
                     parcelas: dados.parcelas,
                 }),
             })
-                .then((response) => response.json())
-                .then((data) => {
-                    setError('');
-                    alert('Contrato atualizado com sucesso!');
-                })
-                .catch((error) => {
-                    setError('Erro ao atualizar contrato.');
-                    console.error('Erro ao atualizar contrato:', error);
-                });
+            .then((response) => response.json())
+            .then((data) => {
+                setError('');
+                alert('Contrato atualizado com sucesso!');
+            })
+            .catch((error) => {
+                setError('Erro ao atualizar contrato.');
+                console.error('Erro ao atualizar contrato:', error);
+            });
         } else {
             setError('Por favor, preencha todos os campos.');
         }
@@ -125,6 +131,20 @@ function AlterarDados() {
                             </option>
                         ))}
                     </select>
+
+                    <select
+                        className="contrato__selectBox2"  
+                        name="contrato"  
+                        value={dados.contrato}
+                        onChange={(e) => setDados({...dados, contrato: e.target.value})}
+                        >
+                        <option value="" disabled>Selecionar Contrato</option>
+                        {listaContratos.map((contrato) => (
+                            <option key={contrato.num_contrato} value={contrato.num_contrato}>  
+                                {contrato.num_contrato} 
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 <form className="div__botoes" onSubmit={buscarContrato}>
@@ -143,6 +163,7 @@ function AlterarDados() {
                                 <Wrench />
                         </div>
                     </button>
+                    {error && <div className="error">{error}</div>}
                 </form>
             </div>
 

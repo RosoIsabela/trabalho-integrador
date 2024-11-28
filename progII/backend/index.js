@@ -496,7 +496,7 @@ server.get("/contratos", async (req, res) => {
 
 server.get("/ver-contrato", async (req, res) => {
   try { 
-      const { cliente_cnpj, protocolo_sigla } = req.query;
+      const { cliente_cnpj, protocolo_sigla, num_contrato } = req.query;
 
       const protocolo = await db.oneOrNone("select sigla from protocolo", [protocolo_sigla]);
       if (!protocolo) {
@@ -504,8 +504,8 @@ server.get("/ver-contrato", async (req, res) => {
       }
 
       const contrato = await db.any(
-        "select num_contrato, num_parcelas, preco, dt_assinatura, dt_entrega from contrato where cliente_cnpj = $1 and protocolo_num = $2;",
-        [cliente_cnpj, protocolo_sigla] 
+        "select num_contrato, num_parcelas, preco, dt_assinatura, dt_entrega from contrato where cliente_cnpj = $1 and protocolo_num = $2 and num_contrato = $3;",
+        [cliente_cnpj, protocolo_sigla, num_contrato] 
      );
 
       if (!contrato || contrato.length === 0) {
@@ -584,8 +584,8 @@ server.post("/cadastrar-contrato", async (req, res) => {
 });
 
 
-server.put('/alterar-contrato/:cliente_cnpj/:protocolo_num', async (req, res) => {
-  const { cliente_cnpj, protocolo_num } = req.params;
+server.put('/alterar-contrato/:cliente_cnpj/:protocolo_num/:num_contrato', async (req, res) => {
+  const { cliente_cnpj, protocolo_num, num_contrato } = req.params;
   const { 
     contrato, 
     dataContrato, 
@@ -603,7 +603,7 @@ server.put('/alterar-contrato/:cliente_cnpj/:protocolo_num', async (req, res) =>
                preco = COALESCE($4, preco),
                num_parcelas = COALESCE($5, num_parcelas)
            where cliente_cnpj = $6 and protocolo_num = $7`,
-          [contrato, dataContrato, dataEntrega, custo, parcelas, cliente_cnpj, protocolo_num]
+          [contrato, dataContrato, dataEntrega, custo, parcelas, cliente_cnpj, protocolo_num, num_contrato]
       );
 
       res.json({ message: 'Contrato atualizado com sucesso!' });
