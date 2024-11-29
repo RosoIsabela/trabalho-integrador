@@ -115,9 +115,10 @@ function SelectsRelatoriosCliente() {
                             <MagnifyingGlass />
                         </div>
                     </button>
+                    
+                    {error && <p className="error-message">{error}</p>}
                 </div>
 
-                {error && <p className="error-message">{error}</p>}
 
                 <div className="box__branca">
                     <form className="DadosDaPesquisa">

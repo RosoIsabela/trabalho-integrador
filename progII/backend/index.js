@@ -241,7 +241,6 @@ server.get('/contratos/:clienteCnpj', async (req, res) => {
 });
 
 // Atualização da data final de entrega do dashboard do profissional
-
 server.get('/contratos/:clienteCnpj/:contratoNum', async (req, res) => {
   try {
     const { clienteCnpj, contratoNum } = req.params;
@@ -263,6 +262,7 @@ server.get('/contratos/:clienteCnpj/:contratoNum', async (req, res) => {
     res.status(500).json({ message: "Erro ao buscar contrato." });
   }
 });
+
 
 // Atualização do checklist das fases da pesquisa
 server.get('/pesquisas/fase-maior/:clienteCnpj/:contratoNum', async (req, res) => {
@@ -287,6 +287,7 @@ server.get('/pesquisas/fase-maior/:clienteCnpj/:contratoNum', async (req, res) =
     res.status(500).json({ message: "Erro ao buscar a maior fase da pesquisa." });
   }
 });
+
 
 //rota para criar um colaborador
 server.post("/create-colaborador", async (req, res) => {
@@ -599,16 +600,16 @@ server.get("/contratos-cliente", authenticateToken, async (req, res) => {
 
 server.get("/ver-contrato", async (req, res) => {
   try { 
-      const { cliente_cnpj, protocolo_sigla, num_contrato } = req.query;
+      const { cliente_cnpj, protocolo_num, num_contrato } = req.query;
 
-      const protocolo = await db.oneOrNone("select sigla from protocolo", [protocolo_sigla]);
+      const protocolo = await db.oneOrNone("select sigla, tipo from protocolo where sigla = $1", protocolo_num);
       if (!protocolo) {
         return res.status(404).json({ message: "Protocolo não encontrado." });
       }
 
       const contrato = await db.any(
         "select num_contrato, num_parcelas, preco, dt_assinatura, dt_entrega from contrato where cliente_cnpj = $1 and protocolo_num = $2 and num_contrato = $3;",
-        [cliente_cnpj, protocolo_sigla, num_contrato] 
+        [cliente_cnpj, protocolo_num, num_contrato] 
      );
 
       if (!contrato || contrato.length === 0) {
@@ -625,20 +626,20 @@ server.get("/ver-contrato", async (req, res) => {
 
 server.get("/ver-contrato-cliente", async (req, res) => {
   try {
-    const { protocolo_sigla, num_contrato } = req.query;
+    const { protocolo_num, num_contrato } = req.query;
 
-    if (!protocolo_sigla || !num_contrato) {
+    if (!protocolo_num || !num_contrato) {
       return res.status(400).json({ message: "Parâmetros obrigatórios ausentes." });
     }
 
-    const protocolo = await db.oneOrNone("SELECT sigla FROM protocolo WHERE sigla = $1", [protocolo_sigla]);
+    const protocolo = await db.oneOrNone("select sigla, tipo from protocolo where sigla = $1", protocolo_num);
     if (!protocolo) {
       return res.status(404).json({ message: "Protocolo não encontrado." });
     }
 
     const contrato = await db.any(
       `SELECT num_contrato, num_parcelas, preco, dt_assinatura, dt_entrega FROM contrato WHERE protocolo_num = $1 AND num_contrato = $2;`,
-      [protocolo_sigla, num_contrato]
+      [protocolo_num, num_contrato]
     );
 
     if (!contrato || contrato.length === 0) {
@@ -653,9 +654,6 @@ server.get("/ver-contrato-cliente", async (req, res) => {
     res.status(500).json({ message: "Erro ao buscar contrato." });
   }
 });
-
-
-
 
 
 server.post("/cadastrar-protocolo", async (req, res) => {
@@ -683,7 +681,7 @@ server.post("/cadastrar-contrato", async (req, res) => {
   try {
     const {
       num_contrato,
-      protocolo,
+      protocolo_num,
       num_parcelas,
       preco,
       dt_assinatura,
@@ -693,7 +691,8 @@ server.post("/cadastrar-contrato", async (req, res) => {
 
 
     // Buscar a sigla do protocolo
-    const protocoloData = await db.oneOrNone("SELECT sigla FROM protocolo", [protocolo]);
+    const protocoloData = await db.oneOrNone("select sigla, tipo from protocolo where sigla = $1", protocolo_num); 
+
     if (!protocoloData) {
         return res.status(400).json({ message: "Protocolo não encontrado." });
     }
@@ -723,9 +722,8 @@ server.post("/cadastrar-contrato", async (req, res) => {
 
 
 server.put('/alterar-contrato/:cliente_cnpj/:protocolo_num/:num_contrato', async (req, res) => {
-  const { cliente_cnpj, protocolo_num, num_contrato } = req.params;
+  const { cliente_cnpj, protocolo_num } = req.params;
   const { 
-    contrato, 
     dataContrato, 
     dataEntrega, 
     custo, 
@@ -733,16 +731,15 @@ server.put('/alterar-contrato/:cliente_cnpj/:protocolo_num/:num_contrato', async
   } = req.body;
 
   try {
-      await db.none(
-          `update contrato 
-           set num_contrato = COALESCE($1, num_contrato),
-               dt_assinatura = COALESCE($2, dt_assinatura),
-               dt_entrega = COALESCE($3, dt_entrega),
-               preco = COALESCE($4, preco),
-               num_parcelas = COALESCE($5, num_parcelas)
-           where cliente_cnpj = $6 and protocolo_num = $7`,
-          [contrato, dataContrato, dataEntrega, custo, parcelas, cliente_cnpj, protocolo_num, num_contrato]
-      );
+    await db.none(
+      `UPDATE contrato
+        SET dt_assinatura = COALESCE($1, dt_assinatura),
+            dt_entrega = COALESCE($2, dt_entrega),
+            preco = COALESCE($3, preco),
+            num_parcelas = COALESCE($4, num_parcelas)
+        WHERE cliente_cnpj = $5 AND protocolo_num = $6`,
+      [dataContrato, dataEntrega, custo, parcelas, cliente_cnpj, protocolo_num]
+    );
 
       res.json({ message: 'Contrato atualizado com sucesso!' });
   } catch (error) {

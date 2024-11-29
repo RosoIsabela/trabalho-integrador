@@ -40,7 +40,7 @@ function AlterarDados() {
     const buscarContrato = (e) => {
         e.preventDefault();
         if (cliente && protocolo) {
-            fetch(`http://localhost:4000/ver-contrato?cliente_cnpj=${cliente}&protocolo_sigla=${protocolo}&num_contrato=${dados.contrato}`)
+            fetch(`http://localhost:4000/ver-contrato?cliente_cnpj=${cliente}&protocolo_num=${protocolo}&num_contrato=${dados.contrato}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.contrato && data.contrato.length === 1) {

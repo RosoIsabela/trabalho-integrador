@@ -136,7 +136,7 @@ const DadosRelatorios = () => {
                     </select>
 
                     <select
-                        className="contrato__selectBox"
+                        className="contrato__selectBox2"
                         name="selectFase"
                         value={fase}
                         onChange={(e) => setFase(e.target.value)}
@@ -150,7 +150,7 @@ const DadosRelatorios = () => {
                     </select>
 
                     <select
-                        className="contrato__selectBox"
+                        className="contrato__selectBox2"
                         name="selectContrato"
                         value={dadosRelatorio.contrato}
                         onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, contrato: e.target.value })}

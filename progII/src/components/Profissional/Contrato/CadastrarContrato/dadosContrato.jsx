@@ -34,7 +34,6 @@ function DadosContrato() {
         setCliente(e.target.value);
     };
 
-
     const SubmitCadastrar = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
@@ -43,6 +42,8 @@ function DadosContrato() {
           alert('Você precisa estar logado para cadastrar.');
           return;
         }
+
+        console.log("Protocolo Selecionado:", dados.protocolo); 
       
         //validações
         if (!dados.contrato || !dados.dataContrato || !dados.dataEntrega || !dados.custo || !dados.parcelas || !cliente) {
@@ -67,7 +68,7 @@ function DadosContrato() {
               cliente_cnpj: cliente
             }),
           });
-      
+          
           if (!response.ok) {
             throw new Error('Erro ao salvar os dados!');
           }
@@ -121,11 +122,14 @@ function DadosContrato() {
                     <p>Protocolo</p>
                     <Link className="link_cadastrarProtocolo" to="/cadastrar-protocolo">Cadastrar Protocolo</Link>
 
+                    
                     <select
                         className="inputs__DadosContrato"
                         name="text"
                         value={dados.protocolo || ''} 
-                        onChange={(e) => setDados({ ...dados, protocolo: e.target.value })} 
+                        onChange={(e) => {
+                            setDados({ ...dados, protocolo: e.target.value });
+                        }}
                     >
                         <option value="" disabled>Selecione o Protocolo</option>
                         {protocolo.map((protocolo) => (
