@@ -13,4 +13,4 @@ function AlterarRelatorioProfissional(){
 
 }
 
-export default AlterarRelatorioProfissional
+export default AlterarRelatorioProfissional;

@@ -12,7 +12,7 @@ const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
 // Conexão com o banco
 const usuario = "postgres";
-const senha = "postgres";
+const senha = "xxxxxx";
 const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
 
 const server = express();
@@ -312,30 +312,34 @@ server.post("/create-colaborador", async (req, res) => {
       const hashedPasswd = bcrypt.hashSync(senha, salt);
 
       await db.none(
-          "insert into colaborador_sulagro (nome, cpf, email, celular, cargo, permissao, cidade, logradouro, bairro, cep, estado, horario, senha) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);",
-          [
-              nome,
-              cpf,
-              email,
-              celular,
-              cargo,
-              permissao,
-              cidade,
-              logradouro,
-              bairro,
-              cep,
-              estado,
-              horario,
-              hashedPasswd
-          ]
-      );
+        `INSERT INTO colaborador_sulagro 
+        (cpf, nome, email, celular, cargo, permissao, cidade, logradouro, bairro, cep, estado, horario, senha) 
+        VALUES 
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);`,
+        [
+            cpf,
+            nome,
+            email,
+            celular,
+            cargo,
+            permissao,
+            cidade,
+            logradouro,
+            bairro,
+            cep,
+            estado,
+            horario,
+            hashedPasswd
+        ]
+    );
 
-      console.log("Colaborador criado com sucesso!");
-      res.status(200).json({ message: "Colaborador criado com sucesso!" });
-  } catch (error) {
-      console.error("Erro ao criar colaborador:", error);
-      res.status(400).json({ message: "Erro ao criar colaborador" });
-  }
+    console.log("Colaborador criado com sucesso!");
+    res.status(200).json({ message: "Colaborador criado com sucesso!" });
+} catch (error) {
+
+    console.error("Erro ao criar colaborador:", error);
+    res.status(500).json({ message: "Erro ao criar colaborador.", error });
+}
 });
 
 // Rota para procurar um colaborador
@@ -569,6 +573,30 @@ server.get("/contratos", async (req, res) => {
 });
 
 
+// Rota para buscar todos os contratos do cliente
+server.get("/contratos-cliente", authenticateToken, async (req, res) => {
+  try {
+    const cnpjCliente = req.user.identificador; 
+
+    const contratos = await db.any(
+      `SELECT num_contrato FROM contrato WHERE cliente_cnpj = $1`, 
+      [cnpjCliente]
+    );
+
+    if (contratos.length === 0) {
+      return res.status(404).json({ message: "Nenhum contrato encontrado para este cliente." });
+    }
+
+    res.status(200).json(contratos);
+
+  } catch (error) {
+    console.error("Erro ao buscar contratos:", error);
+    res.status(400).json({ message: "Erro ao buscar contratos" });
+  }
+});
+
+
+
 server.get("/ver-contrato", async (req, res) => {
   try { 
       const { cliente_cnpj, protocolo_sigla, num_contrato } = req.query;
@@ -593,6 +621,41 @@ server.get("/ver-contrato", async (req, res) => {
       res.status(500).json({ message: "Erro ao buscar contrato." });
   }
 });
+
+
+server.get("/ver-contrato-cliente", async (req, res) => {
+  try {
+    const { protocolo_sigla, num_contrato } = req.query;
+
+    if (!protocolo_sigla || !num_contrato) {
+      return res.status(400).json({ message: "Parâmetros obrigatórios ausentes." });
+    }
+
+    const protocolo = await db.oneOrNone("SELECT sigla FROM protocolo WHERE sigla = $1", [protocolo_sigla]);
+    if (!protocolo) {
+      return res.status(404).json({ message: "Protocolo não encontrado." });
+    }
+
+    const contrato = await db.any(
+      `SELECT num_contrato, num_parcelas, preco, dt_assinatura, dt_entrega FROM contrato WHERE protocolo_num = $1 AND num_contrato = $2;`,
+      [protocolo_sigla, num_contrato]
+    );
+
+    if (!contrato || contrato.length === 0) {
+      return res.status(404).json({ message: "Contrato não encontrado." });
+    }
+
+    const formattedContract = contrato[0]; 
+    res.status(200).json({ contrato: [formattedContract] });
+
+  } catch (error) {
+    console.error("Erro ao buscar contrato:", error);
+    res.status(500).json({ message: "Erro ao buscar contrato." });
+  }
+});
+
+
+
 
 
 server.post("/cadastrar-protocolo", async (req, res) => {
@@ -764,6 +827,46 @@ server.get("/ver-pesquisa/:contrato/:fase", async (req, res) => {
     res.status(500).json({ message: "Erro ao buscar pesquisa." });
   }
 });
+
+server.put('/alterar-relatorio/:cliente_cnpj/:fase/:num_contrato', async (req, res) => {
+  const { cliente_cnpj, fase, num_contrato } = req.params;
+  const { 
+    dtColeta, 
+    dtAplicacao, 
+    tamanho, 
+    corFolhas, 
+    outrosProdutos, 
+    numeroNos, 
+    clima, 
+    observacao, 
+    contrato 
+  } = req.body;
+
+  try {
+      // Atualizando o relatório na tabela 'pesquisa' com os dados fornecidos
+      await db.none(
+          `UPDATE pesquisa 
+          SET dt_coleta = COALESCE($1, dt_coleta),
+                dt_apl_prod = COALESCE($2, dt_apl_prod),
+                tm_plantas = COALESCE($3, tm_plantas),
+                cor_folhas = COALESCE($4, cor_folhas),
+                outros_prod = COALESCE($5, outros_prod),
+                num_nos = COALESCE($6, num_nos),
+                clima = COALESCE($7, clima),
+                fase = COALESCE($8, fase),
+                obs = COALESCE($9, obs),
+                contrato = COALESCE($10, contrato)
+          WHERE cliente_cnpj = $11 AND fase = $12 AND contrato = $13`,
+          [dtColeta, dtAplicacao, tamanho, corFolhas, outrosProdutos, numeroNos, clima, fase, observacao, contrato, cliente_cnpj, fase, num_contrato]
+      );
+
+      res.json({ message: 'Relatório atualizado com sucesso!' });
+  } catch (error) {
+      console.error('Erro ao atualizar relatório:', error);
+      res.status(500).json({ message: 'Erro ao atualizar relatório!' });
+  }
+});
+
 
 
 server.delete("/excluir-relatorio/:fase", async (req, res) => {
