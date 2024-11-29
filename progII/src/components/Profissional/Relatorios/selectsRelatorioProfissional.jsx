@@ -3,12 +3,14 @@ import { ArrowRight, Eraser, MagnifyingGlass, Wrench } from "@phosphor-icons/rea
 import Linha from "../../../assets/Line 29.png";
 import { Link } from 'react-router-dom'; 
 import { useState, useEffect } from 'react';
+import { jwtDecode } from "jwt-decode";
 
 function SelectsRelatoriosProfissional() {
     const [contratos, setContratos] = useState([]);
     const [fase, setFase] = useState('');
     const [dados, setDados] = useState({});
     const [num_contrato, setNumContrato] = useState('');
+    const [permissao, setPermissao] = useState(null);
     const [error, setError] = useState('');
 
     const fases = [
@@ -24,6 +26,13 @@ function SelectsRelatoriosProfissional() {
             .then((response) => response.json())
             .then((data) => setContratos(data))
             .catch((error) => console.error("Erro ao buscar contratos:", error));
+
+
+        const token = localStorage.getItem('token'); 
+        if (token) {
+            const payload = jwtDecode(token);
+            setPermissao(payload.permissao);
+        }
     }, []);
 
     const formatData = (date) => {
@@ -94,6 +103,7 @@ function SelectsRelatoriosProfissional() {
         <div>
             <div className="contrato__options">
                 <div className="div__buttons">
+                
                     <select
                         className="contrato__selectBox"
                         name="contrato"
@@ -107,7 +117,7 @@ function SelectsRelatoriosProfissional() {
                             </option>
                         ))}
                     </select>
-                    
+
                     <select
                         className="contrato__selectBox"
                         name="selectFase"
@@ -116,9 +126,9 @@ function SelectsRelatoriosProfissional() {
                     >
                         <option value="">Selecione a Fase</option>
                         {fases.map((fase) => (
-                        <option key={fase.id} value={fase.id}>
-                            {fase.nome}
-                        </option>
+                            <option key={fase.id} value={fase.id}>
+                                {fase.nome}
+                            </option>
                         ))}
                     </select>
 

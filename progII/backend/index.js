@@ -12,7 +12,7 @@ const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
 // Conexão com o banco
 const usuario = "postgres";
-const senha = "xxxxxx";
+const senha = "postgre";
 const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
 
 const server = express();
@@ -891,4 +891,3 @@ server.post("/logout", function (req, res) {
       res.status(200).json({ message: "Logout realizado com sucesso" });
   });
 });
-

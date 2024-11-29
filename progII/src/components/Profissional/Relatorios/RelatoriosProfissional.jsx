@@ -2,7 +2,6 @@ import SideBar from "../../Profissional/Dashboard Profissional/sidebarProfission
 import Relatorios from "./Relatorio";
 import SelectsRelatorios from "./selectsRelatorioProfissional"
 
-
 function RelatoriosProfissional() {
     return (
         <div>

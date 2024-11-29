@@ -26,8 +26,8 @@ import GerenciarClientes from './components/Profissional/Controle Geral/Gerencia
 import GerenciarFuncionario from './components/Profissional/Controle Geral/GerenciarFuncionarios/GerenciarFuncionario';
 import CadastrarProtocoloProfissional from './components/Profissional/Contrato/CadastrarProtocolo/cadastrarProtocoloProfissional';
 import AlterarContratoProfissional from './components/Profissional/Contrato/AlterarContrato/AlterarContratoProfissional';
-import axios from "axios";
 import AlterarRelatorioProfissional from './components/Profissional/Relatorios/AlterarRelatorios/AlterarRelatorioProfissional';
+import axios from "axios";
 
 axios.defaults.baseURL = "http://localhost:4000/";
 axios.defaults.headers.common["Content-Type"] =
@@ -43,7 +43,7 @@ function App() {
     }
   }, [navigate]);
 
-  return (
+  return ( 
       <Routes>
         <Route 
           path="/" 

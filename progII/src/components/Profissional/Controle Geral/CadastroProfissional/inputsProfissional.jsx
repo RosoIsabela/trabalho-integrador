@@ -43,12 +43,12 @@ const InputsProfissional = () => {
 
         try {
             const response = await axios.get(`http://localhost:4000/buscar_funcionario?search=${searchQuery}`);
-            const data = response.data;
-
-            if (data.length === 1) {
-                setFormData(data[0]); // Preenche o formulário se apenas um colaborador for encontrado
-            } else if (data.length > 1) {
-                setColaboradores(data); // Lista os colaboradores encontrados
+            const { status, data } = response.data; // Desestruturação para acessar status e dados diretamente
+    
+            if (status === 'encontrado' && data.length === 1) {
+                setFormData(data[0]);
+            } else if (status === 'encontrado' && data.length > 1) {
+                setColaboradores(data);
             } else {
                 alert('Nenhum colaborador encontrado!');
             }
@@ -255,9 +255,9 @@ const InputsProfissional = () => {
                     onChange={handleChange}
                 >
                     <option value="opcao" disabled>Tipo de Permissão</option>
-                    <option value="3">Funcionário</option>
+                    <option value="3">Administrador</option>
                     <option value="2">Coordenador de Equipe</option>
-                    <option value="1">Administrador</option>
+                    <option value="1">Funcionário</option>
                 </select>
                 <input
                     className="inputs__boxsP"
