@@ -9,6 +9,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
+const moment = require('moment');
 
 // Conexão com o banco
 const usuario = "postgres";
@@ -287,6 +288,7 @@ server.get('/pesquisas/fase-maior/:clienteCnpj/:contratoNum', async (req, res) =
     res.status(500).json({ message: "Erro ao buscar a maior fase da pesquisa." });
   }
 });
+
 
 
 //rota para criar um colaborador
@@ -572,6 +574,95 @@ server.get("/contratos", async (req, res) => {
       res.status(400).json({ message: "Erro ao buscar contratos" });
   }
 });
+
+// Rotas dashboard do cliente
+
+// Rota para buscar informações do contrato do cliente
+server.get("/contratos-cliente/:numContrato", authenticateToken, async (req, res) => {
+  try {
+    const cnpjCliente = req.user.identificador; 
+    const { numContrato } = req.params;
+
+    const contratos = await db.any(
+      `SELECT num_contrato, num_parcelas, preco, dt_entrega 
+       FROM contrato 
+       WHERE cliente_cnpj = $1 AND num_contrato = $2`, 
+      [cnpjCliente, numContrato]
+    );
+
+    if (contratos.length === 0) {
+      return res.status(404).json({ message: "Nenhum contrato encontrado para este cliente." });
+    }
+
+    res.status(200).json(contratos[0]); 
+  } catch (error) {
+    console.error("Erro ao buscar contratos:", error);
+    res.status(500).json({ message: "Erro ao buscar contratos" });
+  }
+});
+
+// Rota para recuperar o número da fase da pesquisa que é utilizado na construção do gráfico
+
+server.get('/pesquisas/fase-maior/:contratoNum', async (req, res) => {
+  try {
+    const { contratoNum } = req.params;
+
+    const resultado = await db.oneOrNone(
+      `SELECT MAX(fase) AS maior_fase
+       FROM pesquisa p
+       JOIN contrato c ON p.contrato = c.num_contrato
+       WHERE c.num_contrato = $1;`, 
+      [contratoNum]
+    );
+
+    if (!resultado || resultado.maior_fase === null) {
+      return res
+        .status(404)
+        .json({ message: 'Nenhuma fase encontrada para o contrato especificado.' });
+    }
+
+    res.status(200).json({ maiorFase: resultado.maior_fase });
+  } catch (error) {
+    console.error('Erro ao buscar a maior fase:', error);
+    res.status(500).json({ message: 'Erro ao buscar a maior fase da pesquisa.' });
+  }
+});
+
+
+// Rota para buscar os últimos dados coletados da pesquisa
+server.get('/pesquisas/ultimos-dados/:contratoNum', async (req, res) => {
+  try {
+    const { contratoNum } = req.params;
+
+    const resultado = await db.oneOrNone(
+      `SELECT dt_coleta, tm_plantas, cor_folhas, num_nos, clima
+       FROM pesquisa
+       WHERE contrato = $1
+       ORDER BY dt_coleta DESC
+       LIMIT 1`, 
+      [contratoNum]
+    );
+
+    if (!resultado) {
+      return res.status(404).json({ message: 'Nenhum dado encontrado para o contrato especificado.' });
+    }
+
+    res.status(200).json({
+      data_coleta: moment(resultado.dt_coleta).format('DD/MM/YYYY'),
+      tamanho_plantas: resultado.tm_plantas,
+      coloracao_folhas: resultado.cor_folhas,
+      num_nos: resultado.num_nos,
+      clima: resultado.clima,
+    });
+  } catch (error) {
+    console.error('Erro ao buscar os últimos dados:', error);
+    res.status(500).json({ message: 'Erro ao buscar os últimos dados da pesquisa.' });
+  }
+});
+
+
+
+//-----Fim rotas dashboard cliente ---
 
 
 // Rota para buscar todos os contratos do cliente
