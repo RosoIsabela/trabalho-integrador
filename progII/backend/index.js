@@ -13,7 +13,7 @@ const moment = require('moment');
 
 // Conexão com o banco
 const usuario = "postgres";
-const senha = "xx";
+const senha = "postgres";
 const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
 
 const server = express();
@@ -271,7 +271,7 @@ server.get('/pesquisas/fase-maior/:clienteCnpj/:contratoNum', async (req, res) =
     const { clienteCnpj, contratoNum } = req.params;
 
     const resultado = await db.oneOrNone(
-      `SELECT MAX(fase) AS maior_fase
+      `SELECT MAX(CAST(REGEXP_REPLACE(fase, '\\D', '', 'g') AS INTEGER)) AS maior_fase
        FROM pesquisa p
        JOIN contrato c ON p.contrato = c.num_contrato
        WHERE c.cliente_cnpj = $1 AND c.num_contrato = $2;`,
@@ -279,15 +279,20 @@ server.get('/pesquisas/fase-maior/:clienteCnpj/:contratoNum', async (req, res) =
     );
 
     if (!resultado || resultado.maior_fase === null) {
-      return res.status(404).json({ message: "Nenhuma fase encontrada para o contrato e cliente especificados." });
+      return res.status(404).json({ 
+        message: "Nenhuma fase encontrada para o contrato e cliente especificados." 
+      });
     }
 
     res.status(200).json({ maiorFase: resultado.maior_fase });
   } catch (error) {
     console.error("Erro ao buscar a maior fase:", error);
-    res.status(500).json({ message: "Erro ao buscar a maior fase da pesquisa." });
+    res.status(500).json({ 
+      message: "Erro ao buscar a maior fase da pesquisa." 
+    });
   }
 });
+
 
 
 
@@ -608,10 +613,10 @@ server.get('/pesquisas/fase-maior/:contratoNum', async (req, res) => {
     const { contratoNum } = req.params;
 
     const resultado = await db.oneOrNone(
-      `SELECT MAX(fase) AS maior_fase
+      `SELECT MAX(CAST(REGEXP_REPLACE(fase, '\\D', '', 'g') AS INTEGER)) AS maior_fase
        FROM pesquisa p
        JOIN contrato c ON p.contrato = c.num_contrato
-       WHERE c.num_contrato = $1;`, 
+       WHERE c.num_contrato = $1;`,
       [contratoNum]
     );
 
