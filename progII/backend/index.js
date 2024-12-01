@@ -12,7 +12,7 @@ const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
 // Conexão com o banco
 const usuario = "postgres";
-const senha = "postgre";
+const senha = "xx";
 const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
 
 const server = express();
@@ -825,44 +825,75 @@ server.get("/ver-pesquisa/:contrato/:fase", async (req, res) => {
   }
 });
 
-server.put('/alterar-relatorio/:cliente_cnpj/:fase/:num_contrato', async (req, res) => {
-  const { cliente_cnpj, fase, num_contrato } = req.params;
+// Rota para buscar todos os relatorios (pesquisas)
+server.get("/contratos", async (req, res) => {
+  try {
+      const contratos = await db.any("select cod from pesquisa");
+      res.status(200).json(contratos);
+  } catch (error) {
+      console.error("Erro ao buscar pesquisa:", error);
+      res.status(400).json({ message: "Erro ao buscar pesquisa" });
+  }
+});
+
+//rota para encontrar relatorio com base na fase e numero do contrato 
+server.get("/relatorios/:fase/:contrato", async (req, res) => {
+  const { fase, contrato } = req.params; // Captura os parâmetros da URL
+  try {
+      // Consulta no banco de dados utilizando os parâmetros fase e contrato
+      const relatorio = await db.any(
+          "SELECT * FROM pesquisa WHERE fase = $1 AND contrato = $2", 
+          [fase, contrato]  // Passando os valores dos parâmetros para a consulta
+      );
+      
+      // Retorna os resultados encontrados
+      if (relatorio.length === 0) {
+          return res.status(404).json({ message: "Relatório não encontrado." });
+      }
+
+      res.status(200).json(relatorio);  // Retorna os dados do relatório
+  } catch (error) {
+      console.error("Erro ao buscar relatorios:", error);
+      res.status(500).json({ message: "Erro ao buscar relatorios" });
+  }
+});
+
+
+server.put('/alterar-relatorio/:fase/:contrato', async (req, res) => {
+  const { fase, contrato } = req.params; 
   const { 
-    dtColeta, 
-    dtAplicacao, 
-    tamanho, 
-    corFolhas, 
-    outrosProdutos, 
-    numeroNos, 
-    clima, 
-    observacao, 
-    contrato 
+      dtColeta, 
+      dtAplicacao, 
+      tamanho, 
+      corFolhas, 
+      outrosProdutos, 
+      numeroNos, 
+      clima, 
+      observacao, 
   } = req.body;
 
   try {
-      // Atualizando o relatório na tabela 'pesquisa' com os dados fornecidos
       await db.none(
           `UPDATE pesquisa 
-          SET dt_coleta = COALESCE($1, dt_coleta),
-                dt_apl_prod = COALESCE($2, dt_apl_prod),
-                tm_plantas = COALESCE($3, tm_plantas),
-                cor_folhas = COALESCE($4, cor_folhas),
-                outros_prod = COALESCE($5, outros_prod),
-                num_nos = COALESCE($6, num_nos),
-                clima = COALESCE($7, clima),
-                fase = COALESCE($8, fase),
-                obs = COALESCE($9, obs),
-                contrato = COALESCE($10, contrato)
-          WHERE cliente_cnpj = $11 AND fase = $12 AND contrato = $13`,
-          [dtColeta, dtAplicacao, tamanho, corFolhas, outrosProdutos, numeroNos, clima, fase, observacao, contrato, cliente_cnpj, fase, num_contrato]
+              SET dt_coleta = COALESCE($1, dt_coleta),
+                  dt_apl_prod = COALESCE($2, dt_apl_prod),
+                  tm_plantas = COALESCE($3, tm_plantas),
+                  cor_folhas = COALESCE($4, cor_folhas),
+                  outros_prod = COALESCE($5, outros_prod),
+                  num_nos = COALESCE($6, num_nos),
+                  clima = COALESCE($7, clima),
+                  obs = COALESCE($8, obs)
+              WHERE fase = $9 AND contrato = $10`,
+          [dtColeta, dtAplicacao, tamanho, corFolhas, outrosProdutos, numeroNos, clima, observacao, fase, contrato] // Passando 10 parâmetros
       );
 
       res.json({ message: 'Relatório atualizado com sucesso!' });
   } catch (error) {
       console.error('Erro ao atualizar relatório:', error);
-      res.status(500).json({ message: 'Erro ao atualizar relatório!' });
+      res.status(500).json({ message: 'Erro ao atualizar relatório!', error: error.message });
   }
 });
+
 
 
 
