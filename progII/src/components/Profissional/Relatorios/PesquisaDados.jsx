@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import './PesquisaDados.css';
 
 const PesquisaDados = () => {
-    const [contratos, setContratos] = useState([]);  
+    const [contratos, setContratos] = useState([]);
+    const [funcionarios, setFuncionarios] = useState([]);  // Estado para armazenar os colaboradores
     const [formData, setFormData] = useState({
         cultivar: "",
         fase: "opcao",
@@ -15,6 +16,7 @@ const PesquisaDados = () => {
         descricao: "",
         clima: "",
         contrato: "opcao",
+        cpf_colaborador: "opcao",  // Campo para armazenar o cpf do colaborador selecionado
     });
 
     const fases = [
@@ -25,12 +27,18 @@ const PesquisaDados = () => {
         { id: 'fase5', nome: '5º Etapa' },
     ];
 
-
     useEffect(() => {
+        // Buscar contratos
         fetch('http://localhost:4000/contratos')
             .then((response) => response.json())
             .then((data) => setContratos(data))
             .catch((error) => console.error("Erro ao buscar contratos:", error));
+
+        // Buscar funcionários
+        fetch('http://localhost:4000/listar_colaboradores')
+            .then((response) => response.json())
+            .then((data) => setFuncionarios(data))
+            .catch((error) => console.error("Erro ao buscar funcionários:", error));
     }, []);
 
     const handleChange = (e) => {
@@ -55,12 +63,13 @@ const PesquisaDados = () => {
                     dt_apl_prod: formData.data_aplicacao,
                     tm_plantas: formData.tamanho,
                     cor_folhas: formData.coloracao,
-                    outros_prod: formData. produtos,
+                    outros_prod: formData.produtos,
                     num_nos: formData.nos,
                     clima: formData.clima,
                     fase: formData.fase,
                     obs: formData.descricao,
                     contrato: formData.contrato,
+                    cpf_colaborador: formData.cpf_colaborador,
                 }),
             });
 
@@ -83,27 +92,38 @@ const PesquisaDados = () => {
         }));
     };
 
+    //função para selecionar o colaborador
+    const handleColaboradorSelect = (e) => {
+        const { value } = e.target;
+        setFormData((prevState) => ({
+            ...prevState,
+            cpf_colaborador: value,
+        }));
+    };
+
     return (
         <form className="container" onSubmit={handleSubmit}>
             <div className="colunas">
                 <nav className="TopBarPesquisa">
                     <div>
                         <select
-                            id="contratoSelect"  
-                            name="contrato"  
+                            id="contratoSelect"
+                            name="contrato"
                             defaultValue="opcao"
                             value={formData.contrato}
-                            onChange={handleContratoSelect} 
+                            onChange={handleContratoSelect}
                         >
                             <option value="opcao" disabled>Selecionar Contrato</option>
                             {contratos.map((contrato) => (
-                            <option key={contrato.num_contrato} value={contrato.num_contrato}>  
-                                {contrato.num_contrato} 
-                            </option>
+                                <option key={contrato.num_contrato} value={contrato.num_contrato}>
+                                    {contrato.num_contrato}
+                                </option>
                             ))}
                         </select>
                     </div>
                 </nav>
+
+                
 
                 <div className="inputsContainers">
                     <div className="inputsPesquisa">
@@ -176,12 +196,11 @@ const PesquisaDados = () => {
                         >
                             <option value="">Selecione a Fase</option>
                             {fases.map((fase) => (
-                            <option key={fase.id} value={fase.id}>
-                                {fase.nome}
-                            </option>
+                                <option key={fase.id} value={fase.id}>
+                                    {fase.nome}
+                                </option>
                             ))}
                         </select>
-
                     </div>
                 </nav>
 
@@ -197,7 +216,7 @@ const PesquisaDados = () => {
                         onChange={handleChange}
                     />
                 </div>
-                    
+
                 <div className="inputsDate">
                     <label className="label__InserirDados" id="dateInput_Nome" htmlFor="dateInput">Data da Coleta</label>
                     <input
@@ -224,10 +243,30 @@ const PesquisaDados = () => {
                     />
                 </div>
             </div>
-                
+
+            
             <div className="colunas">
-                <label className="label__InserirDados"  htmlFor="descricao">Descrição</label>
-                <div  className="inputsNote">
+            <nav className="TopBarPesquisa">
+                    
+            <select
+                        id="colaboradorSelect"
+                        name="cpf_colaborador"
+                        value={formData.cpf_colaborador}
+                        onChange={handleColaboradorSelect}
+                    >
+                        <option value="opcao" disabled>Selecione o Colaborador</option>
+                        {funcionarios.map((funcionario) => (
+                            <option key={funcionario.cpf} value={funcionario.cpf}>
+                                {funcionario.nome}
+                            </option>
+                        ))}
+                    </select>
+                </nav>
+                               
+
+            
+                <label className="label__InserirDados" htmlFor="descricao">Descrição</label>
+                <div className="inputsNote">
                     <input
                         className="input__InserirText"
                         type="text"

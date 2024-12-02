@@ -13,7 +13,7 @@ const moment = require('moment');
 
 // Conexão com o banco
 const usuario = "postgres";
-const senha = "postgres";
+const senha = "xx";
 const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
 
 const server = express();
@@ -350,6 +350,8 @@ server.post("/create-colaborador", async (req, res) => {
 }
 });
 
+
+
 // Rota para procurar um colaborador
 server.get('/buscar_funcionario', async (req, res) => {
   console.log('Requisição recebida em /buscar_funcionario');
@@ -469,7 +471,7 @@ server.post("/create-cliente", async (req, res) => {
   const saltRounds = 10; // Número de rounds para o salt
   try {
       const {
-        nome_completo: nome,
+        nome,
         cnpj,
         email,
         celular,
@@ -488,7 +490,7 @@ server.post("/create-cliente", async (req, res) => {
       const hashedPasswd = bcrypt.hashSync(senha, salt);
 
       await db.none(
-          "insert into cliente (nome, cnpj, email, celular, razao_social, cidade, logradouro, bairro, cep, estado, permissao, senha) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",
+          "insert into cliente (nome, cnpj, email, celular, razao_social, cidade, logradouro, bairro, cep, estado, senha) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);",
           [
               nome,
               cnpj,
@@ -500,7 +502,6 @@ server.post("/create-cliente", async (req, res) => {
               bairro,
               estado,
               cep,
-              permissao,
               hashedPasswd
           ]
       );
@@ -510,6 +511,35 @@ server.post("/create-cliente", async (req, res) => {
   } catch (error) {
       console.error("Erro ao criar cliente:", error);
       res.status(400).json({ message: "Erro ao criar cliente" });
+  }
+});
+
+// Rota para procurar um cliente
+server.get('/buscar_cliente', async (req, res) => {
+  console.log('Requisição recebida em /buscar_cliente');
+  const termoBusca = req.query.search;
+  console.log('Parâmetro search:', termoBusca);
+
+  try {
+      const cliente = await db.any(
+          `
+          SELECT * 
+          FROM cliente 
+          WHERE nome ILIKE $1 
+          OR cnpj ILIKE $1
+          OR razao_social ILIKE $1
+          `,
+          [`%${termoBusca}%`]
+      );
+
+      if (cliente.length > 0) {
+          res.json({ status: 'encontrado', data: cliente });
+      } else {
+          res.json({ status: 'não encontrado', message: 'Nenhum cliente encontrado.' });
+      }
+  } catch (error) {
+      console.error('Erro ao buscar cclientes:', error.message);
+      res.status(500).json({ status: 'error', message: 'Erro no servidor.' });
   }
 });
 
@@ -530,6 +560,67 @@ server.get("/perfilCliente", authenticateToken, async (req, res) => {
   } catch (error) {
       console.error("Erro ao buscar perfil cliente:", error);
       res.status(500).json({ message: "Erro ao buscar perfil cliente." });
+  }
+});
+
+// Atualizar cliente
+server.put('/update-cliente/:cnpj', async (req, res) => {
+  const { cnpj } = req.params;
+  let {
+        nome,
+        email,
+        celular,
+        razao_social,
+        cidade,
+        logradouro,
+        bairro,
+        estado,
+        cep,
+        senha,
+  } = req.body;
+
+  try {
+    // Atualiza a senha apenas se ela for enviada
+    if (senha) {
+      const saltRounds = 10;
+      const salt = bcrypt.genSaltSync(saltRounds);
+      senha = bcrypt.hashSync(senha, salt);
+    }
+
+    await db.none(
+      `UPDATE cliente
+       SET nome = COALESCE($1, nome), 
+           email = COALESCE($2, email), 
+           celular = COALESCE($3, celular), 
+           razao_social = COALESCE($4, razao_social), 
+           cidade = COALESCE($5, cidade),
+           logradouro = COALESCE($6, logradouro), 
+           bairro = COALESCE($7, bairro), 
+           estado = COALESCE($8, estado), 
+           cep = COALESCE($9, cep),            
+           senha = COALESCE($10, senha)
+       WHERE cnpj = $11`,
+      [ nome, email, celular, razao_social, cidade, logradouro, bairro, estado, cep, senha, cnpj]
+    );
+
+    res.json({ message: 'Colaborador atualizado com sucesso!' });
+  } catch (error) {
+    console.error('Erro ao atualizar colaborador:', error);
+    res.status(500).json({ message: 'Erro ao atualizar colaborador!' });
+  }
+});
+
+
+// Excluir cliente
+server.delete('/delete-cliente/:cnpj', async (req, res) => {
+  const { cnpj } = req.params;
+
+  try {
+      await db.none('DELETE FROM cliente WHERE cnpj = $1', [cnpj]);
+      res.json({ message: 'Cliente excluído com sucesso!' });
+  } catch (error) {
+      console.error('Erro ao excluir cliente:', error);
+      res.status(500).json({ message: 'Erro ao excluir cliente!' });
   }
 });
 
@@ -872,12 +963,13 @@ server.post("/incluir-etapa-pesquisa", async (req, res) => {
       fase,
       obs,
       contrato,
+      cpf_colaborador,
     } = req.body;
 
     await db.none(
       `insert into pesquisa 
-      (dt_coleta, dt_apl_prod, tm_plantas, cor_folhas, outros_prod, num_nos, clima, fase, obs, contrato) 
-      values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`,
+      (dt_coleta, dt_apl_prod, tm_plantas, cor_folhas, outros_prod, num_nos, clima, fase, obs, contrato, cpf_colaborador) 
+      values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`,
       [
         dt_coleta,
         dt_apl_prod,
@@ -889,6 +981,7 @@ server.post("/incluir-etapa-pesquisa", async (req, res) => {
         fase,
         obs,
         contrato,
+        cpf_colaborador,
       ]
     );
 
@@ -951,6 +1044,21 @@ server.get("/relatorios/:fase/:contrato", async (req, res) => {
   } catch (error) {
       console.error("Erro ao buscar relatorios:", error);
       res.status(500).json({ message: "Erro ao buscar relatorios" });
+  }
+});
+
+// Rota para listar os funcionários cadastrados
+
+server.get("/listar_colaboradores", async (req, res) => {
+  try {
+    // Consulta os colaboradores (nome e cpf)
+    const colaboradores = await db.any("SELECT cpf, nome FROM colaborador_sulagro");
+
+    // Retorna os dados dos colaboradores
+    res.status(200).json(colaboradores);
+  } catch (error) {
+    console.error("Erro ao buscar colaboradores:", error);
+    res.status(400).json({ message: "Erro ao buscar colaboradores" });
   }
 });
 

@@ -9,7 +9,7 @@ function ControleGeral() {
             <SideBar />
             <Controle />
             <CardsCadastros />
-            <CardsGerenciar />
+            
         </div>
     )
 }

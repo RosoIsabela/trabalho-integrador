@@ -12,7 +12,7 @@ function CardsCadastros() {
                     <Link className="links__cadastro"  to="/cadastro-cliente"> 
                         <div className="card__cliente">
                             <div className="div__cadastraCliente">
-                                <p className="card__title">Cadastrar Cliente</p>
+                                <p className="card__title">Gerenciar Clientes</p>
                             </div>
 
                             <img src={imgCliente} alt="imagem moderna para cadastrar clientes" className="img__cards"/>
@@ -22,7 +22,7 @@ function CardsCadastros() {
                     <Link className="links__cadastro"  to="/cadastro-funcionario">
                         <div className="card__funcionario">
                             <div className="div__cadastraFuncionario">
-                                <p className="card__title">Cadastrar Funcionário</p> 
+                                <p className="card__title">Gerenciar Funcionários</p> 
                             </div>
 
                             <img src={imgFuncionario} alt="varios usuarios funcionario" className="img__cards"/>

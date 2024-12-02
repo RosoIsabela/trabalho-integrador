@@ -4,7 +4,7 @@ import axios from "axios";
 
 const InputsCliente = () => {
     const [formData, setFormData] = useState({
-        nome_completo: "",
+        nome: "",
         cnpj: "",
         email: "",
         celular: "",
@@ -17,12 +17,36 @@ const InputsCliente = () => {
         senha: "",
     });
 
+    const [searchQuery, setSearchQuery] = useState('');
+
     const handleChange = (e) => {
         const { id, value } = e.target;
         setFormData((prevState) => ({
             ...prevState,
             [id]: value,
         }));
+    };
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const handleSearch = async () => {
+        if (!searchQuery) {
+            alert('Digite o nome, razão social ou CNPJ para buscar!');
+            return;
+        }
+
+        try {
+            const response = await axios.get(`http://localhost:4000/buscar_cliente?search=${searchQuery}`);
+            if (response.data.status === 'encontrado' && response.data.data.length === 1) {
+                setFormData(response.data.data[0]); // Preenche os campos com os dados encontrados
+            } else {
+                alert('Nenhum cliente encontrado!');
+            }
+        } catch (error) {
+            alert('Erro ao buscar cliente!');
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -33,38 +57,90 @@ const InputsCliente = () => {
             return;
         }
 
-        const payload = { 
-            ...formData,
-            permissao: 0
-        };
-
-        console.log("Dados enviados:", payload);
-
         try {
-            const response = await axios.post("http://localhost:4000/create-cliente", payload);
-            console.log("Resposta do servidor:", response.data);
+            const response = await axios.post("http://localhost:4000/create-cliente", formData);
             alert("Cliente criado com sucesso!");
         } catch (error) {
-            console.error("Erro ao enviar dados:", error);
+            alert("Erro ao criar cliente!");
         }
     };
 
+    const handleAlterar = async () => {
+        try {
+            const response = await axios.put(
+                `http://localhost:4000/update-cliente/${formData.cnpj}`, 
+                formData 
+            );
+            console.log("Cliente atualizado:", response.data);
+            alert("Alteração realizada com sucesso!");
+        } catch (error) {
+            console.error("Erro ao alterar cliente:", error);
+            alert("Erro ao tentar alterar o cliente.");
+        }
+    };
+
+
+    // Função para excluir cliente
+const handleExcluir = async () => {
+    if (!formData.cnpj) {
+        alert("Informe o CNPJ do cliente para exclusão.");
+        return;
+    }
+    try {
+        const response = await axios.delete(`http://localhost:4000/delete-cliente/${formData.cnpj}`);
+        console.log("Cliente excluído:", response.data);
+        alert("Exclusão realizada com sucesso!");
+        
+        setFormData({
+            nome: '',
+            cnpj: '',
+            email: '',
+            celular: '',
+            razao_social: '',
+            cidade: '',
+            logradouro: '',
+            bairro: '',
+            estado: '',
+            cep: '',
+            senha: '',
+        });
+    } catch (error) {
+        console.error("Erro ao excluir cliente:", error);
+        alert("Erro ao tentar excluir o cliente.");
+    }
+};
+
+
     return (
         <div>
+            <div className="div__search">
+                <input
+                    className="inputs__boxsP"
+                    id="search"
+                    type="text"
+                    placeholder="Digite o nome, razão social ou CNPJ do cliente"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                />
+                <button className="button__search" type="button" onClick={handleSearch}>
+                    Buscar
+                </button>
+            </div>
+
             <form className="div__inputsC" onSubmit={handleSubmit}>
                 <input 
                     className="boxC1" 
-                    id="nome_completo" 
+                    id="nome" 
                     type="text" 
                     placeholder="Nome Completo"
-                    value={formData.nome_completo}
+                    value={formData.nome}
                     onChange={handleChange}
                 />
                 <input 
                     className="boxC2" 
                     id="cnpj" 
                     type="text" 
-                    placeholder="CPF/CNPJ"
+                    placeholder="CNPJ"
                     value={formData.cnpj}
                     onChange={handleChange}
                 />
@@ -135,7 +211,7 @@ const InputsCliente = () => {
                 <input 
                     className="boxC11" 
                     id="senha" 
-                    type="text" 
+                    type="password" 
                     placeholder="Senha para login do cliente"
                     value={formData.senha}
                     onChange={handleChange}
@@ -144,6 +220,21 @@ const InputsCliente = () => {
                 <button className="button__formC" type="submit">
                     Cadastrar
                 </button>
+               
+                    <button
+                        className="button__formC alterar"
+                        type="button" onClick={handleAlterar}>
+                       
+                    
+                        Alterar
+                    </button>
+                    <button
+                        className="button__formC deletar"
+                        type="button"
+                        onClick={handleExcluir}                    >
+                        Excluir
+                    </button>
+                
             </form>
         </div>
     );
