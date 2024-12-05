@@ -11,20 +11,39 @@ const bcrypt = require("bcryptjs");
 const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 const moment = require('moment');
 
-// Conexão com o banco
-const usuario = "postgres";
-const senha = "xx";
-const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
+//conexao com o banco
+const usuario = process.env.DB_USER;
+const senha = process.env.DB_PASSWORD;
+const dbHost = process.env.DB_HOST;
+const dbPort = process.env.DB_PORT;
+const dbName = process.env.DB_NAME;
+
+const db = pgp(`postgres://${usuario}:${senha}@${dbHost}:${dbPort}/${dbName}`);
 
 const server = express();
 
 // Configuração de CORS
+const PORT = process.env.PORT || 4000;
+server.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
+
+
 const corsOptions = {
-  origin: "http://localhost:5173", // Permite requisições do frontend
+  origin: process.env.FRONTEND_URL,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   optionsSuccessStatus: 200,
 };
+
+db.connect()
+  .then(obj => {
+    console.log("Conexão bem-sucedida com o banco de dados!");
+    obj.done(); // libera a conexão
+  })
+  .catch(error => {
+    console.error("Erro ao conectar ao banco:", error);
+});
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback_secret";
 
@@ -43,23 +62,6 @@ server.use(
 );
 server.use(passport.initialize());
 server.use(passport.session());
-
-
-// Inicialização do servidor
-const PORT = 4000;
-server.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
-
-
-db.connect()
-  .then(obj => {
-    console.log("Conexão bem-sucedida com o banco de dados!");
-    obj.done(); // libera a conexão
-  })
-  .catch(error => {
-    console.error("Erro ao conectar ao banco:", error);
-});
 
 
 // Estratégia Local com Passport para autenticação
