@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './inputsCliente.css';
+import { Eraser, Wrench } from "@phosphor-icons/react";
 import axios from "axios";
 
 const InputsCliente = () => {
@@ -52,7 +53,7 @@ const InputsCliente = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.cnpj || !formData.nome_completo || !formData.email || !formData.razao_social) {
+        if (!formData.cnpj || !formData.nome || !formData.email || !formData.razao_social) {
             alert("Preencha todos os campos obrigatórios!");
             return;
         }
@@ -224,15 +225,20 @@ const handleExcluir = async () => {
                     <button
                         className="button__formC alterar"
                         type="button" onClick={handleAlterar}>
-                       
-                    
                         Alterar
+                    <div className="icons__button3">
+                        <Wrench />
+                    </div>
                     </button>
+
                     <button
                         className="button__formC deletar"
                         type="button"
-                        onClick={handleExcluir}                    >
+                    onClick={handleExcluir}>
                         Excluir
+                    <div className="icons__button2">
+                        <Eraser />
+                    </div>
                     </button>
                 
             </form>

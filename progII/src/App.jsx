@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { Route, Routes } from 'react-router-dom';
 import DashboardCliente from './components/Cliente/DashBoard Cliente/DashboardCliente';
 import DashboardProfissional from './components/Profissional/Dashboard Profissional/DashboardProfissional';
-import TelaEsqueceuSenha from './components/TelasDeEsqueceuSenha/TelaEsqueceuSenha';
 import TelaLoginPrincipal from './components/TelasDeLogin/TelaLoginPrincipal';
 import TelaPrincipal from './components/TelaPrincipal/TelaPrincipal';
 import ContratoCliente from './components/Cliente/VerContrato/ContratoCliente';
@@ -56,11 +55,6 @@ function App() {
           element={<TelaLoginPrincipal />} 
         />
 
-
-        <Route 
-          path="/tela-esqueceu-senha" 
-          element={<TelaEsqueceuSenha />}
-        />
 
         {/* Cliente*/}
         <Route 

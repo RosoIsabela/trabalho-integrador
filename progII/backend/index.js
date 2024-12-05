@@ -490,13 +490,14 @@ server.post("/create-cliente", async (req, res) => {
       const hashedPasswd = bcrypt.hashSync(senha, salt);
 
       await db.none(
-          "insert into cliente (nome, cnpj, email, celular, razao_social, cidade, logradouro, bairro, cep, estado, senha) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);",
+          "insert into cliente (nome, cnpj, email, celular, razao_social, permissao, cidade, logradouro, bairro, cep, estado, senha) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",
           [
               nome,
               cnpj,
               email,
               celular,
               razao_social,
+              permissao,
               cidade,
               logradouro,
               bairro,
