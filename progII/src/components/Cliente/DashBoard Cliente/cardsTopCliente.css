@@ -25,7 +25,7 @@
     width: 300px;
     height: 160px;
 
-    font-size: 24px;
+    font-size: 23px;
     text-align: center;
     margin-top: 10px;
 
@@ -65,5 +65,5 @@
 .title__cards {
     margin: 0;
     padding: 10px;
-    font-size: 48px;
+    font-size: 44px;
 }

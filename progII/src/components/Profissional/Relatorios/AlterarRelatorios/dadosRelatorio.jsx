@@ -75,39 +75,47 @@ const DadosRelatorios = () => {
         }
     };
 
-    const alterarRelatorio = (e) => {
+    const alterarRelatorio = async (e) => {
         e.preventDefault();
-        if (!dadosRelatorio.tamanho || !dadosRelatorio.coloracao || !dadosRelatorio.produtos || !dadosRelatorio.nos || !dadosRelatorio.clima || !dadosRelatorio.dataColeta || !dadosRelatorio.dataAplicacao) {
+    
+        // Validação de campos obrigatórios
+        if (!dadosRelatorio.tamanho || !dadosRelatorio.coloracao || !dadosRelatorio.nos || !dadosRelatorio.clima || !dadosRelatorio.dataColeta) {
             setError('Por favor, preencha todos os campos obrigatórios.');
             return;
         }
-
-        fetch(`http://localhost:4000/alterar-relatorio/${fase}/${dadosRelatorio.contrato}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                dtColeta: dadosRelatorio.dataColeta,
-                dtAplicacao: dadosRelatorio.dataAplicacao,
-                tamanho: dadosRelatorio.tamanho,
-                corFolhas: dadosRelatorio.coloracao,
-                outrosProdutos: dadosRelatorio.produtos,
-                numeroNos: dadosRelatorio.nos,
-                clima: dadosRelatorio.clima,
-                observacao: dadosRelatorio.descricao,
-            }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setError('');
-                alert('Relatório atualizado com sucesso!');
-            })
-            .catch((error) => {
-                setError('Erro ao atualizar relatório.');
-                console.error('Erro ao atualizar relatório:', error);
+    
+        const processData = (value) => (value === "" ? null : value);
+    
+        try {
+            const response = await fetch(`http://localhost:4000/alterar-relatorio/${fase}/${dadosRelatorio.contrato}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    dtColeta: dadosRelatorio.dataColeta,
+                    dtAplicacao: processData(dadosRelatorio.dataAplicacao),
+                    tamanho: dadosRelatorio.tamanho,
+                    corFolhas: dadosRelatorio.coloracao,
+                    outrosProdutos: processData(dadosRelatorio.produtos),
+                    numeroNos: dadosRelatorio.nos,
+                    clima: dadosRelatorio.clima,
+                    observacao: processData(dadosRelatorio.descricao),
+                }),
             });
+    
+            if (!response.ok) {
+                throw new Error('Erro ao salvar os dados!');
+            }
+    
+            alert('Relatório atualizado com sucesso!');
+            setError('');
+        } catch (error) {
+            setError('Erro ao atualizar relatório.');
+            console.error('Erro ao atualizar relatório:', error);
+        }
     };
+    
 
     return (
         <div className="div__mestre">
@@ -168,17 +176,18 @@ const DadosRelatorios = () => {
                 </form>
 
                 <form className="div__botoes" onSubmit={alterarRelatorio}>
-                    <button className="button__alterar" type="submit">
-                        Atualizar Relatório
-                        <div className="icons__button3">
-                            <Wrench />
-                        </div>
-                    </button>
-                    {error && <div className="error">{error}</div>}
-                </form>
+    <button className="button__alterar" type="submit">
+        Atualizar Relatório
+        <div className="icons__button3">
+            <Wrench />
+        </div>
+    </button>
+    {error && <div className="error">{error}</div>}
+</form>
+
             </div>
 
-            <div className="box__branca">
+            <div className="box__brancaPesquisa">
                 <form className="container">
                     <div className="colunas">
                         <div className="inputsContainers">

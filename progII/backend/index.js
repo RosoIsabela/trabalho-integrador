@@ -955,6 +955,8 @@ server.delete("/excluir-contrato/:num_contrato", async (req, res) => {
 
 server.post("/incluir-etapa-pesquisa", async (req, res) => {
   try {
+    console.log("Dados recebidos no backend:", req.body);
+
     const {
       dt_coleta,
       dt_apl_prod,
@@ -969,32 +971,52 @@ server.post("/incluir-etapa-pesquisa", async (req, res) => {
       cpf_colaborador,
     } = req.body;
 
+    // tratando os campos null
+    const normalizarCampo = (campo) => (campo === undefined || campo === "" ? null : campo);
+
+    const valoresTratados = {
+      dt_coleta,
+      dt_apl_prod: normalizarCampo(dt_apl_prod),
+      tm_plantas,
+      cor_folhas,
+      outros_prod: normalizarCampo(outros_prod),
+      num_nos,
+      clima,
+      fase,
+      obs: normalizarCampo(obs),
+      contrato,
+      cpf_colaborador,
+    };
+
+    console.log("Valores tratados para inserção:", valoresTratados);
+
     await db.none(
-      `insert into pesquisa 
+      `INSERT INTO pesquisa 
       (dt_coleta, dt_apl_prod, tm_plantas, cor_folhas, outros_prod, num_nos, clima, fase, obs, contrato, cpf_colaborador) 
-      values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`,
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`,
       [
-        dt_coleta,
-        dt_apl_prod,
-        tm_plantas,
-        cor_folhas,
-        outros_prod,
-        num_nos,
-        clima,
-        fase,
-        obs,
-        contrato,
-        cpf_colaborador,
+        valoresTratados.dt_coleta,
+        valoresTratados.dt_apl_prod,
+        valoresTratados.tm_plantas,
+        valoresTratados.cor_folhas,
+        valoresTratados.outros_prod,
+        valoresTratados.num_nos,
+        valoresTratados.clima,
+        valoresTratados.fase,
+        valoresTratados.obs,
+        valoresTratados.contrato,
+        valoresTratados.cpf_colaborador,
       ]
     );
 
     console.log("Etapa de pesquisa adicionada com sucesso!");
     res.status(200).json({ message: "Etapa de pesquisa adicionada com sucesso!" });
   } catch (error) {
-    console.error("Erro ao adicionar etapa de pesquisa:", error);
-    res.status(400).json({ message: "Erro ao adicionar etapa de pesquisa." });
+    console.error("Erro ao adicionar etapa de pesquisa:", error.message || error);
+    res.status(400).json({ message: "Erro ao adicionar etapa de pesquisa.", error });
   }
 });
+
 
 
 server.get("/ver-pesquisa/:contrato/:fase", async (req, res) => {
@@ -1079,7 +1101,22 @@ server.put('/alterar-relatorio/:fase/:contrato', async (req, res) => {
       observacao, 
   } = req.body;
 
+  // Função para tratar os campos nulos
+  const normalizarCampo = (campo) => (campo === undefined || campo === "" ? null : campo);
+
   try {
+
+    const valoresTratados = {
+          dt_coleta: normalizarCampo(dtColeta),
+          dt_apl_prod: normalizarCampo(dtAplicacao),
+          tm_plantas: tamanho,
+          cor_folhas: corFolhas,
+          outros_prod: normalizarCampo(outrosProdutos),
+          num_nos: numeroNos,
+          clima,
+          obs: normalizarCampo(observacao)
+      };
+
       await db.none(
           `UPDATE pesquisa 
               SET dt_coleta = COALESCE($1, dt_coleta),
@@ -1091,7 +1128,18 @@ server.put('/alterar-relatorio/:fase/:contrato', async (req, res) => {
                   clima = COALESCE($7, clima),
                   obs = COALESCE($8, obs)
               WHERE fase = $9 AND contrato = $10`,
-          [dtColeta, dtAplicacao, tamanho, corFolhas, outrosProdutos, numeroNos, clima, observacao, fase, contrato] // Passando 10 parâmetros
+          [
+              valoresTratados.dt_coleta,
+              valoresTratados.dt_apl_prod,
+              valoresTratados.tm_plantas,
+              valoresTratados.cor_folhas,
+              valoresTratados.outros_prod,
+              valoresTratados.num_nos,
+              valoresTratados.clima,
+              valoresTratados.obs,
+              fase,
+              contrato
+          ] 
       );
 
       res.json({ message: 'Relatório atualizado com sucesso!' });
