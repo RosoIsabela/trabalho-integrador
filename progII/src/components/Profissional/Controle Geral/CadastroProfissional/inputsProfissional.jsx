@@ -59,14 +59,10 @@ const InputsProfissional = () => {
     };
 
 
-    const handleEdit = (colaborador) => {
-        setFormData(colaborador); // Preenche o formulário com os dados do colaborador para edição
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.cpf || !formData.nome || !formData.email) {
+        if (!formData.cpf || !formData.nome || !formData.email || !formData.senha) {
             alert('Preencha todos os campos obrigatórios!');
             return;
         }
@@ -104,6 +100,11 @@ const InputsProfissional = () => {
 
    
     const handleAlterar = async () => {
+        if (!formData.email.trim() || !formData.cpf.trim() || !formData.nome.trim() || !formData.senha.trim() ) {
+            alert("O campos obrigatórios não podem estar vazio.");
+            return;
+        }
+
         try {
             const response = await axios.put(
                 `http://localhost:4000/update-colaborador/${formData.cpf}`, 

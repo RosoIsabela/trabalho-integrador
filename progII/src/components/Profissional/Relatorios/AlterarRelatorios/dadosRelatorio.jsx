@@ -176,133 +176,113 @@ const DadosRelatorios = () => {
                 </form>
 
                 <form className="div__botoes" onSubmit={alterarRelatorio}>
-    <button className="button__alterar" type="submit">
-        Atualizar Relatório
-        <div className="icons__button3">
-            <Wrench />
-        </div>
-    </button>
-    {error && <div className="error">{error}</div>}
-</form>
+                    <button className="button__alterar" type="submit">
+                        Atualizar Relatório
+                        <div className="icons__button3">
+                            <Wrench />
+                        </div>
+                    </button>
+                    {error && <div className="error">{error}</div>}
+                </form>
 
             </div>
 
-            <div className="box__brancaPesquisa">
-                <form className="container">
-                    <div className="colunas">
-                        <div className="inputsContainers">
-                            <div className="inputsPesquisa">
-                                <label className="label__InserirDados" htmlFor="tamanhoInput">Tamanho médio das plantas</label>
-                                <input
-                                    className="input__InserirText"
-                                    type="text"
-                                    id="tamanhoInput"
-                                    name="tamanho"
-                                    placeholder="Digite aqui"
-                                    value={dadosRelatorio.tamanho}
-                                    onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, tamanho: e.target.value })}
-                                    required
-                                />
-                            </div>
+            <div className="box__branca">
+                <form className="DadosDaPesquisa">
+                    <div className="div__Pesquisa1">
+                        <label className="label__InserirDados" htmlFor="tamanhoInput">Tamanho médio das plantas</label>
+                        <input
+                            className="input__InserirText"
+                            type="text"
+                            id="tamanhoInput"
+                            name="tamanho"
+                            placeholder="Digite aqui"
+                            value={dadosRelatorio.tamanho}
+                            onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, tamanho: e.target.value })}
+                            required
+                        />
 
-                            <div className="inputsPesquisa">
-                                <label className="label__InserirDados" htmlFor="coloracaoInput">Coloração das folhas</label>
-                                <input
-                                    className="input__InserirText"
-                                    type="text"
-                                    id="coloracaoInput"
-                                    name="coloracao"
-                                    placeholder="Digite aqui"
-                                    value={dadosRelatorio.coloracao}
-                                    onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, coloracao: e.target.value })}
-                                    required
-                                />
-                            </div>
+                        <label className="label__InserirDados" htmlFor="coloracaoInput">Coloração das folhas</label>
+                        <input
+                            className="input__InserirText"
+                            type="text"
+                            id="coloracaoInput"
+                            name="coloracao"
+                            placeholder="Digite aqui"
+                            value={dadosRelatorio.coloracao}
+                            onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, coloracao: e.target.value })}
+                            required
+                        />
+                    
+                        <label className="label__InserirDados" htmlFor="produtosInput">Outros produtos aplicados</label>
+                        <input
+                            className="input__InserirText"
+                            type="text"
+                            id="produtosInput"
+                            name="produtos"
+                            placeholder="Digite aqui"
+                            value={dadosRelatorio.produtos}
+                            onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, produtos: e.target.value })}
+                            required
+                        />
+                    
+                        <label className="label__InserirDados" htmlFor="nosInput">Número de nós</label>
+                        <input
+                            className="input__InserirText"
+                            type="text"
+                            id="nosInput"
+                            name="nos"
+                            placeholder="Digite aqui"
+                            value={dadosRelatorio.nos}
+                            onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, nos: e.target.value })}
+                            required
+                        />
+                    
+                        <label className="label__InserirDados" htmlFor="climaInput">Clima</label>
+                        <input
+                            className="input__InserirText"
+                            type="text"
+                            id="climaInput"
+                            name="clima"
+                            placeholder="Digite aqui"
+                            value={dadosRelatorio.clima}
+                            onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, clima: e.target.value })}
+                            required
+                        />
+                    </div>
 
-                            <div className="inputsPesquisa">
-                                <label className="label__InserirDados" htmlFor="produtosInput">Outros produtos aplicados</label>
-                                <input
-                                    className="input__InserirText"
-                                    type="text"
-                                    id="produtosInput"
-                                    name="produtos"
-                                    placeholder="Digite aqui"
-                                    value={dadosRelatorio.produtos}
-                                    onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, produtos: e.target.value })}
-                                    required
-                                />
-                            </div>
-                        </div>
+                    <div className="div__Pesquisa2">
+                        <label className="label__InserirDados" htmlFor="dataColetaInput">Data de coleta</label>
+                        <input
+                            className="input__InserirText"
+                            type="date"
+                            id="dataColetaInput"
+                            name="dataColeta"
+                            value={dadosRelatorio.dataColeta}
+                            onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, dataColeta: e.target.value })}
+                            required
+                        />
 
-                        <div className="inputsContainers">
-                            <div className="inputsPesquisa">
-                                <label className="label__InserirDados" htmlFor="nosInput">Número de nós</label>
-                                <input
-                                    className="input__InserirText"
-                                    type="text"
-                                    id="nosInput"
-                                    name="nos"
-                                    placeholder="Digite aqui"
-                                    value={dadosRelatorio.nos}
-                                    onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, nos: e.target.value })}
-                                    required
-                                />
-                            </div>
+                        <label className="label__InserirDados" htmlFor="dataAplicacaoInput">Data de aplicação do produto</label>
+                        <input
+                            className="input__InserirText"
+                            type="date"
+                            id="dataAplicacaoInput"
+                            name="dataAplicacao"
+                            value={dadosRelatorio.dataAplicacao}
+                            onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, dataAplicacao: e.target.value })}
+                            required
+                        />
 
-                            <div className="inputsPesquisa">
-                                <label className="label__InserirDados" htmlFor="climaInput">Clima</label>
-                                <input
-                                    className="input__InserirText"
-                                    type="text"
-                                    id="climaInput"
-                                    name="clima"
-                                    placeholder="Digite aqui"
-                                    value={dadosRelatorio.clima}
-                                    onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, clima: e.target.value })}
-                                    required
-                                />
-                            </div>
-
-                            <div className="inputsPesquisa">
-                                <label className="label__InserirDados" htmlFor="dataColetaInput">Data de coleta</label>
-                                <input
-                                    className="input__InserirText"
-                                    type="date"
-                                    id="dataColetaInput"
-                                    name="dataColeta"
-                                    value={dadosRelatorio.dataColeta}
-                                    onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, dataColeta: e.target.value })}
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="inputsContainers">
-                            <div className="inputsPesquisa">
-                                <label className="label__InserirDados" htmlFor="dataAplicacaoInput">Data de aplicação do produto</label>
-                                <input
-                                    className="input__InserirText"
-                                    type="date"
-                                    id="dataAplicacaoInput"
-                                    name="dataAplicacao"
-                                    value={dadosRelatorio.dataAplicacao}
-                                    onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, dataAplicacao: e.target.value })}
-                                    required
-                                />
-                            </div>
-
-                            <div className="inputsPesquisa">
-                                <label className="label__InserirDados" htmlFor="descricaoInput">Descrição</label>
-                                <textarea
-                                    className="textarea__InserirText"
-                                    id="descricaoInput"
-                                    name="descricao"
-                                    value={dadosRelatorio.descricao}
-                                    onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, descricao: e.target.value })}
-                                    required
-                                />
-                            </div>
-                        </div>
+                        <label className="label__InserirDados" htmlFor="descricaoInput">Descrição</label>
+                        <textarea
+                            className="textarea__InserirText"
+                            id="descricaoInput"
+                            name="descricao"
+                            value={dadosRelatorio.descricao}
+                            onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, descricao: e.target.value })}
+                            required
+                        />
                     </div>
                 </form>
             </div>

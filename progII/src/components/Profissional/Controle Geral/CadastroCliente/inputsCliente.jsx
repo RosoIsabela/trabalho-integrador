@@ -50,14 +50,17 @@ const InputsCliente = () => {
         }
     };
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!formData.cnpj || !formData.nome || !formData.email || !formData.razao_social) {
+    
+        if (!formData.cnpj || !formData.nome || !formData.email || !formData.razao_social || !formData.senha) {
             alert("Preencha todos os campos obrigatórios!");
             return;
         }
 
+        
+    
         try {
             const response = await axios.post("http://localhost:4000/create-cliente", formData);
             alert("Cliente criado com sucesso!");
@@ -67,6 +70,11 @@ const InputsCliente = () => {
     };
 
     const handleAlterar = async () => {
+        if (!formData.email.trim() || !formData.cpf.trim() || !formData.nome.trim() || !formData.senha.trim() ) {
+            alert("O campos obrigatórios não podem estar vazio.");
+            return;
+        }
+        
         try {
             const response = await axios.put(
                 `http://localhost:4000/update-cliente/${formData.cnpj}`, 
@@ -79,37 +87,38 @@ const InputsCliente = () => {
             alert("Erro ao tentar alterar o cliente.");
         }
     };
+    
 
 
     // Função para excluir cliente
-const handleExcluir = async () => {
-    if (!formData.cnpj) {
-        alert("Informe o CNPJ do cliente para exclusão.");
-        return;
-    }
-    try {
-        const response = await axios.delete(`http://localhost:4000/delete-cliente/${formData.cnpj}`);
-        console.log("Cliente excluído:", response.data);
-        alert("Exclusão realizada com sucesso!");
-        
-        setFormData({
-            nome: '',
-            cnpj: '',
-            email: '',
-            celular: '',
-            razao_social: '',
-            cidade: '',
-            logradouro: '',
-            bairro: '',
-            estado: '',
-            cep: '',
-            senha: '',
-        });
-    } catch (error) {
-        console.error("Erro ao excluir cliente:", error);
-        alert("Erro ao tentar excluir o cliente.");
-    }
-};
+    const handleExcluir = async () => {
+        if (!formData.cnpj) {
+            alert("Informe o CNPJ do cliente para exclusão.");
+            return;
+        }
+        try {
+            const response = await axios.delete(`http://localhost:4000/delete-cliente/${formData.cnpj}`);
+            console.log("Cliente excluído:", response.data);
+            alert("Exclusão realizada com sucesso!");
+            
+            setFormData({
+                nome: '',
+                cnpj: '',
+                email: '',
+                celular: '',
+                razao_social: '',
+                cidade: '',
+                logradouro: '',
+                bairro: '',
+                estado: '',
+                cep: '',
+                senha: '',
+            });
+        } catch (error) {
+            console.error("Erro ao excluir cliente:", error);
+            alert("Erro ao tentar excluir o cliente.");
+        }
+    };
 
 
     return (
@@ -222,24 +231,24 @@ const handleExcluir = async () => {
                     Cadastrar
                 </button>
                
-                    <button
-                        className="button__formC alterar"
-                        type="button" onClick={handleAlterar}>
-                        Alterar
+                <button
+                    className="button__formC alterar"
+                    type="button" onClick={handleAlterar}>
+                    Alterar
                     <div className="icons__button3">
                         <Wrench />
                     </div>
-                    </button>
+                </button>
 
-                    <button
-                        className="button__formC deletar"
-                        type="button"
+                <button
+                    className="button__formC deletar"
+                    type="button"
                     onClick={handleExcluir}>
-                        Excluir
+                    Excluir
                     <div className="icons__button2">
                         <Eraser />
                     </div>
-                    </button>
+                </button>
                 
             </form>
         </div>

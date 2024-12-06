@@ -1,7 +1,7 @@
 import SideBar from "../../Profissional/Dashboard Profissional/sidebarProfissional"
 import Controle from "./controle"
 import CardsCadastros from "./cardsCadastros"
-import CardsGerenciar from "./cardsGerenciar"
+
 
 function ControleGeral() {
     return (
@@ -9,7 +9,6 @@ function ControleGeral() {
             <SideBar />
             <Controle />
             <CardsCadastros />
-            
         </div>
     )
 }

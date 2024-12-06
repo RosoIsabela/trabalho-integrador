@@ -21,8 +21,6 @@ import PesquisaProfissional from './components/Profissional/Relatorios/PesquisaP
 import CadastroDoCliente from './components/Profissional/Controle Geral/CadastroCliente/CadastroDoCliente';
 import CadastroDoProfissional from './components/Profissional/Controle Geral/CadastroProfissional/CadastroDoProfissional';
 import CadastrarContratoProfissional from './components/Profissional/Contrato/CadastrarContrato/CadastrarContratoProfissional';
-import GerenciarClientes from './components/Profissional/Controle Geral/GerenciarClientes/GerenciarClientes';
-import GerenciarFuncionario from './components/Profissional/Controle Geral/GerenciarFuncionarios/GerenciarFuncionario';
 import CadastrarProtocoloProfissional from './components/Profissional/Contrato/CadastrarProtocolo/cadastrarProtocoloProfissional';
 import AlterarContratoProfissional from './components/Profissional/Contrato/AlterarContrato/AlterarContratoProfissional';
 import AlterarRelatorioProfissional from './components/Profissional/Relatorios/AlterarRelatorios/AlterarRelatorioProfissional';
@@ -156,18 +154,6 @@ function App() {
         <Route 
           path="/cadastro-funcionario"
           element={<CadastroDoProfissional />}
-        />
-
- 
-        <Route 
-          path="/gerenciar-clientes"
-          element={<GerenciarClientes />}
-        />
-
-
-        <Route 
-          path="/gerenciar-funcionarios"
-          element={<GerenciarFuncionario/>}
         />
 
 
