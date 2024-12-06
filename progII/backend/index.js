@@ -11,20 +11,39 @@ const bcrypt = require("bcryptjs");
 const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 const moment = require('moment');
 
-// Conexão com o banco
-const usuario = "postgres";
-const senha = "postgre";
-const db = pgp(`postgres://${usuario}:${senha}@localhost:5432/sulagro`);
+//conexao com o banco
+const usuario = process.env.DB_USER;
+const senha = process.env.DB_PASSWORD;
+const dbHost = process.env.DB_HOST;
+const dbPort = process.env.DB_PORT;
+const dbName = process.env.DB_NAME;
+
+const db = pgp(`postgres://${usuario}:${senha}@${dbHost}:${dbPort}/${dbName}`);
 
 const server = express();
 
 // Configuração de CORS
+const PORT = process.env.PORT || 4000;
+server.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
+
+
 const corsOptions = {
-  origin: "http://localhost:5173", // Permite requisições do frontend
+  origin: process.env.FRONTEND_URL,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   optionsSuccessStatus: 200,
 };
+
+db.connect()
+  .then(obj => {
+    console.log("Conexão bem-sucedida com o banco de dados!");
+    obj.done(); // libera a conexão
+  })
+  .catch(error => {
+    console.error("Erro ao conectar ao banco:", error);
+});
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback_secret";
 
@@ -43,23 +62,6 @@ server.use(
 );
 server.use(passport.initialize());
 server.use(passport.session());
-
-
-// Inicialização do servidor
-const PORT = 4000;
-server.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
-
-
-db.connect()
-  .then(obj => {
-    console.log("Conexão bem-sucedida com o banco de dados!");
-    obj.done(); // libera a conexão
-  })
-  .catch(error => {
-    console.error("Erro ao conectar ao banco:", error);
-});
 
 
 // Estratégia Local com Passport para autenticação
@@ -350,6 +352,8 @@ server.post("/create-colaborador", async (req, res) => {
 }
 });
 
+
+
 // Rota para procurar um colaborador
 server.get('/buscar_funcionario', async (req, res) => {
   console.log('Requisição recebida em /buscar_funcionario');
@@ -469,7 +473,7 @@ server.post("/create-cliente", async (req, res) => {
   const saltRounds = 10; // Número de rounds para o salt
   try {
       const {
-        nome_completo: nome,
+        nome,
         cnpj,
         email,
         celular,
@@ -488,19 +492,19 @@ server.post("/create-cliente", async (req, res) => {
       const hashedPasswd = bcrypt.hashSync(senha, salt);
 
       await db.none(
-          "insert into cliente (nome, cnpj, email, celular, razao_social, cidade, logradouro, bairro, cep, estado, permissao, senha) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",
+          "insert into cliente (nome, cnpj, email, celular, razao_social, permissao, cidade, logradouro, bairro, cep, estado, senha) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",
           [
               nome,
               cnpj,
               email,
               celular,
               razao_social,
+              permissao,
               cidade,
               logradouro,
               bairro,
               estado,
               cep,
-              permissao,
               hashedPasswd
           ]
       );
@@ -510,6 +514,35 @@ server.post("/create-cliente", async (req, res) => {
   } catch (error) {
       console.error("Erro ao criar cliente:", error);
       res.status(400).json({ message: "Erro ao criar cliente" });
+  }
+});
+
+// Rota para procurar um cliente
+server.get('/buscar_cliente', async (req, res) => {
+  console.log('Requisição recebida em /buscar_cliente');
+  const termoBusca = req.query.search;
+  console.log('Parâmetro search:', termoBusca);
+
+  try {
+      const cliente = await db.any(
+          `
+          SELECT * 
+          FROM cliente 
+          WHERE nome ILIKE $1 
+          OR cnpj ILIKE $1
+          OR razao_social ILIKE $1
+          `,
+          [`%${termoBusca}%`]
+      );
+
+      if (cliente.length > 0) {
+          res.json({ status: 'encontrado', data: cliente });
+      } else {
+          res.json({ status: 'não encontrado', message: 'Nenhum cliente encontrado.' });
+      }
+  } catch (error) {
+      console.error('Erro ao buscar cclientes:', error.message);
+      res.status(500).json({ status: 'error', message: 'Erro no servidor.' });
   }
 });
 
@@ -530,6 +563,67 @@ server.get("/perfilCliente", authenticateToken, async (req, res) => {
   } catch (error) {
       console.error("Erro ao buscar perfil cliente:", error);
       res.status(500).json({ message: "Erro ao buscar perfil cliente." });
+  }
+});
+
+// Atualizar cliente
+server.put('/update-cliente/:cnpj', async (req, res) => {
+  const { cnpj } = req.params;
+  let {
+        nome,
+        email,
+        celular,
+        razao_social,
+        cidade,
+        logradouro,
+        bairro,
+        estado,
+        cep,
+        senha,
+  } = req.body;
+
+  try {
+    // Atualiza a senha apenas se ela for enviada
+    if (senha) {
+      const saltRounds = 10;
+      const salt = bcrypt.genSaltSync(saltRounds);
+      senha = bcrypt.hashSync(senha, salt);
+    }
+
+    await db.none(
+      `UPDATE cliente
+       SET nome = COALESCE($1, nome), 
+           email = COALESCE($2, email), 
+           celular = COALESCE($3, celular), 
+           razao_social = COALESCE($4, razao_social), 
+           cidade = COALESCE($5, cidade),
+           logradouro = COALESCE($6, logradouro), 
+           bairro = COALESCE($7, bairro), 
+           estado = COALESCE($8, estado), 
+           cep = COALESCE($9, cep),            
+           senha = COALESCE($10, senha)
+       WHERE cnpj = $11`,
+      [ nome, email, celular, razao_social, cidade, logradouro, bairro, estado, cep, senha, cnpj]
+    );
+
+    res.json({ message: 'Colaborador atualizado com sucesso!' });
+  } catch (error) {
+    console.error('Erro ao atualizar colaborador:', error);
+    res.status(500).json({ message: 'Erro ao atualizar colaborador!' });
+  }
+});
+
+
+// Excluir cliente
+server.delete('/delete-cliente/:cnpj', async (req, res) => {
+  const { cnpj } = req.params;
+
+  try {
+      await db.none('DELETE FROM cliente WHERE cnpj = $1', [cnpj]);
+      res.json({ message: 'Cliente excluído com sucesso!' });
+  } catch (error) {
+      console.error('Erro ao excluir cliente:', error);
+      res.status(500).json({ message: 'Erro ao excluir cliente!' });
   }
 });
 
@@ -861,6 +955,8 @@ server.delete("/excluir-contrato/:num_contrato", async (req, res) => {
 
 server.post("/incluir-etapa-pesquisa", async (req, res) => {
   try {
+    console.log("Dados recebidos no backend:", req.body);
+
     const {
       dt_coleta,
       dt_apl_prod,
@@ -872,33 +968,55 @@ server.post("/incluir-etapa-pesquisa", async (req, res) => {
       fase,
       obs,
       contrato,
+      cpf_colaborador,
     } = req.body;
 
+    // tratando os campos null
+    const normalizarCampo = (campo) => (campo === undefined || campo === "" ? null : campo);
+
+    const valoresTratados = {
+      dt_coleta,
+      dt_apl_prod: normalizarCampo(dt_apl_prod),
+      tm_plantas,
+      cor_folhas,
+      outros_prod: normalizarCampo(outros_prod),
+      num_nos,
+      clima,
+      fase,
+      obs: normalizarCampo(obs),
+      contrato,
+      cpf_colaborador,
+    };
+
+    console.log("Valores tratados para inserção:", valoresTratados);
+
     await db.none(
-      `insert into pesquisa 
-      (dt_coleta, dt_apl_prod, tm_plantas, cor_folhas, outros_prod, num_nos, clima, fase, obs, contrato) 
-      values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`,
+      `INSERT INTO pesquisa 
+      (dt_coleta, dt_apl_prod, tm_plantas, cor_folhas, outros_prod, num_nos, clima, fase, obs, contrato, cpf_colaborador) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`,
       [
-        dt_coleta,
-        dt_apl_prod,
-        tm_plantas,
-        cor_folhas,
-        outros_prod,
-        num_nos,
-        clima,
-        fase,
-        obs,
-        contrato,
+        valoresTratados.dt_coleta,
+        valoresTratados.dt_apl_prod,
+        valoresTratados.tm_plantas,
+        valoresTratados.cor_folhas,
+        valoresTratados.outros_prod,
+        valoresTratados.num_nos,
+        valoresTratados.clima,
+        valoresTratados.fase,
+        valoresTratados.obs,
+        valoresTratados.contrato,
+        valoresTratados.cpf_colaborador,
       ]
     );
 
     console.log("Etapa de pesquisa adicionada com sucesso!");
     res.status(200).json({ message: "Etapa de pesquisa adicionada com sucesso!" });
   } catch (error) {
-    console.error("Erro ao adicionar etapa de pesquisa:", error);
-    res.status(400).json({ message: "Erro ao adicionar etapa de pesquisa." });
+    console.error("Erro ao adicionar etapa de pesquisa:", error.message || error);
+    res.status(400).json({ message: "Erro ao adicionar etapa de pesquisa.", error });
   }
 });
+
 
 
 server.get("/ver-pesquisa/:contrato/:fase", async (req, res) => {
@@ -954,6 +1072,21 @@ server.get("/relatorios/:fase/:contrato", async (req, res) => {
   }
 });
 
+// Rota para listar os funcionários cadastrados
+
+server.get("/listar_colaboradores", async (req, res) => {
+  try {
+    // Consulta os colaboradores (nome e cpf)
+    const colaboradores = await db.any("SELECT cpf, nome FROM colaborador_sulagro");
+
+    // Retorna os dados dos colaboradores
+    res.status(200).json(colaboradores);
+  } catch (error) {
+    console.error("Erro ao buscar colaboradores:", error);
+    res.status(400).json({ message: "Erro ao buscar colaboradores" });
+  }
+});
+
 
 server.put('/alterar-relatorio/:fase/:contrato', async (req, res) => {
   const { fase, contrato } = req.params; 
@@ -968,7 +1101,22 @@ server.put('/alterar-relatorio/:fase/:contrato', async (req, res) => {
       observacao, 
   } = req.body;
 
+  // Função para tratar os campos nulos
+  const normalizarCampo = (campo) => (campo === undefined || campo === "" ? null : campo);
+
   try {
+
+    const valoresTratados = {
+          dt_coleta: normalizarCampo(dtColeta),
+          dt_apl_prod: normalizarCampo(dtAplicacao),
+          tm_plantas: tamanho,
+          cor_folhas: corFolhas,
+          outros_prod: normalizarCampo(outrosProdutos),
+          num_nos: numeroNos,
+          clima,
+          obs: normalizarCampo(observacao)
+      };
+
       await db.none(
           `UPDATE pesquisa 
               SET dt_coleta = COALESCE($1, dt_coleta),
@@ -980,7 +1128,18 @@ server.put('/alterar-relatorio/:fase/:contrato', async (req, res) => {
                   clima = COALESCE($7, clima),
                   obs = COALESCE($8, obs)
               WHERE fase = $9 AND contrato = $10`,
-          [dtColeta, dtAplicacao, tamanho, corFolhas, outrosProdutos, numeroNos, clima, observacao, fase, contrato] // Passando 10 parâmetros
+          [
+              valoresTratados.dt_coleta,
+              valoresTratados.dt_apl_prod,
+              valoresTratados.tm_plantas,
+              valoresTratados.cor_folhas,
+              valoresTratados.outros_prod,
+              valoresTratados.num_nos,
+              valoresTratados.clima,
+              valoresTratados.obs,
+              fase,
+              contrato
+          ] 
       );
 
       res.json({ message: 'Relatório atualizado com sucesso!' });

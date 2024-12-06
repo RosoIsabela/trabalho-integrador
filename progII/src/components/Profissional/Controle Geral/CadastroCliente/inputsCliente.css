@@ -9,13 +9,62 @@
     padding: 40px;
 }
 
+.div__search {
+    display: flex;
+    justify-content: left;
+    flex-direction: row;
+    align-items: left;
+    flex-wrap:wrap ;
+    gap: 20px;
+    padding: 20px;
+    padding-left: 45px;
+}
+
+.button__formC.alterar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    background-color: var(--yellow-para-botao);
+}
+
+.button__formC.deletar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    
+    background-color: var(--red-para-botao);
+}
+
+.button__search {
+    border: none;
+    border-radius: 30px;
+    vertical-align:top;
+    font-size: 24px;
+    width: 200px;
+    height: 45px;
+    margin-top: 0;
+    background-color: var(--laranja-nome-empresa);
+    cursor: pointer;
+}
+
+.div__search #search {
+    width: 600px; 
+    height: 50px;
+    border-radius: 30px;
+    border-style:solid;
+    border-color:  var(--laranja-nome-empresa);
+}
+
 
 .button__formC {
     border: none;
     border-radius: 30px;
     font-size: 24px;
 
-    width: 550px;
+    width: 300px;
     height: 55px;
     margin-top: 30px;
     background-color: var(--verde-nome-empresa);
@@ -147,4 +196,23 @@
 
     font-size: 16px;
     padding: 20px 20px 15px 20px;
+}
+
+@media (max-width: 768px) {
+    .div__inputsP {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #nome, #email, #cpf, #celular, #cargo, #logradouro, #bairro, #cidade, #cep, #permissao, #horario, #senha {
+        width: 100%;
+    }
+
+    .button__formP {
+        width: 33%; 
+    }
+
+    .button__search{
+        width: 50%;
+    }
 }
