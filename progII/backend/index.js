@@ -216,8 +216,49 @@ server.post("/tela-login-principal", async (req, res) => {
   }
 });
 
-// seleção de cliente para a tela inicial do funcionário
+server.put("/tela-esqueceu-senha", async (req, res) => {
+  const { email, identificador, novasenha } = req.body;
 
+  try {
+    // Verifica se todos os campos foram preenchidos
+    if (!email || !identificador || !novasenha) {
+      return res.status(400).json({ message: "Todos os campos são obrigatórios!" });
+    }
+
+    //criptografa a nova senha
+    const hashedPassword = await bcrypt.hash(novasenha, 10);
+
+    let user;
+
+    //tenta atualizar na tabela de colaboradores
+    user = await db.result(
+      "update colaborador_sulagro set senha = $1 where email = $2 and cpf = $3",
+      [hashedPassword, email, identificador]
+    );
+
+    if (user.rowCount === 0) {
+      // Se não encontrou no colaborador, tenta na tabela de clientes
+      user = await db.result(
+        "update cliente set senha = $1 where email = $2 and cnpj = $3",
+        [hashedPassword, email, identificador]
+      );
+    }
+
+    if (user.rowCount === 0) {
+      // Se nenhum registro foi atualizado, retorna erro
+      return res.status(404).json({ message: "Usuário não encontrado!" });
+    }
+
+    // Retorna sucesso
+    res.json({ message: "Senha atualizada com sucesso!" });
+  } catch (error) {
+    console.error("Erro ao redefinir senha:", error);
+    res.status(500).json({ message: "Erro no servidor" });
+  }
+});
+
+
+// seleção de cliente para a tela inicial do funcionário
 server.get("/clientes", async (req, res) => {
   try {
       const clientes = await db.any("select cnpj, razao_social from cliente");

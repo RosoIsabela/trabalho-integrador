@@ -1,5 +1,6 @@
 import './TelaLoginLeft.css';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
@@ -72,6 +73,7 @@ function TelaLoginBemVindo() {
                 
                 <button type="submit" className="button__login">Entrar</button> 
             </form>
+            <Link className="esqueceu__senha" to="/tela-esqueceu-senha">Esqueceu a senha?</Link>
             
         </div>
     );
