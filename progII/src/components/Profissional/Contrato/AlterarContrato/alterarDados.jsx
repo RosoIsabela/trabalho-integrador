@@ -69,6 +69,12 @@ function AlterarDados() {
 
     const alterarContrato = (e) => {
         e.preventDefault();
+
+        // Verifica se algum campo está vazio
+        if (!cliente || !protocolo || !dados.contrato || !dados.dataContrato || !dados.dataEntrega || !dados.custo || !dados.parcelas) {
+            setError('Por favor, preencha todos os campos.');
+            return;
+        }
     
         if (cliente && protocolo && dados.contrato) {
             fetch(`http://localhost:4000/alterar-contrato/${cliente}/${protocolo}/${dados.contrato}`, {
