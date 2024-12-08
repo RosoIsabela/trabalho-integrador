@@ -74,7 +74,7 @@ function DadosCliente() {
                     </div>
                     
 
-                    <div className="divs__dados" id="ajuste__div1">   
+                    <div className="divs__dados" >   
                         <p>Celular</p>
                         <p>{colaborador.celular}</p>
 
@@ -89,7 +89,7 @@ function DadosCliente() {
                         <img src={lineDivisor} alt="linha divisoria" className="linha-divisoria"/>
                     </div>
 
-                    <div className="divs__dados" id="ajuste__div2">
+                    <div className="divs__dados">
                         <p>Horário de Trabalho </p>
                         <p>{colaborador.horario}</p>
 

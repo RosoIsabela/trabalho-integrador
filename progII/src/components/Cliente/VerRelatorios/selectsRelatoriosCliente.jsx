@@ -40,11 +40,6 @@ function SelectsRelatoriosCliente() {
             });
     }, []);
 
-    const formatData = (data) => {
-        if (!data) return '';
-        const date = new Date(data);
-        return date.toLocaleDateString('pt-BR');
-    };
 
     const buscarRelatorio = () => {
         if (num_contrato && fase) {
@@ -59,8 +54,8 @@ function SelectsRelatoriosCliente() {
                             produtos: pesquisaData.outros_prod || '',
                             nos: pesquisaData.num_nos || '',
                             clima: pesquisaData.clima || '',
-                            data_coleta: pesquisaData.dt_coleta ? formatData(pesquisaData.dt_coleta) : '',
-                            data_aplicacao: pesquisaData.dt_apl_prod ? formatData(pesquisaData.dt_apl_prod) : '',
+                            data_coleta: pesquisaData.dt_coleta || '',
+                            data_aplicacao: pesquisaData.dt_apl_prod || '',
                             descricao: pesquisaData.obs || '',
                         });
                         setError('');

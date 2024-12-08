@@ -68,7 +68,7 @@ function DadosCliente() {
                         <img src={lineDivisor} alt="linha divisoria" className="linha-divisoria" />
                     </div>
 
-                    <div className="divs__dados" id="ajuste__div">
+                    <div className="divs__dados" id='ajuste__div'>
                         <p>Celular</p>
                         <p>{cliente.celular}</p>
                         <img src={lineDivisor} alt="linha divisoria" className="linha-divisoria" />

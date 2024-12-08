@@ -35,15 +35,6 @@ function SelectsRelatoriosProfissional() {
         }
     }, []);
 
-    const formatData = (date) => {
-        const formattedDate = new Date(date);
-        // Verifica se a data é válida
-        if (isNaN(formattedDate.getTime())) {
-            return ''; // Retorna uma string vazia se a data for inválida
-        }
-        return formattedDate.toISOString().split('T')[0]; // Formata a data para AAAA-MM-DD
-    };
-
     // Função para buscar os dados da pesquisa baseado no contrato
     const buscarRelatorio = () => {
         if (num_contrato && fase) {
@@ -58,8 +49,8 @@ function SelectsRelatoriosProfissional() {
                             produtos: pesquisaData.outros_prod || '',
                             nos: pesquisaData.num_nos || '',
                             clima: pesquisaData.clima || '',
-                            data_coleta: pesquisaData.dt_coleta ? formatData(pesquisaData.dt_coleta) : '',
-                            data_aplicacao: pesquisaData.dt_apl_prod ? formatData(pesquisaData.dt_apl_prod) : '',
+                            data_coleta: pesquisaData.dt_coleta || '',
+                            data_aplicacao: pesquisaData.dt_apl_prod || '',
                             descricao: pesquisaData.obs || '',
                         });
                         setError('');
