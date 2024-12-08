@@ -9,7 +9,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
-const moment = require('moment');
+
 
 //conexao com o banco
 const usuario = process.env.DB_USER;
@@ -778,7 +778,7 @@ server.get('/pesquisas/ultimos-dados/:contratoNum', async (req, res) => {
       `SELECT dt_coleta, tm_plantas, cor_folhas, num_nos, clima
        FROM pesquisa
        WHERE contrato = $1
-       ORDER BY dt_coleta DESC
+       ORDER BY fase DESC
        LIMIT 1`, 
       [contratoNum]
     );
@@ -788,7 +788,7 @@ server.get('/pesquisas/ultimos-dados/:contratoNum', async (req, res) => {
     }
 
     res.status(200).json({
-      data_coleta: moment(resultado.dt_coleta).format('DD/MM/YYYY'),
+      data_coleta: resultado.dt_coleta,
       tamanho_plantas: resultado.tm_plantas,
       coloracao_folhas: resultado.cor_folhas,
       num_nos: resultado.num_nos,

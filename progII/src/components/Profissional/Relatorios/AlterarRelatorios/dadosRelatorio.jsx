@@ -255,8 +255,9 @@ const DadosRelatorios = () => {
                         <label className="label__InserirDados" htmlFor="dataColetaInput">Data de coleta</label>
                         <input
                             className="input__InserirText"
-                            type="date"
+                            type="text"
                             id="dataColetaInput"
+                            placeholder="dd/mm/aaaa"
                             name="dataColeta"
                             value={dadosRelatorio.dataColeta}
                             onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, dataColeta: e.target.value })}
@@ -266,9 +267,10 @@ const DadosRelatorios = () => {
                         <label className="label__InserirDados" htmlFor="dataAplicacaoInput">Data de aplicação do produto</label>
                         <input
                             className="input__InserirText"
-                            type="date"
+                            type="text"
                             id="dataAplicacaoInput"
                             name="dataAplicacao"
+                            placeholder="dd/mm/aaaa"
                             value={dadosRelatorio.dataAplicacao}
                             onChange={(e) => setDadosRelatorio({ ...dadosRelatorio, dataAplicacao: e.target.value })}
                             required

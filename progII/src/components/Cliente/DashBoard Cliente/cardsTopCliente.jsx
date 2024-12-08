@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './cardsTopCliente.css';
-import moment from 'moment'; 
 
 function CardsTopCliente({ contratoSelecionado }) {
     const [dados, setDados] = useState({
@@ -39,10 +38,12 @@ function CardsTopCliente({ contratoSelecionado }) {
         }
     }, [contratoSelecionado]);
 
-    
-    const dataFormatada = dados.dataEntrega ? moment(dados.dataEntrega).format('DD/MM/YYYY') : '-';
+    // Data já no formato esperado
+    const dataFormatada = dados.dataEntrega || '-';
 
-    const precoFormatado = dados.preco ? `R$ ${parseFloat(dados.preco).toFixed(2).replace('.', ',')}` 
+    // Formatação do preço
+    const precoFormatado = dados.preco 
+        ? `R$ ${parseFloat(dados.preco).toFixed(2).replace('.', ',')}` 
         : '-';
 
     return (

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './inputsProfissional.css';
-import { Eraser, Wrench } from "@phosphor-icons/react";
+import { Eraser, Wrench, MagnifyingGlass, UserPlus } from "@phosphor-icons/react";
 import axios from 'axios';
 
 const InputsProfissional = () => {
@@ -62,7 +62,7 @@ const InputsProfissional = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.cpf || !formData.nome || !formData.email || !formData.senha) {
+        if (!formData.cpf || !formData.nome || !formData.email || !formData.celular ||!formData.cargo ||!formData.logradouro ||!formData.cidade ||!formData.bairro ||!formData.cep|| !formData.permissao ||!formData.horario ||!formData.senha) {
             alert('Preencha todos os campos obrigatórios!');
             return;
         }
@@ -100,7 +100,7 @@ const InputsProfissional = () => {
 
    
     const handleAlterar = async () => {
-        if (!formData.email.trim() || !formData.cpf.trim() || !formData.nome.trim() || !formData.senha.trim() ) {
+        if (!formData.cpf || !formData.nome || !formData.email || !formData.celular ||!formData.cargo ||!formData.logradouro ||!formData.cidade ||!formData.bairro ||!formData.cep|| !formData.permissao ||!formData.horario ||!formData.senha) {
             alert("O campos obrigatórios não podem estar vazio.");
             return;
         }
@@ -164,6 +164,7 @@ const InputsProfissional = () => {
                     />
                     <button className="button__search" type="submit" onClick={handleSearch}>
                         Buscar
+                        <MagnifyingGlass />
                     </button>
                 </div>
             
@@ -279,24 +280,26 @@ const InputsProfissional = () => {
                 <div>
                     <button className="button__formP" type="submit" onClick={handleSubmit}>
                         Cadastrar
+                       
+                        <UserPlus />
                     </button>
                 </div>
 
                 <div>
                     <button className="button__formP alterar" type="button" onClick={handleAlterar}>
                         Alterar
-                        <div className="icons__button3">
+                       
                             <Wrench />
-                        </div>
+                        
                     </button>
                 </div>
 
                 <div>
                     <button className="button__formP deletar" type="button" onClick={handleExcluir}>
                         Excluir
-                        <div className="icons__button2">
+                       
                             <Eraser />
-                        </div>
+                       
                     </button>
                 </div>
             </form>      

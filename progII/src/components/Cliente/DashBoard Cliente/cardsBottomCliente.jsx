@@ -2,7 +2,6 @@ import './cardsBottomCliente.css';
 import { useState, useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from 'chart.js';
-import moment from 'moment';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
 
@@ -42,13 +41,14 @@ function CardsBottomCliente({ contratoSelecionado }) {
 
                 if (data) {
                     setDadosPesquisa({
-                        dataColeta: data.data_coleta ? moment(data.data_coleta).format('DD/MM/YYYY') : '', 
+                        dataColeta: data.data_coleta || '',
                         tamanhoPlantas: data.tamanho_plantas || '',
                         coloracaoFolhas: data.coloracao_folhas || '',
                         numNos: data.num_nos || '',
                         clima: data.clima || '',
                     });
                 }
+                
             } catch (error) {
                 console.error('Erro ao buscar os últimos dados da pesquisa:', error);
             }

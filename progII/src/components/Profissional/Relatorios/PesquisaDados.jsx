@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './PesquisaDados.css';
+import { FilePlus} from "@phosphor-icons/react";
 
 const PesquisaDados = () => {
     const [contratos, setContratos] = useState([]);
@@ -52,7 +53,7 @@ const PesquisaDados = () => {
     const processData = (value) => (value === "" ? null : value);
 
     const validateFormData = () => {
-        if (!formData.data_coleta || !formData.fase || !formData.contrato || !formData.cpf_colaborador || !formData.clima) {
+        if (!formData.data_coleta || !formData.fase || !formData.contrato || !formData.cpf_colaborador || !formData.clima || !formData.tamanho || !formData.coloracao || !formData.coloracao || !formData.nos) {
             alert('Campos obrigatórios não podem estar vazios!');
             return false;
         }
@@ -61,18 +62,20 @@ const PesquisaDados = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         if (!validateFormData()) return;
-
+    
+           
         try {
+            // Preparar os dados formatados, aplicando a conversão corretamente
             const response = await fetch('http://localhost:4000/incluir-etapa-pesquisa', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    dt_coleta: formData.data_coleta,
-                    dt_apl_prod: processData(formData.data_aplicacao),
+                    dt_coleta: formData.data_coleta, 
+                    dt_apl_prod: formData.data_aplicacao,
                     tm_plantas: formData.tamanho,
                     cor_folhas: formData.coloracao,
                     outros_prod: processData(formData.produtos),
@@ -84,11 +87,11 @@ const PesquisaDados = () => {
                     cpf_colaborador: formData.cpf_colaborador,
                 }),
             });
-
+    
             if (!response.ok) {
                 throw new Error('Erro ao salvar os dados!');
             }
-
+    
             alert('Etapa de pesquisa cadastrada com sucesso!');
             // Resetar o formulário após o envio
             setFormData({
@@ -110,7 +113,7 @@ const PesquisaDados = () => {
             alert('Erro ao cadastrar etapa de pesquisa. Tente novamente.');
         }
     };
-
+    
     return (
         <form className="container" onSubmit={handleSubmit}>
             <div className="colunas">
@@ -230,9 +233,10 @@ const PesquisaDados = () => {
                     <label className="label__InserirDados" htmlFor="dateInput">Data da Coleta</label>
                     <input
                         className="input__InserirDados"
-                        type="date"
+                        type="text"
                         id="dateInput"
                         name="data_coleta"
+                        placeholder="dd/mm/aaaa"
                         value={formData.data_coleta}
                         onChange={handleChange}
                         required
@@ -243,8 +247,9 @@ const PesquisaDados = () => {
                     <label className="label__InserirDados" htmlFor="dateInputAplicacao">Data da Aplicação</label>
                     <input
                         className="input__InserirDados"
-                        type="date"
+                        type="text"
                         id="dateInputAplicacao"
+                        placeholder="dd/mm/aaaa"
                         name="data_aplicacao"
                         value={formData.data_aplicacao}
                         onChange={handleChange}
@@ -285,7 +290,7 @@ const PesquisaDados = () => {
                     />
                 </div>
 
-                <button className="saveButton" type="submit">Cadastrar</button>
+                <button className="saveButton" type="submit">Cadastrar <FilePlus /></button>
             </div>
         </form>
     );

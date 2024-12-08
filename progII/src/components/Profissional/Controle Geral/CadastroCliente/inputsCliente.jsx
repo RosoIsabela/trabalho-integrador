@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './inputsCliente.css';
-import { Eraser, Wrench } from "@phosphor-icons/react";
+import { Eraser, Wrench, MagnifyingGlass, UserPlus} from "@phosphor-icons/react";
 import axios from "axios";
 
 const InputsCliente = () => {
@@ -54,7 +54,7 @@ const InputsCliente = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        if (!formData.cnpj || !formData.nome || !formData.email || !formData.razao_social || !formData.senha) {
+        if (!formData.cnpj || !formData.nome || !formData.email || !formData.razao_social || !formData.senha || !formData.logradouro|| !formData.bairro ||!formData.cidade||!formData.estado||!formData.cep) {
             alert("Preencha todos os campos obrigatórios!");
             return;
         }
@@ -70,7 +70,7 @@ const InputsCliente = () => {
     };
 
     const handleAlterar = async () => {
-        if (!formData.email.trim() || !formData.cpf.trim() || !formData.nome.trim() || !formData.senha.trim() ) {
+        if (!formData.cnpj || !formData.nome || !formData.email || !formData.razao_social || !formData.senha || !formData.logradouro|| !formData.bairro ||!formData.cidade||!formData.estado||!formData.cep) {
             alert("O campos obrigatórios não podem estar vazio.");
             return;
         }
@@ -134,6 +134,7 @@ const InputsCliente = () => {
                 />
                 <button className="button__search" type="button" onClick={handleSearch}>
                     Buscar
+                    <MagnifyingGlass />
                 </button>
             </div>
 
@@ -229,6 +230,7 @@ const InputsCliente = () => {
 
                 <button className="button__formC" type="submit">
                     Cadastrar
+                    <UserPlus />
                 </button>
                
                 <button
