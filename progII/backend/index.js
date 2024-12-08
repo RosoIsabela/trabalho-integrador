@@ -337,8 +337,6 @@ server.get('/pesquisas/fase-maior/:clienteCnpj/:contratoNum', async (req, res) =
 });
 
 
-
-
 //rota para criar um colaborador
 server.post("/create-colaborador", async (req, res) => {
   const saltRounds = 10; // Número de rounds para o salt
@@ -1091,7 +1089,7 @@ server.get("/contratos", async (req, res) => {
   }
 });
 
-//rota para encontrar relatorio com base na fase e numero do contrato 
+//rota para encontrar relatorio com base na fase, numero do contrato e cliente
 server.get("/relatorios/:fase/:contrato", async (req, res) => {
   const { fase, contrato } = req.params; // Captura os parâmetros da URL
   try {

@@ -3,9 +3,7 @@ import { MagnifyingGlass, Wrench } from "@phosphor-icons/react";
 import { useState, useEffect } from 'react';
 
 const DadosRelatorios = () => {
-    const [clientes, setClientes] = useState([]);
     const [contratos, setContratos] = useState([]);
-    const [cliente, setCliente] = useState('');
     const [fase, setFase] = useState('');
     const [dadosRelatorio, setDadosRelatorio] = useState({
         contrato: '',
@@ -29,11 +27,6 @@ const DadosRelatorios = () => {
     ];
 
     useEffect(() => {
-        fetch('http://localhost:4000/clientes')
-            .then((response) => response.json())
-            .then((data) => setClientes(data))
-            .catch((error) => console.error("Erro ao buscar clientes:", error));
-
         fetch('http://localhost:4000/contratos')
             .then((response) => response.json())
             .then((data) => setContratos(data))
@@ -44,7 +37,7 @@ const DadosRelatorios = () => {
     const buscarRelatorio = (e) => {
         e.preventDefault();
         // Verificar fase e contrato foram selecionados
-        if (fase && cliente && dadosRelatorio.contrato) {
+        if (fase && dadosRelatorio.contrato) {
             fetch(`http://localhost:4000/relatorios/${fase}/${dadosRelatorio.contrato}`)
                 .then(response => response.json())
                 .then(data => {
@@ -71,7 +64,7 @@ const DadosRelatorios = () => {
                     console.error('Erro ao buscar dados do relatório:', error);
                 });
         } else {
-            setError('Por favor, selecione um cliente, fase e contrato.');
+            setError('Por favor, selecione uma fase e contrato.');
         }
     };
 
@@ -122,21 +115,6 @@ const DadosRelatorios = () => {
             <div className="div__superior">
                 <div className="divAdicionarPDF">
                     <label className="p__cadastro3">Para Alterar Relatório</label>
-
-                    <select
-                        className="contrato__selectBox2"
-                        name="selectCliente"
-                        value={cliente}
-                        onChange={(e) => setCliente(e.target.value)}
-                    >
-                        <option value="" disabled>Selecione o Cliente</option>
-                        {clientes.map((cliente) => (
-                            <option key={cliente.cnpj} value={cliente.cnpj}>
-                                {cliente.razao_social}
-                            </option>
-                        ))}
-                    </select>
-
                     <select
                         className="contrato__selectBox2"
                         name="selectFase"

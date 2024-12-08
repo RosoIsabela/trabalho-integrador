@@ -73,7 +73,6 @@ function TelaLoginBemVindo() {
                 
                 <button type="submit" className="button__login">Entrar</button> 
             </form>
-            <Link className="esqueceu__senha" to="/tela-esqueceu-senha">Esqueceu a senha?</Link>
             
         </div>
     );

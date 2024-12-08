@@ -1,12 +1,11 @@
 import './cardsTopProfissional.css';
 import { useState, useEffect } from 'react';
-import moment from 'moment';
 
 function CardsTopProfissional({ cliente, contrato }) {
     const [dataEntrega, setDataEntrega] = useState('');
     const [maiorFase, setMaiorFase] = useState(0);
 
-    // verifica data de entrega com base no cliente e no contrato selecionado
+    // Verifica data de entrega com base no cliente e no contrato selecionado
     useEffect(() => {
         const fetchDataEntrega = async () => {
             try {
@@ -14,8 +13,7 @@ function CardsTopProfissional({ cliente, contrato }) {
                 const data = await response.json();
 
                 if (data?.contrato?.dt_entrega) {
-                    const dataFormatada = moment(data.contrato.dt_entrega).format('DD/MM/YYYY');
-                    setDataEntrega(dataFormatada);
+                    setDataEntrega(data.contrato.dt_entrega); // Agora a data não é formatada
                 } else {
                     setDataEntrega('__/__/____');
                 }
@@ -49,7 +47,6 @@ function CardsTopProfissional({ cliente, contrato }) {
         fetchMaiorFase();
     }, [cliente, contrato]);
 
-   
     const fasesCheckbox = [
         { id: 1, label: 'Avaliações Pré-Plantio' },
         { id: 2, label: 'Avaliação de Protocolo' },

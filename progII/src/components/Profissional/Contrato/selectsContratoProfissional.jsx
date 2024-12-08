@@ -44,13 +44,12 @@ function SelectsContratoProfissional() {
                 .then(data => {
                     if (data.contrato && data.contrato.length === 1) {
                         const contractData = data.contrato[0];
-                        const formatData = (date) => new Date(date).toISOString().split('T')[0]; // Converte para AAAA-MM-DD
                         setDados({
                             contrato: contractData.num_contrato || '',
                             parcelas: contractData.num_parcelas || '',
                             custo: contractData.preco || '',
-                            dataContrato: contractData.dt_assinatura ? formatData(contractData.dt_assinatura) : '',
-                            dataEntrega: contractData.dt_entrega ? formatData(contractData.dt_entrega) : '',
+                            dataContrato: contractData.dt_assinatura || '',
+                            dataEntrega: contractData.dt_entrega || '',
                         });
                         setError('');
                     } else {

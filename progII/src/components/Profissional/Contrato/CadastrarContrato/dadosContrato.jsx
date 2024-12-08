@@ -162,7 +162,8 @@ function DadosContrato() {
                     <p>Data do Contrato</p>
                     <input 
                         className="inputs__DadosContrato" 
-                        type="date" 
+                        type="text" 
+                        placeholder='dd/mm/aaaa'
                         value={dados.dataContrato || ''} 
                         onChange={(e) => setDados({ ...dados, dataContrato: e.target.value })} 
                     />
@@ -171,7 +172,8 @@ function DadosContrato() {
                     <p>Data de Entrega do Relatório Final</p>
                     <input 
                         className="inputs__DadosContrato" 
-                        type="date" 
+                        type="text"
+                        placeholder='dd/mm/aaaa' 
                         value={dados.dataEntrega || ''} 
                         onChange={(e) => setDados({ ...dados, dataEntrega: e.target.value })} 
                     />

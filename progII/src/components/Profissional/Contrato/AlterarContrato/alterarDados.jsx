@@ -45,13 +45,12 @@ function AlterarDados() {
                 .then(data => {
                     if (data.contrato && data.contrato.length === 1) {
                         const contractData = data.contrato[0];
-                        const formatData = (date) => new Date(date).toISOString().split('T')[0]; // Converte para AAAA-MM-DD
                         setDados({
                             contrato: contractData.num_contrato || '',
                             parcelas: contractData.num_parcelas || '',
                             custo: contractData.preco || '',
-                            dataContrato: contractData.dt_assinatura ? formatData(contractData.dt_assinatura) : '',
-                            dataEntrega: contractData.dt_entrega ? formatData(contractData.dt_entrega) : '',
+                            dataContrato: contractData.dt_assinatura || '',
+                            dataEntrega: contractData.dt_entrega || '',
                         });
                         setError('');
                     } else {
@@ -204,7 +203,7 @@ function AlterarDados() {
 
                     <p>Data do Contrato</p>
                     <input
-                        type="date"
+                        type="text"
                         className="input_dadosDoContrato"
                         value={dados.dataContrato}
                         onChange={(e) => setDados({ ...dados, dataContrato: e.target.value })}
@@ -213,7 +212,7 @@ function AlterarDados() {
 
                     <p>Data de Entrega do Relatório Final</p>
                     <input
-                        type="date"
+                        type="text"
                         className="input_dadosDoContrato"
                         value={dados.dataEntrega}
                         onChange={(e) => setDados({ ...dados, dataEntrega: e.target.value })}
